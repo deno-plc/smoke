@@ -26,10 +26,10 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './cursor.mts'
-export * from './database.mts'
-export * from './factory.mts'
-export * from './indexed.mts'
-export * from './object-store.mts'
-export * from './request.mts'
-export * from './transaction.mts'
+export * from './cursor.ts';
+export * from './database.ts';
+export * from './factory.ts';
+export * from './indexed.ts';
+export * from './object-store.ts';
+export * from './request.ts';
+export * from './transaction.ts';

@@ -26,30 +26,30 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { delay as delayFunc } from './delay.mts'
+import { delay as delayFunc } from './delay.ts';
 
-export type RetryFunction<T> = () => Promise<T> | T
+export type RetryFunction<T> = () => Promise<T> | T;
 
 export interface RetryOptions {
   /** The number of attempts before throwing last error. Default is 1 */
-  attempts?: number
+  attempts?: number;
   /** A millisecond delay between retries. Default is 1 */
-  delay?: number
+  delay?: number;
   /** A multiplier value applied to the retry delay for each failed attempt. Default is 1 */
-  backoff?: number
+  backoff?: number;
 }
 /** Runs the given function for the specified number of times. Returns last error if all attempts fail. */
 export async function retry<T>(options: RetryOptions, func: RetryFunction<T>): Promise<T> {
-  let [attempts, delay, backoff] = [options.attempts ?? 1, options.delay ?? 1, options.backoff ?? 1]
-  let last_error: null | Error = null
+  let [attempts, delay, backoff] = [options.attempts ?? 1, options.delay ?? 1, options.backoff ?? 1];
+  let last_error: null | Error = null;
   for (let i = 0; i < attempts; i++) {
     try {
-      return await func()
+      return await func();
     } catch (error: any) {
-      last_error = error
-      await delayFunc(delay)
-      delay = delay * backoff
+      last_error = error;
+      await delayFunc(delay);
+      delay = delay * backoff;
     }
   }
-  throw last_error
+  throw last_error;
 }

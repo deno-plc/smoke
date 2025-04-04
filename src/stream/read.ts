@@ -26,15 +26,15 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import type { Close, CloseSync } from './close.mts'
+import type { Close, CloseSync } from './close.ts';
 
 /** Represents a resource that can be read asynchronously */
 export interface Read<T = unknown> extends Close {
-  [Symbol.asyncIterator](): AsyncIterableIterator<T>
-  read(): Promise<T | null>
+  [Symbol.asyncIterator](): AsyncIterableIterator<T>;
+  read(): Promise<T | null>;
 }
 /** Represents a resource that can be read syncronously */
 export interface ReadSync<T = unknown> extends CloseSync {
-  [Symbol.iterator](): IterableIterator<T>
-  read(): T | null
+  [Symbol.iterator](): IterableIterator<T>;
+  read(): T | null;
 }

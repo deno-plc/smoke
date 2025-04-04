@@ -1,1 +1,1 @@
-import './buffer.mts'
+import './buffer.ts';

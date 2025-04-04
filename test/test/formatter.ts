@@ -26,7 +26,7 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Guard from './guard/index.mts'
+import * as Guard from './guard/index.ts';
 
 export namespace ValueFormatter {
   function formatTypedArray(value: Guard.TypedArrayType): string {
@@ -53,20 +53,20 @@ export namespace ValueFormatter {
                         : Guard.isBigUint64Array(value)
                           ? `BigUint64Array { length: ${value.length} }`
                           : (() => {
-                              throw new Error('Unknown typed array')
-                            })()
+                            throw new Error('Unknown typed array');
+                          })();
   }
   function formatArray(value: unknown[]): string {
-    const elements: string = value.map((value) => format(value)).join(', ')
-    return `Array { length: ${value.length} } [${elements}]`
+    const elements: string = value.map((value) => format(value)).join(', ');
+    return `Array { length: ${value.length} } [${elements}]`;
   }
   function formatInstanceObject(value: Guard.ObjectType) {
-    return `${value.constructor.name}`
+    return `${value.constructor.name}`;
   }
   function formatObject(value: Guard.ObjectType) {
-    return JSON.stringify(value)
+    return JSON.stringify(value);
   }
   export function format(value: unknown): string {
-    return Guard.isTypedArray(value) ? formatTypedArray(value) : Guard.isArray(value) ? formatArray(value) : Guard.isInstanceObject(value) ? formatInstanceObject(value) : Guard.isStandardObject(value) ? formatObject(value) : `${value}`
+    return Guard.isTypedArray(value) ? formatTypedArray(value) : Guard.isArray(value) ? formatArray(value) : Guard.isInstanceObject(value) ? formatInstanceObject(value) : Guard.isStandardObject(value) ? formatObject(value) : `${value}`;
   }
 }

@@ -26,13 +26,13 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Assert from './assert/index.mts'
-import * as Buffer from './buffer/index.mts'
-import * as Ansi from './ansi/index.mts'
+import * as Assert from './assert/index.ts';
+import * as Buffer from './buffer/index.ts';
+import * as Ansi from './ansi/index.ts';
 
-import type { DescribeContext } from './describe.mts'
-import type { ItContext } from './it.mts'
-import { ValueFormatter } from './formatter.mts'
+import type { DescribeContext } from './describe.ts';
+import type { ItContext } from './it.ts';
+import { ValueFormatter } from './formatter.ts';
 
 // Mapping of ANSI codes to their respective hex color values
 const ansiToHex: Record<string, string> = {
@@ -68,156 +68,156 @@ const ansiToHex: Record<string, string> = {
   '\x1b[105m': '#FF80FF', // lightMagenta (background)
   '\x1b[106m': '#80FFFF', // lightCyan (background)
   '\x1b[107m': '#FFFFFF', // lightWhite (background)
-}
+};
 
 // ------------------------------------------------------------------
 // ConsoleBuffer
 // ------------------------------------------------------------------
 class ConsoleBuffer {
-  readonly #buffers: Uint8Array[]
-  readonly #interval: number
+  readonly #buffers: Uint8Array[];
+  readonly #interval: number;
   constructor(private readonly dispatch: (content: string) => void) {
-    this.#interval = setInterval(() => this.#flush(), 50) as never
-    this.#buffers = []
+    this.#interval = setInterval(() => this.#flush(), 50) as never;
+    this.#buffers = [];
   }
   public write(buffer: Uint8Array) {
-    this.#buffers.push(buffer)
+    this.#buffers.push(buffer);
   }
   public close() {
-    clearInterval(this.#interval)
+    clearInterval(this.#interval);
   }
   #collect() {
-    const length = this.#buffers.reduce((acc, c) => acc + c.length, 0)
-    let [index, collect] = [0, new Uint8Array(length)]
+    const length = this.#buffers.reduce((acc, c) => acc + c.length, 0);
+    let [index, collect] = [0, new Uint8Array(length)];
     while (this.#buffers.length > 0) {
-      const buffer = this.#buffers.shift()!
-      collect.set(buffer, index)
-      index += buffer.length
+      const buffer = this.#buffers.shift()!;
+      collect.set(buffer, index);
+      index += buffer.length;
     }
-    return collect
+    return collect;
   }
   #dispatch(buffer: Uint8Array, start: number, end: number) {
-    const slice = buffer.slice(start, end)
-    this.dispatch(Buffer.decode(slice))
+    const slice = buffer.slice(start, end);
+    this.dispatch(Buffer.decode(slice));
   }
   #flush() {
-    if (this.#buffers.length === 0) return
-    let [pointer, buffer] = [0, this.#collect()]
+    if (this.#buffers.length === 0) return;
+    let [pointer, buffer] = [0, this.#collect()];
     for (let i = 0; i < buffer.length; i++) {
-      const ch = buffer[i]
+      const ch = buffer[i];
       if (ch === 10) {
-        this.#dispatch(buffer, pointer, i)
-        i = i + 1
-        pointer = i
+        this.#dispatch(buffer, pointer, i);
+        i = i + 1;
+        pointer = i;
       }
     }
-    this.#dispatch(buffer, pointer, buffer.length)
+    this.#dispatch(buffer, pointer, buffer.length);
   }
 }
 // ------------------------------------------------------------------
 // Stdout
 // ------------------------------------------------------------------
-const stdout_buffer = new ConsoleBuffer((content) => console.log(content))
+const stdout_buffer = new ConsoleBuffer((content) => console.log(content));
 export const stdout = new WritableStream<Uint8Array>({
   write: (chunk) => stdout_buffer.write(chunk),
-})
+});
 export interface Reporter {
-  onContextBegin(context: DescribeContext): any
-  onContextEnd(context: DescribeContext): any
-  onUnitBegin(unit: ItContext): any
-  onUnitEnd(unit: ItContext): any
-  onSummary(context: DescribeContext): any
+  onContextBegin(context: DescribeContext): any;
+  onContextEnd(context: DescribeContext): any;
+  onUnitBegin(unit: ItContext): any;
+  onUnitEnd(unit: ItContext): any;
+  onSummary(context: DescribeContext): any;
 }
 export class DocumentReporter implements Reporter {
-  readonly #writer: WritableStreamDefaultWriter<Uint8Array>
+  readonly #writer: WritableStreamDefaultWriter<Uint8Array>;
   constructor() {
-    this.#writer = stdout.getWriter()
+    this.#writer = stdout.getWriter();
   }
   // ----------------------------------------------------------------
   // Stdout
   // ----------------------------------------------------------------
-  #currentColor: string | undefined
+  #currentColor: string | undefined;
   #color(code: string, callback: Function) {
-    this.#writer.write(Buffer.encode(code))
-    this.#currentColor = code
-    callback()
-    this.#currentColor = undefined
-    this.#writer.write(Buffer.encode(Ansi.reset))
+    this.#writer.write(Buffer.encode(code));
+    this.#currentColor = code;
+    callback();
+    this.#currentColor = undefined;
+    this.#writer.write(Buffer.encode(Ansi.reset));
   }
   #newline() {
-    this.#writer.write(Buffer.encode(`\n`))
-    if (!('document' in globalThis)) return
-    const br = document.createElement('br')
-    document.body.appendChild(br)
+    this.#writer.write(Buffer.encode(`\n`));
+    if (!('document' in globalThis)) return;
+    const br = document.createElement('br');
+    document.body.appendChild(br);
   }
   #write(message: string) {
-    this.#writer.write(Buffer.encode(message))
-    if (!('document' in globalThis)) return
-    const span = document.createElement('span')
-    span.style.color = ansiToHex[this.#currentColor as never] as never
-    span.innerHTML = message
-    document.body.appendChild(span)
+    this.#writer.write(Buffer.encode(message));
+    if (!('document' in globalThis)) return;
+    const span = document.createElement('span');
+    span.style.color = ansiToHex[this.#currentColor as never] as never;
+    span.innerHTML = message;
+    document.body.appendChild(span);
   }
   // ----------------------------------------------------------------
   // Handlers
   // ----------------------------------------------------------------
   public onContextBegin(context: DescribeContext) {
-    if (context.name === 'root') return
-    this.#color(Ansi.color.lightBlue, () => this.#write(context.name))
-    this.#newline()
+    if (context.name === 'root') return;
+    this.#color(Ansi.color.lightBlue, () => this.#write(context.name));
+    this.#newline();
   }
   public onContextEnd(context: DescribeContext) {
-    if (context.name === 'root') return
-    this.#newline()
+    if (context.name === 'root') return;
+    this.#newline();
   }
   public onUnitBegin(unit: ItContext) {
-    this.#color(Ansi.color.gray, () => this.#write(` - ${unit.name}`))
+    this.#color(Ansi.color.gray, () => this.#write(` - ${unit.name}`));
   }
   public onUnitEnd(unit: ItContext) {
     if (unit.error === null) {
-      this.#color(Ansi.color.green, () => this.#write(` pass`))
-      this.#color(Ansi.color.lightBlue, () => this.#write(` ${unit.elapsed.toFixed()} ms`))
+      this.#color(Ansi.color.green, () => this.#write(` pass`));
+      this.#color(Ansi.color.lightBlue, () => this.#write(` ${unit.elapsed.toFixed()} ms`));
     } else {
-      this.#color(Ansi.color.lightRed, () => this.#write(' fail'))
+      this.#color(Ansi.color.lightRed, () => this.#write(' fail'));
     }
-    this.#newline()
+    this.#newline();
   }
   #printFailureSummary(context: DescribeContext) {
     for (const error of context.failures()) {
-      this.#color(Ansi.color.lightBlue, () => this.#write(`${error.context} `))
-      this.#color(Ansi.color.gray, () => this.#write(`${error.unit}`))
-      this.#newline()
-      this.#newline()
-      this.#color(Ansi.color.lightRed, () => this.#write(`  error`))
-      this.#color(Ansi.color.gray, () => this.#write(`:  ${error.error.message}`))
-      this.#newline()
+      this.#color(Ansi.color.lightBlue, () => this.#write(`${error.context} `));
+      this.#color(Ansi.color.gray, () => this.#write(`${error.unit}`));
+      this.#newline();
+      this.#newline();
+      this.#color(Ansi.color.lightRed, () => this.#write(`  error`));
+      this.#color(Ansi.color.gray, () => this.#write(`:  ${error.error.message}`));
+      this.#newline();
       if (error.error instanceof Assert.AssertError) {
-        this.#color(Ansi.color.lightGreen, () => this.#write(`  expect`))
-        this.#write(`: ${ValueFormatter.format(error.error.expect)}`)
-        this.#newline()
-        this.#color(Ansi.color.lightRed, () => this.#write(`  actual`))
-        this.#write(`: ${ValueFormatter.format(error.error.actual)}`)
-        this.#newline()
+        this.#color(Ansi.color.lightGreen, () => this.#write(`  expect`));
+        this.#write(`: ${ValueFormatter.format(error.error.expect)}`);
+        this.#newline();
+        this.#color(Ansi.color.lightRed, () => this.#write(`  actual`));
+        this.#write(`: ${ValueFormatter.format(error.error.actual)}`);
+        this.#newline();
       }
-      this.#newline()
+      this.#newline();
     }
-    this.#newline()
+    this.#newline();
   }
   #printCompletionSummary(context: DescribeContext) {
-    this.#color(Ansi.color.lightBlue, () => this.#write('elapsed'))
-    this.#color(Ansi.color.gray, () => this.#write(`: ${context.elapsed.toFixed(0)} ms`))
-    this.#newline()
+    this.#color(Ansi.color.lightBlue, () => this.#write('elapsed'));
+    this.#color(Ansi.color.gray, () => this.#write(`: ${context.elapsed.toFixed(0)} ms`));
+    this.#newline();
 
-    this.#color(Ansi.color.lightBlue, () => this.#write('passed'))
-    this.#color(Ansi.color.gray, () => this.#write(`:  ${context.passCount}`))
-    this.#newline()
+    this.#color(Ansi.color.lightBlue, () => this.#write('passed'));
+    this.#color(Ansi.color.gray, () => this.#write(`:  ${context.passCount}`));
+    this.#newline();
 
-    this.#color(Ansi.color.lightBlue, () => this.#write('failed'))
-    this.#color(Ansi.color.gray, () => this.#write(`:  ${context.failCount}`))
-    this.#newline()
+    this.#color(Ansi.color.lightBlue, () => this.#write('failed'));
+    this.#color(Ansi.color.gray, () => this.#write(`:  ${context.failCount}`));
+    this.#newline();
   }
   public onSummary(context: DescribeContext) {
-    this.#printFailureSummary(context)
-    this.#printCompletionSummary(context)
+    this.#printFailureSummary(context);
+    this.#printCompletionSummary(context);
   }
 }

@@ -26,49 +26,49 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { HttpListener, type HttpListenerOptions, type HttpListenerAcceptCallback, type HttpListenerUpgradeCallback, UpgradeMap } from './listener.mts'
-import * as WebSocket from './websocket/index.mts'
-import * as Fetch from './fetch.mts'
-import type * as Net from '../net/index.mts'
-import * as Url from '../url/index.mts'
+import { HttpListener, type HttpListenerOptions, type HttpListenerAcceptCallback, type HttpListenerUpgradeCallback, UpgradeMap } from './listener.ts';
+import * as WebSocket from './websocket/index.ts';
+import * as Fetch from './fetch.ts';
+import type * as Net from '../net/index.ts';
+import * as Url from '../url/index.ts';
 
 export class HttpModule {
-  readonly #net: Net.NetModule
+  readonly #net: Net.NetModule;
   constructor(net: Net.NetModule) {
-    this.#net = net
+    this.#net = net;
   }
   // ----------------------------------------------------------------
   // Module API
   // ----------------------------------------------------------------
   /** Creates a Http listener. */
   public listen(options: HttpListenerOptions, accept: HttpListenerAcceptCallback): HttpListener {
-    return new HttpListener(this.#net, options, accept)
+    return new HttpListener(this.#net, options, accept);
   }
   /** Fetches a response from the Http endpoint */
   public async fetch(endpoint: URL | Request | string, init?: RequestInit): Promise<Response> {
-    return await Fetch.fetch(this.#net, endpoint as string, init)
+    return await Fetch.fetch(this.#net, endpoint as string, init);
   }
   /** Upgrades a Http request into a WebSocket */
   public async upgrade(request: Request, callback: HttpListenerUpgradeCallback): Promise<Response> {
-    UpgradeMap.set(request, callback)
-    return new Response()
+    UpgradeMap.set(request, callback);
+    return new Response();
   }
   /** Establishes a connection to a remote WebSocket endpoint */
   public async connect(endpoint: string): Promise<WebSocket.HttpWebSocket> {
-    const [hostname, port] = this.#resolveHostnameAndPort(endpoint)
-    const socket = await this.#net.connect({ hostname, port })
+    const [hostname, port] = this.#resolveHostnameAndPort(endpoint);
+    const socket = await this.#net.connect({ hostname, port });
     return new Promise(async (resolve, reject) => {
-      const websocket = new WebSocket.HttpWebSocket(socket, endpoint)
-      websocket.on('close', () => reject(new Error('WebSocket closed unexpectedly')))
-      websocket.on('error', (error) => reject(error))
-      websocket.on('open', () => resolve(websocket))
-    })
+      const websocket = new WebSocket.HttpWebSocket(socket, endpoint);
+      websocket.on('close', () => reject(new Error('WebSocket closed unexpectedly')));
+      websocket.on('error', (error) => reject(error));
+      websocket.on('open', () => resolve(websocket));
+    });
   }
   // ----------------------------------------------------------------
   // Internal
   // ----------------------------------------------------------------
   #resolveHostnameAndPort(input: string): [hostname: string, port: number] {
-    const url = Url.parse(input)
-    return [url.host ?? 'localhost', url.port === null ? 80 : parseInt(url.port)]
+    const url = Url.parse(input);
+    return [url.host ?? 'localhost', url.port === null ? 80 : parseInt(url.port)];
   }
 }

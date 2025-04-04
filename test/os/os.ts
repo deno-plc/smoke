@@ -1,9 +1,9 @@
-import { Os } from '@sinclair/smoke'
-import { Test, Assert } from '../test/index.mts'
+import { Os } from '@sinclair/smoke';
+import { Test, Assert } from '../test/index.ts';
 
 Test.describe('Os:type', () => {
   Test.it('Should return operating system string', async () => {
-    const result = Os.type()
-    Assert.isTrue(result === 'win32' || result === 'darwin' || result === 'linux')
-  })
-})
+    const result = Os.type();
+    Assert.isTrue(result === 'win32' || result === 'darwin' || result === 'linux');
+  });
+});

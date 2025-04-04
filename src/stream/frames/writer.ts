@@ -26,41 +26,41 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Buffer from '../../buffer/index.mts'
-import * as Async from '../../async/index.mts'
-import type { Write } from '../write.mts'
+import * as Buffer from '../../buffer/index.ts';
+import * as Async from '../../async/index.ts';
+import type { Write } from '../write.ts';
 
 export class FrameWriter implements Write<Uint8Array> {
-  readonly #write: Write<Uint8Array>
-  readonly #mutex: Async.Mutex
-  readonly #header: Uint8Array
-  readonly #view: DataView
-  #ordinal: number
+  readonly #write: Write<Uint8Array>;
+  readonly #mutex: Async.Mutex;
+  readonly #header: Uint8Array;
+  readonly #view: DataView;
+  #ordinal: number;
   constructor(write: Write<Uint8Array>) {
-    this.#header = new Uint8Array(8) // [ordinal: u32, length: u32]
-    this.#view = new DataView(this.#header.buffer)
-    this.#ordinal = 0
-    this.#mutex = new Async.Mutex()
-    this.#write = write
+    this.#header = new Uint8Array(8); // [ordinal: u32, length: u32]
+    this.#view = new DataView(this.#header.buffer);
+    this.#ordinal = 0;
+    this.#mutex = new Async.Mutex();
+    this.#write = write;
   }
   public async write(value: Uint8Array): Promise<void> {
-    const lock = await this.#mutex.lock()
+    const lock = await this.#mutex.lock();
     try {
-      this.#view.setUint32(0, this.#ordinal)
-      this.#view.setUint32(4, value.length)
-      this.#ordinal += 1
-      const buffer = Buffer.concat([this.#header, value])
-      await this.#write.write(buffer)
+      this.#view.setUint32(0, this.#ordinal);
+      this.#view.setUint32(4, value.length);
+      this.#ordinal += 1;
+      const buffer = Buffer.concat([this.#header, value]);
+      await this.#write.write(buffer);
     } finally {
-      lock.dispose()
+      lock.dispose();
     }
   }
   public async close(): Promise<void> {
-    const lock = await this.#mutex.lock()
+    const lock = await this.#mutex.lock();
     try {
-      await this.#write.close()
+      await this.#write.close();
     } finally {
-      lock.dispose()
+      lock.dispose();
     }
   }
 }

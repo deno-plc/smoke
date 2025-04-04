@@ -26,23 +26,23 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as IndexedDb from '../indexeddb/index.mts'
-import { FileSystem } from './filesystem.mts'
+import * as IndexedDb from '../indexeddb/index.ts';
+import { FileSystem } from './filesystem.ts';
 
 /** Deletes a FileSystem with the given databaseName */
 export async function remove(databaseName: string): Promise<void> {
-  await IndexedDb.Factory.deleteDatabase(databaseName)
+  await IndexedDb.Factory.deleteDatabase(databaseName);
 }
 /** Opens a FileSystem using the given IndexedDB database name */
 export async function open(databaseName: string): Promise<FileSystem> {
   return new FileSystem(
     await IndexedDb.Factory.open(databaseName, (database) => {
-      const folderStore = database.createObjectStore('folder', { keyPath: 'path' })
-      const fileStore = database.createObjectStore('file', { keyPath: 'path' })
-      const blobStore = database.createObjectStore('blob', { autoIncrement: true })
-      folderStore.createIndex('parent', 'parent')
-      fileStore.createIndex('parent', 'parent')
-      blobStore.createIndex('parent', 'parent')
+      const folderStore = database.createObjectStore('folder', { keyPath: 'path' });
+      const fileStore = database.createObjectStore('file', { keyPath: 'path' });
+      const blobStore = database.createObjectStore('blob', { autoIncrement: true });
+      folderStore.createIndex('parent', 'parent');
+      fileStore.createIndex('parent', 'parent');
+      blobStore.createIndex('parent', 'parent');
     }),
-  )
+  );
 }

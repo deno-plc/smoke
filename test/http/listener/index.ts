@@ -1,1 +1,1 @@
-import './listener.mts'
+import './listener.ts';

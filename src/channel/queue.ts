@@ -26,40 +26,40 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { Deferred } from '../async/deferred.mts'
+import { Deferred } from '../async/deferred.ts';
 
 /** Asynchronous queue that supports asynchronous awaiting values */
 export class Queue<T> {
-  readonly #enqueues: Deferred<T>[]
-  readonly #dequeues: Promise<T>[]
+  readonly #enqueues: Deferred<T>[];
+  readonly #dequeues: Promise<T>[];
   constructor() {
-    this.#enqueues = []
-    this.#dequeues = []
+    this.#enqueues = [];
+    this.#dequeues = [];
   }
   /** Returns the number of values buffered in this queue */
   public get buffered(): number {
-    return this.#dequeues.length
+    return this.#dequeues.length;
   }
   /** Enqueues the next value in this queue. */
   public enqueue(value: T) {
     if (this.#enqueues.length > 0) {
-      const deferred = this.#enqueues.shift()!
-      deferred.resolve(value)
+      const deferred = this.#enqueues.shift()!;
+      deferred.resolve(value);
     } else {
-      const deferred = new Deferred<T>()
-      deferred.resolve(value)
-      this.#dequeues.push(deferred.promise())
+      const deferred = new Deferred<T>();
+      deferred.resolve(value);
+      this.#dequeues.push(deferred.promise());
     }
   }
   /** Dequeues the next value from this queue or waits for a value to arrive. */
   public dequeue(): Promise<T> {
     if (this.#dequeues.length > 0) {
-      const promise = this.#dequeues.shift()!
-      return promise
+      const promise = this.#dequeues.shift()!;
+      return promise;
     } else {
-      const deferred = new Deferred<T>()
-      this.#enqueues.push(deferred)
-      return deferred.promise()
+      const deferred = new Deferred<T>();
+      this.#enqueues.push(deferred);
+      return deferred.promise();
     }
   }
 }

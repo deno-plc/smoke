@@ -26,54 +26,54 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { Deferred } from '../async/deferred.mts'
-import { Database } from './database.mts'
-import { ObjectStore } from './object-store.mts'
+import { Deferred } from '../async/deferred.ts';
+import { Database } from './database.ts';
+import { ObjectStore } from './object-store.ts';
 
-export type StoreName<Names extends readonly string[]> = Names extends string ? Names : { [K in keyof Names]: Names[K] }[number]
+export type StoreName<Names extends readonly string[]> = Names extends string ? Names : { [K in keyof Names]: Names[K] }[number];
 
 export class Transaction<Names extends readonly string[]> {
-  private readonly _aborted: Deferred<void>
-  private readonly _completed: Deferred<void>
-  private readonly _errored: Deferred<any>
+  private readonly _aborted: Deferred<void>;
+  private readonly _completed: Deferred<void>;
+  private readonly _errored: Deferred<any>;
   constructor(private readonly transaction: IDBTransaction) {
-    this._aborted = new Deferred<void>()
-    this._completed = new Deferred<void>()
-    this._errored = new Deferred<void>()
-    this.transaction.addEventListener('abort', () => this._aborted.resolve())
-    this.transaction.addEventListener('complete', () => this._completed.resolve())
-    this.transaction.addEventListener('error', (event) => this._errored.reject(event))
+    this._aborted = new Deferred<void>();
+    this._completed = new Deferred<void>();
+    this._errored = new Deferred<void>();
+    this.transaction.addEventListener('abort', () => this._aborted.resolve());
+    this.transaction.addEventListener('complete', () => this._completed.resolve());
+    this.transaction.addEventListener('error', (event) => this._errored.reject(event));
   }
   public get aborted() {
-    return this._aborted.promise()
+    return this._aborted.promise();
   }
   public get completed() {
-    return this._completed.promise()
+    return this._completed.promise();
   }
   public get errored() {
-    return this._errored.promise()
+    return this._errored.promise();
   }
   /** Aborts the transaction. All pending requests will fail with a "AbortError" DOMException and all changes made to the database will be reverted. */
   public abort() {
-    this.transaction.abort()
+    this.transaction.abort();
   }
   public commit() {
-    this.transaction.commit()
+    this.transaction.commit();
   }
   public get db() {
-    return new Database(this.transaction.db)
+    return new Database(this.transaction.db);
   }
   public get error() {
-    return this.transaction.error
+    return this.transaction.error;
   }
   public get mode() {
-    return this.transaction.mode
+    return this.transaction.mode;
   }
   /** Returns an IDBObjectStore in the transaction's scope. */
   public objectStore<T>(name: StoreName<Names>) {
-    return new ObjectStore<T>(this.transaction.objectStore(name))
+    return new ObjectStore<T>(this.transaction.objectStore(name));
   }
   public get objectStoreNames() {
-    return this.transaction.objectStoreNames
+    return this.transaction.objectStoreNames;
   }
 }

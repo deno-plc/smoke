@@ -26,34 +26,34 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { Request } from './request.mts'
+import { Request } from './request.ts';
 
 // --------------------------------------------------------------------------
 // Cursor<T>
 // --------------------------------------------------------------------------
 export class Record<T> {
-  constructor(private readonly cursor: IDBCursor) {}
+  constructor(private readonly cursor: IDBCursor) { }
   /** This records key */
   public get key(): IDBValidKey {
-    return this.cursor.key
+    return this.cursor.key;
   }
   /** Delete the record pointed at by the cursor with a new value. If successful, request's result will be undefined. */
   public async delete() {
-    return await Request(this.cursor.delete())
+    return await Request(this.cursor.delete());
   }
   /** Updates this record with the given value */
   public async update(value: T) {
-    return await Request(this.cursor.update(value))
+    return await Request(this.cursor.update(value));
   }
 }
 export class Cursor<T> {
-  constructor(protected readonly request: IDBRequest<IDBCursor | null>) {}
+  constructor(protected readonly request: IDBRequest<IDBCursor | null>) { }
   public async *[Symbol.asyncIterator]() {
     while (true) {
-      const next = await Request(this.request)
-      if (next === null) return
-      yield new Record<T>(next)
-      next.continue()
+      const next = await Request(this.request);
+      if (next === null) return;
+      yield new Record<T>(next);
+      next.continue();
     }
   }
 }
@@ -61,32 +61,32 @@ export class Cursor<T> {
 // CursorWithValue<T>
 // --------------------------------------------------------------------------
 export class RecordWithValue<T> {
-  constructor(private readonly cursor: IDBCursorWithValue) {}
+  constructor(private readonly cursor: IDBCursorWithValue) { }
   /** This records key */
   public get key(): IDBValidKey {
-    return this.cursor.key
+    return this.cursor.key;
   }
   /** This records key */
   public get value(): T {
-    return this.cursor.value
+    return this.cursor.value;
   }
   /** Delete the record pointed at by the cursor with a new value. If successful, request's result will be undefined. */
   public async delete() {
-    return await Request(this.cursor.delete())
+    return await Request(this.cursor.delete());
   }
   /** Updates this record with the given value */
   public async update(value: T) {
-    return await Request(this.cursor.update(value))
+    return await Request(this.cursor.update(value));
   }
 }
 export class CursorWithValue<T> {
-  constructor(protected readonly request: IDBRequest<IDBCursorWithValue | null>) {}
+  constructor(protected readonly request: IDBRequest<IDBCursorWithValue | null>) { }
   public async *[Symbol.asyncIterator]() {
     while (true) {
-      const next = await Request(this.request)
-      if (next === null) return
-      yield new RecordWithValue<T>(next)
-      next.continue()
+      const next = await Request(this.request);
+      if (next === null) return;
+      yield new RecordWithValue<T>(next);
+      next.continue();
     }
   }
 }

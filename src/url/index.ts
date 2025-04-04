@@ -26,5 +26,5 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './parse.mts'
-export * from './url.mts'
+export * from './parse.ts';
+export * from './url.ts';

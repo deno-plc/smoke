@@ -26,7 +26,7 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './address.mts'
-export * from './listener.mts'
-export * from './socket.mts'
-export * from './net.mts'
+export * from './address.ts';
+export * from './listener.ts';
+export * from './socket.ts';
+export * from './net.ts';

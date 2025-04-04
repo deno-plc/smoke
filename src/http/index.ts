@@ -26,6 +26,6 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './websocket/index.mts'
-export * from './http.mts'
-export * from './listener.mts'
+export * from './websocket/index.ts';
+export * from './http.ts';
+export * from './listener.ts';

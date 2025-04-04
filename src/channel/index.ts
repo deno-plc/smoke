@@ -26,8 +26,8 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './channel.mts'
-export * from './receiver.mts'
-export * from './select.mts'
-export * from './sender.mts'
-export * from './transform.mts'
+export * from './channel.ts';
+export * from './receiver.ts';
+export * from './select.ts';
+export * from './sender.ts';
+export * from './transform.ts';

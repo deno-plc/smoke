@@ -26,4 +26,4 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './protocol.mts'
+export * from './protocol.ts';

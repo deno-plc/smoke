@@ -26,12 +26,12 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import type { Failed } from './failed.mts'
+import type { Failed } from './failed.ts';
 
 export interface Result {
-  success: boolean
-  elapsed: number
-  passCount: number
-  failCount: number
-  failures: Failed[]
+  success: boolean;
+  elapsed: number;
+  passCount: number;
+  failCount: number;
+  failures: Failed[];
 }

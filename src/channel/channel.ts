@@ -26,10 +26,10 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { TransformChannel } from './transform.mts'
+import { TransformChannel } from './transform.ts';
 
 export class Channel<T = unknown> extends TransformChannel<T, T> {
   constructor() {
-    super((value) => value)
+    super((value) => value);
   }
 }

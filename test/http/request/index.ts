@@ -1,3 +1,3 @@
-import './info.mts'
-import './properties.mts'
-import './readable.mts'
+import './info.ts';
+import './properties.ts';
+import './readable.ts';

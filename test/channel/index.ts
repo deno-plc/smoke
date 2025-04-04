@@ -1,2 +1,2 @@
-import './channel.mts'
-import './select.mts'
+import './channel.ts';
+import './select.ts';

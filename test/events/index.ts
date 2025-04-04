@@ -1,2 +1,2 @@
-import './event.mts'
-import './events.mts'
+import './event.ts';
+import './events.ts';

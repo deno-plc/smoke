@@ -26,43 +26,43 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Async from '../async/index.mts'
-import type { Hub, HubMessageCallback } from './hub.mts'
+import * as Async from '../async/index.ts';
+import type { Hub, HubMessageCallback } from './hub.ts';
 
 export class Public implements Hub {
-  readonly #barrier: Async.Barrier
-  readonly #socket: globalThis.WebSocket
+  readonly #barrier: Async.Barrier;
+  readonly #socket: globalThis.WebSocket;
   constructor(endpoint: string) {
-    this.#barrier = new Async.Barrier({ paused: true })
-    this.#socket = new globalThis.WebSocket(endpoint)
-    this.#socket.addEventListener('open', (event) => this.#onOpen(event))
-    this.#socket.addEventListener('message', (event) => this.#onMessage(event))
-    this.#socket.addEventListener('error', (event) => this.#onError(event))
-    this.#socket.addEventListener('close', (event) => this.#onClose(event))
+    this.#barrier = new Async.Barrier({ paused: true });
+    this.#socket = new globalThis.WebSocket(endpoint);
+    this.#socket.addEventListener('open', (event) => this.#onOpen(event));
+    this.#socket.addEventListener('message', (event) => this.#onMessage(event));
+    this.#socket.addEventListener('error', (event) => this.#onError(event));
+    this.#socket.addEventListener('close', (event) => this.#onClose(event));
   }
   // ----------------------------------------------------------------
   // Hub
   // ----------------------------------------------------------------
   configuration(): Promise<RTCConfiguration> {
-    throw new Error('Method not implemented.')
+    throw new Error('Method not implemented.');
   }
   address(): Promise<string> {
-    throw new Error('Method not implemented.')
+    throw new Error('Method not implemented.');
   }
-  send(message: { to: string; data: unknown }): void {
-    throw new Error('Method not implemented.')
+  send(message: { to: string; data: unknown; }): void {
+    throw new Error('Method not implemented.');
   }
   receive(callback: HubMessageCallback): void {
-    throw new Error('Method not implemented.')
+    throw new Error('Method not implemented.');
   }
   dispose(): void {
-    throw new Error('Method not implemented.')
+    throw new Error('Method not implemented.');
   }
   // ----------------------------------------------------------------
   // Events
   // ----------------------------------------------------------------
-  #onOpen(event: Event) {}
-  #onMessage(event: MessageEvent) {}
-  #onError(event: Event) {}
-  #onClose(event: CloseEvent) {}
+  #onOpen(event: Event) { }
+  #onMessage(event: MessageEvent) { }
+  #onError(event: Event) { }
+  #onClose(event: CloseEvent) { }
 }

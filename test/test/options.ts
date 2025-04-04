@@ -26,9 +26,9 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import type { Reporter } from './reporter.mts'
+import type { Reporter } from './reporter.ts';
 
 export interface Options {
-  reporter: Reporter
-  filter: string
+  reporter: Reporter;
+  filter: string;
 }

@@ -26,7 +26,7 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './event.mts'
-export * from './events.mts'
-export * from './handler.mts'
-export * from './listener.mts'
+export * from './event.ts';
+export * from './events.ts';
+export * from './handler.ts';
+export * from './listener.ts';

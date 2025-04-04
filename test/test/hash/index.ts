@@ -1,1 +1,1 @@
-export * from './hash.mts'
+export * from './hash.ts';

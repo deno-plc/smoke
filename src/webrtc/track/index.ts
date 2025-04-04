@@ -26,4 +26,4 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './listener.mts'
+export * from './listener.ts';

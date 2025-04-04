@@ -1,1 +1,1 @@
-import './net.mts'
+import './net.ts';

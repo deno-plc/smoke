@@ -26,153 +26,153 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Agent from '../agent/index.mts'
-import type * as Dispose from '../dispose/index.mts'
-import * as Buffer from '../buffer/index.mts'
-import * as Stream from '../stream/index.mts'
-import type * as Net from '../net/index.mts'
-import * as Signal from './signal.mts'
-import { HttpServerWebSocket } from './index.mts'
+import * as Agent from '../agent/index.ts';
+import type * as Dispose from '../dispose/index.ts';
+import * as Buffer from '../buffer/index.ts';
+import * as Stream from '../stream/index.ts';
+import type * as Net from '../net/index.ts';
+import * as Signal from './signal.ts';
+import { HttpServerWebSocket } from './index.ts';
 
-export const UpgradeMap = new WeakMap<Request, Function>()
+export const UpgradeMap = new WeakMap<Request, Function>();
 
 export interface HttpListenerRequestInit {
-  url: string
-  method: string
-  headers: Record<PropertyKey, string>
+  url: string;
+  method: string;
+  headers: Record<PropertyKey, string>;
 }
 export interface HttpListenerResponseInit {
-  headers: Record<PropertyKey, string>
-  statusText: string
-  status: number
+  headers: Record<PropertyKey, string>;
+  statusText: string;
+  status: number;
 }
 export interface HttpRequestInfo {
-  local: Net.Address
-  remote: Net.Address
+  local: Net.Address;
+  remote: Net.Address;
 }
-export type HttpListenerUpgradeCallback = (socket: HttpServerWebSocket) => any
-export type HttpListenerAcceptCallback = (request: Request, info: HttpRequestInfo) => Response | Promise<Response>
+export type HttpListenerUpgradeCallback = (socket: HttpServerWebSocket) => any;
+export type HttpListenerAcceptCallback = (request: Request, info: HttpRequestInfo) => Response | Promise<Response>;
 
 // ------------------------------------------------------------------
 // HttpListener
 // ------------------------------------------------------------------
 export interface HttpListenerOptions {
-  port: number
+  port: number;
 }
 // prettier-ignore
 export class HttpListener implements Dispose.Dispose {
-  readonly #listener: Net.NetListener
-  readonly #accept: HttpListenerAcceptCallback
-  readonly #options: HttpListenerOptions
+  readonly #listener: Net.NetListener;
+  readonly #accept: HttpListenerAcceptCallback;
+  readonly #options: HttpListenerOptions;
   constructor(net: Net.NetModule, options: HttpListenerOptions, accept: HttpListenerAcceptCallback) {
-    this.#listener = net.listen({ port: options.port }, (socket) => this.#onSocket(socket))
-    this.#options = options
-    this.#accept = accept
+    this.#listener = net.listen({ port: options.port }, (socket) => this.#onSocket(socket));
+    this.#options = options;
+    this.#accept = accept;
   }
   // ----------------------------------------------------------------
   // Dispose
   // ----------------------------------------------------------------
   [Symbol.dispose](): void {
-    this.dispose()
+    this.dispose();
   }
   public dispose(): void {
-    this.#listener.dispose()
+    this.#listener.dispose();
   }
   // ----------------------------------------------------------------
   // Internal
   // ----------------------------------------------------------------
   #onSocket(socket: Net.NetSocket): void {
-    this.#onRequest(socket)
+    this.#onRequest(socket);
   }
   async #readListenerRequestInit(stream: Stream.FrameDuplex): Promise<HttpListenerRequestInit | null> {
-    const buffer = await stream.read()
-    if (buffer === null) return null
-    const decoded = Buffer.decode(buffer)
-    const init = JSON.parse(decoded) as HttpListenerRequestInit
+    const buffer = await stream.read();
+    if (buffer === null) return null;
+    const decoded = Buffer.decode(buffer);
+    const init = JSON.parse(decoded) as HttpListenerRequestInit;
     return (
       typeof init.url === 'string' &&
       typeof init.method === 'string' &&
       typeof init.headers === 'object' &&
       init.headers !== null
-    ) ? init : null
+    ) ? init : null;
   }
   async #sendResponse(response: Response, stream: Stream.FrameDuplex) {
     const headerData = JSON.stringify({
       headers: Object.fromEntries(response.headers.entries()),
       status: response.status,
       statusText: response.statusText,
-    } as HttpListenerResponseInit)
-    const headerEncoded = Buffer.encode(headerData)
-    await stream.write(headerEncoded)
+    } as HttpListenerResponseInit);
+    const headerEncoded = Buffer.encode(headerData);
+    await stream.write(headerEncoded);
     if (response.body === null) {
-      return await stream.close()
+      return await stream.close();
     }
-    const reader = response.body.getReader()
+    const reader = response.body.getReader();
     while (true) {
-      const next = await reader.read()
-      if (next.value !== undefined) await stream.write(next.value)
-      if (next.done) break
+      const next = await reader.read();
+      if (next.value !== undefined) await stream.write(next.value);
+      if (next.done) break;
     }
-    await stream.close()
+    await stream.close();
   }
   // ----------------------------------------------------------------
   // Body
   // ----------------------------------------------------------------
   /** (Chromium) Creates a ReadableStream from a HttpListenerRequestInit */
   #createReadableStreamFromRequestInit(listenerRequestInit: HttpListenerRequestInit, stream: Stream.FrameDuplex) {
-    if (['HEAD', 'GET'].includes(listenerRequestInit.method)) return null
+    if (['HEAD', 'GET'].includes(listenerRequestInit.method)) return null;
     return new ReadableStream({
       pull: async (controller) => {
-        const next = await stream.read()
+        const next = await stream.read();
         if (next === null || Buffer.equals(next, Signal.REQUEST_END)) {
-          return controller.close()
+          return controller.close();
         } else {
-          controller.enqueue(next)
+          controller.enqueue(next);
         }
       },
-    })
+    });
   }
   /** (Firefox) Creates a Blob from a HttpListenerRequestInit */
   async #createBlobFromRequestInit(listenerRequestInit: HttpListenerRequestInit, stream: Stream.FrameDuplex): Promise<Blob | null> {
-    if (['HEAD', 'GET'].includes(listenerRequestInit.method)) return null
-    const buffers: Uint8Array[] = []
-    while(true) {
-      const next = await stream.read()
-      if(next === null || Buffer.equals(next, Signal.REQUEST_END)) break
-      buffers.push(next)
+    if (['HEAD', 'GET'].includes(listenerRequestInit.method)) return null;
+    const buffers: Uint8Array[] = [];
+    while (true) {
+      const next = await stream.read();
+      if (next === null || Buffer.equals(next, Signal.REQUEST_END)) break;
+      buffers.push(next);
     }
-    return new Blob(buffers)
+    return new Blob(buffers);
   }
   async #createBodyFromRequestInit(listenerRequestInit: HttpListenerRequestInit, stream: Stream.FrameDuplex): Promise<ReadableStream | Blob | null> {
     return Agent.browserType() === 'Firefox'
       ? this.#createBlobFromRequestInit(listenerRequestInit, stream)
-      : this.#createReadableStreamFromRequestInit(listenerRequestInit, stream)
+      : this.#createReadableStreamFromRequestInit(listenerRequestInit, stream);
   }
   // ----------------------------------------------------------------
   // Request
   // ----------------------------------------------------------------
   async #onRequest(socket: Net.NetSocket) {
-    const stream = new Stream.FrameDuplex(socket)
-    const listenerRequestInit = await this.#readListenerRequestInit(stream)
-    if (listenerRequestInit === null) return await stream.close()
-    const url = new URL(`http://${socket.local.hostname}:${socket.local.port}${listenerRequestInit.url}`)
-    const headers = new Headers(listenerRequestInit.headers)
-    const body = await this.#createBodyFromRequestInit(listenerRequestInit, stream)
+    const stream = new Stream.FrameDuplex(socket);
+    const listenerRequestInit = await this.#readListenerRequestInit(stream);
+    if (listenerRequestInit === null) return await stream.close();
+    const url = new URL(`http://${socket.local.hostname}:${socket.local.port}${listenerRequestInit.url}`);
+    const headers = new Headers(listenerRequestInit.headers);
+    const body = await this.#createBodyFromRequestInit(listenerRequestInit, stream);
     const request = new Request(url, {
       method: listenerRequestInit.method,
       headers: headers,
       body,
       duplex: 'half',
-    } as RequestInit)
-    const info = { local: socket.local, remote: socket.remote }
-    const response = await this.#accept(request, info)
+    } as RequestInit);
+    const info = { local: socket.local, remote: socket.remote };
+    const response = await this.#accept(request, info);
     if (UpgradeMap.has(request)) {
-      const callback = UpgradeMap.get(request)!
-      await stream.write(Signal.WEBSOCKET)
-      callback(new HttpServerWebSocket(stream))
+      const callback = UpgradeMap.get(request)!;
+      await stream.write(Signal.WEBSOCKET);
+      callback(new HttpServerWebSocket(stream));
     } else {
-      await stream.write(Signal.RESPONSE)
-      await this.#sendResponse(response, stream)
+      await stream.write(Signal.RESPONSE);
+      await this.#sendResponse(response, stream);
     }
   }
 }

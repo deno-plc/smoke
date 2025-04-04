@@ -1,1 +1,1 @@
-import './proxy.mts'
+import './proxy.ts';

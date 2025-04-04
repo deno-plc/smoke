@@ -26,4 +26,4 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './dispose.mts'
+export * from './dispose.ts';

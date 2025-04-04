@@ -26,5 +26,5 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './client.mts'
-export * from './server.mts'
+export * from './client.ts';
+export * from './server.ts';

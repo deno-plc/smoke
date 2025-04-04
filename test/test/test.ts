@@ -26,57 +26,57 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Async from './async/index.mts'
-import { DescribeContext } from './describe.mts'
-import type { Options } from './options.mts'
-import { DocumentReporter } from './reporter.mts'
-import type { Result } from './result.mts'
-import { ItContext } from './it.mts'
+import * as Async from './async/index.ts';
+import { DescribeContext } from './describe.ts';
+import type { Options } from './options.ts';
+import { DocumentReporter } from './reporter.ts';
+import type { Result } from './result.ts';
+import { ItContext } from './it.ts';
 
-let current = new DescribeContext('root')
+let current = new DescribeContext('root');
 
 export function describe(name: string, callback: Function) {
-  let prev = current
-  let next = new DescribeContext(name)
-  current = next
-  callback()
-  prev.context(next)
-  current = prev
+  let prev = current;
+  let next = new DescribeContext(name);
+  current = next;
+  callback();
+  prev.context(next);
+  current = prev;
 }
 export function it(name: string, callback: Function) {
-  current.unit(new ItContext(name, callback))
+  current.unit(new ItContext(name, callback));
 }
 export function exclude(callback: () => Promise<boolean> | boolean): void {
-  current.exclude(callback)
+  current.exclude(callback);
 }
 export function beforeEach(callback: () => any): void {
-  current.beforeEach(callback)
+  current.beforeEach(callback);
 }
 export function afterEach(callback: () => any): void {
-  current.afterEach(callback)
+  current.afterEach(callback);
 }
 export function before<T>(callback: () => any): void {
-  current.before(callback)
+  current.before(callback);
 }
 export function after(callback: Function) {
-  current.after(callback)
+  current.after(callback);
 }
 function resolveOptions<T extends Partial<Options>>(options: T): Options {
   return {
     filter: options.filter ?? '',
     reporter: options.reporter ?? new DocumentReporter(),
-  }
+  };
 }
 export async function run(options: Partial<Options> = {}): Promise<Result> {
-  const resolvedOptions = resolveOptions(options)
-  await current.run(resolvedOptions)
-  resolvedOptions.reporter.onSummary(current)
-  await Async.delay(1000)
+  const resolvedOptions = resolveOptions(options);
+  await current.run(resolvedOptions);
+  resolvedOptions.reporter.onSummary(current);
+  await Async.delay(1000);
   return {
     success: current.failCount === 0,
     elapsed: current.elapsed,
     passCount: current.passCount,
     failCount: current.failCount,
     failures: [...current.failures()],
-  }
+  };
 }

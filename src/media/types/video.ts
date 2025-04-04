@@ -26,32 +26,32 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import type * as Dispose from '../../dispose/dispose.mts'
+import type * as Dispose from '../../dispose/dispose.ts';
 
 export interface VideoSourceOptions {
-  src: string
+  src: string;
 }
 export class VideoSource implements Dispose.Dispose {
-  readonly #element: HTMLVideoElement
-  readonly #mediastream: MediaStream
+  readonly #element: HTMLVideoElement;
+  readonly #mediastream: MediaStream;
   constructor(element: HTMLVideoElement, mediastream: MediaStream) {
-    this.#element = element
-    this.#mediastream = mediastream
+    this.#element = element;
+    this.#mediastream = mediastream;
   }
   // ----------------------------------------------------------------
   // Properties
   // ----------------------------------------------------------------
   public get mediastream(): MediaStream {
-    return this.#mediastream
+    return this.#mediastream;
   }
   // ----------------------------------------------------------------
   // Dispose
   // ----------------------------------------------------------------
   [Symbol.dispose]() {
-    this.dispose()
+    this.dispose();
   }
   public dispose(): void {
-    this.#element.pause()
+    this.#element.pause();
   }
   // ----------------------------------------------------------------
   // Statics
@@ -59,30 +59,30 @@ export class VideoSource implements Dispose.Dispose {
   /** Resolves a MediaStream from the given HTMLVideoElement */
   private static createMediaStream(element: HTMLVideoElement): MediaStream {
     if ('captureStream' in element && typeof element.captureStream === 'function') {
-      return element.captureStream(30) as MediaStream
+      return element.captureStream(30) as MediaStream;
     }
     if ('mozCaptureStream' in element && typeof element.mozCaptureStream === 'function') {
-      return element.mozCaptureStream(30) as MediaStream
+      return element.mozCaptureStream(30) as MediaStream;
     }
-    throw new Error('HTMLVideoElement does not support captureStream()')
+    throw new Error('HTMLVideoElement does not support captureStream()');
   }
   /** Resolves a HTMLVideoElement and resolves when ready to play */
   private static createVideoElement(options: VideoSourceOptions): Promise<HTMLVideoElement> {
     return new Promise<HTMLVideoElement>((resolve, reject) => {
-      const element = document.createElement('video')
-      element.src = options.src
-      element.volume = 0.0001
-      element.loop = true
-      element.controls = true
-      element.play()
-      element.addEventListener('canplay', () => resolve(element))
-      element.addEventListener('error', (error) => reject(error))
-    })
+      const element = document.createElement('video');
+      element.src = options.src;
+      element.volume = 0.0001;
+      element.loop = true;
+      element.controls = true;
+      element.play();
+      element.addEventListener('canplay', () => resolve(element));
+      element.addEventListener('error', (error) => reject(error));
+    });
   }
   /** Creates a new VideoSource */
   public static async createVideoSource(options: VideoSourceOptions): Promise<VideoSource> {
-    const element = await VideoSource.createVideoElement(options)
-    const mediastream = VideoSource.createMediaStream(element)
-    return new VideoSource(element, mediastream)
+    const element = await VideoSource.createVideoElement(options);
+    const mediastream = VideoSource.createMediaStream(element);
+    return new VideoSource(element, mediastream);
   }
 }

@@ -26,9 +26,9 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import type { Receiver } from './receiver.mts'
-import type { Sender } from './sender.mts'
-import { Queue } from './queue.mts'
+import type { Receiver } from './receiver.ts';
+import type { Sender } from './sender.ts';
+import { Queue } from './queue.ts';
 
 enum MessageType {
   Next = 0,
@@ -36,58 +36,58 @@ enum MessageType {
   End = 2,
 }
 interface MessageNext<T> {
-  type: MessageType.Next
-  value: T
+  type: MessageType.Next;
+  value: T;
 }
 interface MessageError {
-  type: MessageType.Error
-  error: Error
+  type: MessageType.Error;
+  error: Error;
 }
 interface MessageEnd {
-  type: MessageType.End
+  type: MessageType.End;
 }
 
-export type Message<T> = MessageNext<T> | MessageError | MessageEnd
+export type Message<T> = MessageNext<T> | MessageError | MessageEnd;
 
-export type TransformFunction<T, U> = (value: T) => U | Promise<U>
+export type TransformFunction<T, U> = (value: T) => U | Promise<U>;
 
 export class TransformChannel<T = unknown, U = unknown> implements Sender<T>, Receiver<U> {
-  readonly #transformFunction: TransformFunction<T, U>
-  readonly #queue: Queue<Message<T>>
-  #ended: boolean
+  readonly #transformFunction: TransformFunction<T, U>;
+  readonly #queue: Queue<Message<T>>;
+  #ended: boolean;
   constructor(transformFunction: TransformFunction<T, U>) {
-    this.#transformFunction = transformFunction
-    this.#queue = new Queue<Message<T>>()
-    this.#ended = false
+    this.#transformFunction = transformFunction;
+    this.#queue = new Queue<Message<T>>();
+    this.#ended = false;
   }
   // ----------------------------------------------------------------
   // Properties
   // ----------------------------------------------------------------
   /** Returns the number of values buffered in this channel */
   public get buffered() {
-    return this.#queue.buffered
+    return this.#queue.buffered;
   }
   // ----------------------------------------------------------------
   // Receiver<T>
   // ----------------------------------------------------------------
   public async *[Symbol.asyncIterator]() {
     while (true) {
-      const next = await this.next()
-      if (next === null) return
-      yield next
+      const next = await this.next();
+      if (next === null) return;
+      yield next;
     }
   }
   /** Returns the next value from this channel or null if EOF. */
   public async next(): Promise<U | null> {
-    if (this.#ended && this.#queue.buffered === 0) return null
-    const message = await this.#queue.dequeue()
+    if (this.#ended && this.#queue.buffered === 0) return null;
+    const message = await this.#queue.dequeue();
     switch (message.type) {
       case MessageType.Next:
-        return await this.#transformFunction(message.value)
+        return await this.#transformFunction(message.value);
       case MessageType.Error:
-        throw message.error
+        throw message.error;
       case MessageType.End: {
-        return null
+        return null;
       }
     }
   }
@@ -96,20 +96,20 @@ export class TransformChannel<T = unknown, U = unknown> implements Sender<T>, Re
   // ----------------------------------------------------------------
   /** Sends a value to this channel. If channel has ended no action. */
   public send(value: T): void {
-    if (this.#ended) return
-    this.#queue.enqueue({ type: MessageType.Next, value })
+    if (this.#ended) return;
+    this.#queue.enqueue({ type: MessageType.Next, value });
   }
   /** Sends an error to this channel. If channel has ended no action. */
   public error(error: Error): void {
-    if (this.#ended) return
-    this.#ended = true
-    this.#queue.enqueue({ type: MessageType.Error, error })
-    this.#queue.enqueue({ type: MessageType.End })
+    if (this.#ended) return;
+    this.#ended = true;
+    this.#queue.enqueue({ type: MessageType.Error, error });
+    this.#queue.enqueue({ type: MessageType.End });
   }
   /** Ends this channel. */
   public end(): void {
-    if (this.#ended) return
-    this.#ended = true
-    this.#queue.enqueue({ type: MessageType.End })
+    if (this.#ended) return;
+    this.#ended = true;
+    this.#queue.enqueue({ type: MessageType.End });
   }
 }

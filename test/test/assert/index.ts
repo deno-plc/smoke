@@ -26,4 +26,4 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './assert.mts'
+export * from './assert.ts';

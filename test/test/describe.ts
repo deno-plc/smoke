@@ -26,142 +26,142 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import type { Options } from './options.mts'
-import type { Failed } from './failed.mts'
-import type { ItContext } from './it.mts'
+import type { Options } from './options.ts';
+import type { Failed } from './failed.ts';
+import type { ItContext } from './it.ts';
 
 export class DescribeContext {
-  readonly #name: string
-  readonly #contexts: DescribeContext[]
-  readonly #units: ItContext[]
-  readonly #beforeEach: Function[]
-  readonly #afterEach: Function[]
-  readonly #before: Function[]
-  readonly #after: Function[]
-  readonly #exclude: Function[]
-  #elasped: number
+  readonly #name: string;
+  readonly #contexts: DescribeContext[];
+  readonly #units: ItContext[];
+  readonly #beforeEach: Function[];
+  readonly #afterEach: Function[];
+  readonly #before: Function[];
+  readonly #after: Function[];
+  readonly #exclude: Function[];
+  #elasped: number;
   constructor(name: string) {
-    this.#name = name
-    this.#contexts = []
-    this.#units = []
-    this.#beforeEach = []
-    this.#afterEach = []
-    this.#before = []
-    this.#after = []
-    this.#exclude = []
-    this.#elasped = 0
+    this.#name = name;
+    this.#contexts = [];
+    this.#units = [];
+    this.#beforeEach = [];
+    this.#afterEach = [];
+    this.#before = [];
+    this.#after = [];
+    this.#exclude = [];
+    this.#elasped = 0;
   }
   // ----------------------------------------------------------------
   // Properties
   // ----------------------------------------------------------------
   public get name(): string {
-    return this.#name
+    return this.#name;
   }
   public get elapsed(): number {
-    return this.#elasped
+    return this.#elasped;
   }
   public get failCount(): number {
-    const count1 = this.#contexts.reduce((acc, context) => acc + context.failCount, 0)
-    const count2 = this.#units.reduce((acc, unit) => (unit.completed && unit.failed ? acc + 1 : acc), 0)
-    return count1 + count2
+    const count1 = this.#contexts.reduce((acc, context) => acc + context.failCount, 0);
+    const count2 = this.#units.reduce((acc, unit) => (unit.completed && unit.failed ? acc + 1 : acc), 0);
+    return count1 + count2;
   }
   public get passCount(): number {
-    const count1 = this.#contexts.reduce((acc, context) => acc + context.passCount, 0)
-    const count2 = this.#units.reduce((acc, unit) => (unit.completed && unit.passed ? acc + 1 : acc), 0)
-    return count1 + count2
+    const count1 = this.#contexts.reduce((acc, context) => acc + context.passCount, 0);
+    const count2 = this.#units.reduce((acc, unit) => (unit.completed && unit.passed ? acc + 1 : acc), 0);
+    return count1 + count2;
   }
   public *failures(): IterableIterator<Failed> {
     for (const context of this.#contexts) {
-      yield* context.failures()
+      yield* context.failures();
     }
     for (const unit of this.#units) {
-      if (!unit.completed || unit.passed) continue
-      yield { context: this.name, unit: unit.name, error: unit.error! }
+      if (!unit.completed || unit.passed) continue;
+      yield { context: this.name, unit: unit.name, error: unit.error! };
     }
   }
   // ----------------------------------------------------------------
   // Methods
   // ----------------------------------------------------------------
   public exclude(callback: Function) {
-    this.#exclude.push(callback)
+    this.#exclude.push(callback);
   }
   public beforeEach(callback: Function) {
-    this.#beforeEach.push(callback)
+    this.#beforeEach.push(callback);
   }
   public afterEach(callback: Function) {
-    this.#afterEach.push(callback)
+    this.#afterEach.push(callback);
   }
   public before(callback: Function) {
-    this.#before.push(callback)
+    this.#before.push(callback);
   }
   public after(callback: Function) {
-    this.#after.push(callback)
+    this.#after.push(callback);
   }
   public context(context: DescribeContext) {
-    this.#contexts.push(context)
+    this.#contexts.push(context);
   }
   public unit(unit: ItContext) {
-    this.#units.push(unit)
+    this.#units.push(unit);
   }
   // ----------------------------------------------------------------
   // Run
   // ----------------------------------------------------------------
   public async run(options: Options) {
-    if (this.#shouldExcludeWithFilter(options)) return
-    if (await this.#shouldExcludeWithCondition()) return
-    const start = performance.now()
-    options.reporter.onContextBegin(this)
+    if (this.#shouldExcludeWithFilter(options)) return;
+    if (await this.#shouldExcludeWithCondition()) return;
+    const start = performance.now();
+    options.reporter.onContextBegin(this);
     for (const callback of this.#before) {
       try {
-        await callback()
+        await callback();
       } catch {
-        break
+        break;
       }
     }
     for (const unit of this.#units) {
       for (const callback of this.#beforeEach) {
         try {
-          await callback()
+          await callback();
         } catch {
-          break
+          break;
         }
       }
-      await unit.run(options)
+      await unit.run(options);
       for (const callback of this.#afterEach) {
         try {
-          await callback()
+          await callback();
         } catch {
-          break
+          break;
         }
       }
     }
     for (const context of this.#contexts) {
-      await context.run(options)
+      await context.run(options);
     }
     for (const callback of this.#after) {
       try {
-        await callback()
+        await callback();
       } catch {
-        break
+        break;
       }
     }
-    this.#elasped = performance.now() - start
-    options.reporter.onContextEnd(this)
+    this.#elasped = performance.now() - start;
+    options.reporter.onContextEnd(this);
   }
   // ----------------------------------------------------------------
   // Filter
   // ----------------------------------------------------------------
   #shouldExcludeWithFilter(options: Options) {
-    const [name, filter] = [this.#name.toLowerCase(), options.filter.toLowerCase()]
-    return name === 'root' || name.includes(filter) ? false : true
+    const [name, filter] = [this.#name.toLowerCase(), options.filter.toLowerCase()];
+    return name === 'root' || name.includes(filter) ? false : true;
   }
   // ----------------------------------------------------------------
   // Filter
   // ----------------------------------------------------------------
   async #shouldExcludeWithCondition() {
     for (const callback of this.#exclude) {
-      if (await callback()) return true
+      if (await callback()) return true;
     }
-    return false
+    return false;
   }
 }

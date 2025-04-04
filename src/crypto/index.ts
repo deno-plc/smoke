@@ -26,4 +26,4 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './crypto.mts'
+export * from './crypto.ts';

@@ -26,6 +26,6 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './filesystem.mts'
-export * from './fs.mts'
-export * from './stat.mts'
+export * from './filesystem.ts';
+export * from './fs.ts';
+export * from './stat.ts';

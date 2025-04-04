@@ -26,35 +26,35 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import type * as Dispose from '../dispose/index.mts'
-import type * as WebRtc from '../webrtc/index.mts'
-import { NetSocket } from './socket.mts'
+import type * as Dispose from '../dispose/index.ts';
+import type * as WebRtc from '../webrtc/index.ts';
+import { NetSocket } from './socket.ts';
 
-export type NetListenerAcceptCallback = (socket: NetSocket) => any
+export type NetListenerAcceptCallback = (socket: NetSocket) => any;
 
 export interface NetListenerOptions {
-  port: number
+  port: number;
 }
 export class NetListener implements Dispose.Dispose {
-  readonly #listener: WebRtc.WebRtcDataChannelListener
-  readonly #accept: NetListenerAcceptCallback
+  readonly #listener: WebRtc.WebRtcDataChannelListener;
+  readonly #accept: NetListenerAcceptCallback;
   constructor(webrtc: WebRtc.WebRtcModule, options: NetListenerOptions, accept: NetListenerAcceptCallback) {
-    this.#listener = webrtc.listen({ port: options.port }, (peer, datachannel) => this.#onDataChannel(peer, datachannel))
-    this.#accept = accept
+    this.#listener = webrtc.listen({ port: options.port }, (peer, datachannel) => this.#onDataChannel(peer, datachannel));
+    this.#accept = accept;
   }
   // -----------------------------------------------------------------
   // Dispose
   // -----------------------------------------------------------------
   public [Symbol.dispose](): void {
-    return this.dispose()
+    return this.dispose();
   }
   public dispose(): void {
-    this.#listener.dispose()
+    this.#listener.dispose();
   }
   // -----------------------------------------------------------------
   // Internal
   // -----------------------------------------------------------------
   #onDataChannel(peer: WebRtc.WebRtcPeer, datachannel: RTCDataChannel) {
-    this.#accept(new NetSocket(peer, datachannel))
+    this.#accept(new NetSocket(peer, datachannel));
   }
 }

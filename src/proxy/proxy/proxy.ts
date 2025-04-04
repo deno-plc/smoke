@@ -26,18 +26,18 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { ProxyListener, type ListenCallback } from './listener.mts'
-import * as Setup from './setup.mts'
+import { ProxyListener, type ListenCallback } from './listener.ts';
+import * as Setup from './setup.ts';
 
 export interface ProxyListenOptions {
   /** The path this listener should intercept Http requests */
-  path: string
+  path: string;
   /** (Optional) The path to the ServiceWorker script. The default is `worker.js` */
-  workerPath?: string
+  workerPath?: string;
 }
 /** Listens for http requests made to the given path prefix */
 export async function listen(options: ProxyListenOptions, callback: ListenCallback): Promise<ProxyListener> {
-  const workerPath = options.workerPath || 'worker.js'
-  const { clientId, port, worker } = await Setup.resolveWorker({ path: options.path, workerPath })
-  return new ProxyListener(worker, port, clientId, callback)
+  const workerPath = options.workerPath || 'worker.js';
+  const { clientId, port, worker } = await Setup.resolveWorker({ path: options.path, workerPath });
+  return new ProxyListener(worker, port, clientId, callback);
 }

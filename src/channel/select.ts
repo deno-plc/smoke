@@ -26,28 +26,28 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { Channel } from './channel.mts'
-import type { Receiver } from './receiver.mts'
+import { Channel } from './channel.ts';
+import type { Receiver } from './receiver.ts';
 
 // prettier-ignore
-type ReceiverUnwrap<T> = T extends Receiver<infer U> ? U : never
+type ReceiverUnwrap<T> = T extends Receiver<infer U> ? U : never;
 // prettier-ignore
-type ReceiverUnion<T extends Receiver[], Acc = never> = 
+type ReceiverUnion<T extends Receiver[], Acc = never> =
   T extends [infer L extends Receiver, ...infer R extends Receiver[]]
-    ? ReceiverUnion<R, Acc | ReceiverUnwrap<L>>
-    : Acc
+  ? ReceiverUnion<R, Acc | ReceiverUnwrap<L>>
+  : Acc;
 
 // Creates combined receiver channel that selects from the given receivers
 export function select<T extends Receiver[], U = ReceiverUnion<T>>(receivers: [...T]): Receiver<U> {
   async function receive(sender: Channel<any>, iterator: AsyncIterable<any>) {
     for await (const value of iterator) {
-      await sender.send(value)
+      await sender.send(value);
     }
   }
-  const channel = new Channel<ReceiverUnion<T>>()
-  const promises = receivers.map((receiver) => receive(channel, receiver))
+  const channel = new Channel<ReceiverUnion<T>>();
+  const promises = receivers.map((receiver) => receive(channel, receiver));
   Promise.all(promises)
     .then(() => channel.end())
-    .catch((error) => channel.error(error))
-  return channel as never
+    .catch((error) => channel.error(error));
+  return channel as never;
 }

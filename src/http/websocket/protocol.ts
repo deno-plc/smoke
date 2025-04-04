@@ -26,7 +26,7 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Buffer from '../../buffer/index.mts'
+import * as Buffer from '../../buffer/index.ts';
 
 export enum MessageType {
   MessageText = 0,
@@ -34,55 +34,55 @@ export enum MessageType {
   Ping = 2,
   Pong = 3,
 }
-const MESSAGE_TEXT = new Uint8Array([MessageType.MessageText])
-const MESSAGE_DATA = new Uint8Array([MessageType.MessageData])
-const PING = new Uint8Array([MessageType.Ping])
-const PONG = new Uint8Array([MessageType.Pong])
+const MESSAGE_TEXT = new Uint8Array([MessageType.MessageText]);
+const MESSAGE_DATA = new Uint8Array([MessageType.MessageData]);
+const PING = new Uint8Array([MessageType.Ping]);
+const PONG = new Uint8Array([MessageType.Pong]);
 
 // ------------------------------------------------------------------
 // EncodeMessage
 // ------------------------------------------------------------------
 function encodeMessageDataType(value: string | ArrayBufferLike | ArrayBufferView): Uint8Array {
-  if (value instanceof Uint8Array) return value
-  if (value instanceof ArrayBuffer) return new Uint8Array(value)
-  if (typeof value === 'string') return Buffer.encode(value)
-  throw Error('Unable to send data type')
+  if (value instanceof Uint8Array) return value;
+  if (value instanceof ArrayBuffer) return new Uint8Array(value);
+  if (typeof value === 'string') return Buffer.encode(value);
+  throw Error('Unable to send data type');
 }
 export function encodeMessage(value: string | ArrayBufferLike | ArrayBufferView) {
-  const type = typeof value === 'string' ? MESSAGE_TEXT : MESSAGE_DATA
-  const data = encodeMessageDataType(value)
-  return Buffer.concat([type, data])
+  const type = typeof value === 'string' ? MESSAGE_TEXT : MESSAGE_DATA;
+  const data = encodeMessageDataType(value);
+  return Buffer.concat([type, data]);
 }
 // ------------------------------------------------------------------
 // EncodePing
 // ------------------------------------------------------------------
 export function encodePing(value: string | ArrayBufferLike | ArrayBufferView) {
-  const data = encodeMessageDataType(value)
-  return Buffer.concat([PING, data])
+  const data = encodeMessageDataType(value);
+  return Buffer.concat([PING, data]);
 }
 // ------------------------------------------------------------------
 // EncodePong
 // ------------------------------------------------------------------
 export function encodePong(value: string | ArrayBufferLike | ArrayBufferView) {
-  const data = encodeMessageDataType(value)
-  return Buffer.concat([PONG, data])
+  const data = encodeMessageDataType(value);
+  return Buffer.concat([PONG, data]);
 }
 // ------------------------------------------------------------------
 // DecodeAny
 // ------------------------------------------------------------------
 export function decodeAny(value: Uint8Array): [MessageType, ArrayBuffer] {
-  if (value.length === 0) throw Error('Unable to encode empty buffer')
-  const [type, data] = [value[0], value.slice(1)]
+  if (value.length === 0) throw Error('Unable to encode empty buffer');
+  const [type, data] = [value[0], value.slice(1)];
   switch (type) {
     case MessageType.MessageData:
-      return [MessageType.MessageData, data.buffer]
+      return [MessageType.MessageData, data.buffer];
     case MessageType.MessageText:
-      return [MessageType.MessageText, data.buffer]
+      return [MessageType.MessageText, data.buffer];
     case MessageType.Ping:
-      return [MessageType.Ping, data.buffer]
+      return [MessageType.Ping, data.buffer];
     case MessageType.Pong:
-      return [MessageType.Pong, data.buffer]
+      return [MessageType.Pong, data.buffer];
     default:
-      throw Error('Unknown protocol type')
+      throw Error('Unknown protocol type');
   }
 }

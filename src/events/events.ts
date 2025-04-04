@@ -26,48 +26,48 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import type { EventListener } from './listener.mts'
-import type { EventHandler } from './handler.mts'
-import { Event } from './event.mts'
+import type { EventListener } from './listener.ts';
+import type { EventHandler } from './handler.ts';
+import { Event } from './event.ts';
 
 export class Events<T extends Record<string, any> = Record<string, any>> {
-  readonly #events: Map<string, Event>
+  readonly #events: Map<string, Event>;
   constructor() {
-    this.#events = new Map<string, Event>()
+    this.#events = new Map<string, Event>();
   }
   /** Subscribes to an event */
   public on<K extends keyof T>(name: K, handler: EventHandler<T[K]>): EventListener {
-    const key = name as string
-    if (!this.#events.has(key)) this.#events.set(key, new Event())
-    const current = this.#events.get(key)!
-    return current.on(handler)
+    const key = name as string;
+    if (!this.#events.has(key)) this.#events.set(key, new Event());
+    const current = this.#events.get(key)!;
+    return current.on(handler);
   }
   /** Subscribes once to an event */
   public once<K extends keyof T>(name: K, handler: EventHandler<T[K]>): EventListener {
-    const key = name as string
-    if (!this.#events.has(key)) this.#events.set(key, new Event())
-    const current = this.#events.get(key)!
-    return current.once(handler)
+    const key = name as string;
+    if (!this.#events.has(key)) this.#events.set(key, new Event());
+    const current = this.#events.get(key)!;
+    return current.once(handler);
   }
   /** Sends a value to subscribers of this event */
   public send<K extends keyof T>(name: K, value: T[K]) {
-    const key = name as string
-    if (!this.#events.has(key)) return
-    const current = this.#events.get(key)!
-    current.send(value)
+    const key = name as string;
+    if (!this.#events.has(key)) return;
+    const current = this.#events.get(key)!;
+    current.send(value);
   }
   /** Returns the subscriber count for this event */
   public count<K extends keyof T>(name: K): number {
-    const key = name as string
-    if (!this.#events.has(key)) return 0
-    const current = this.#events.get(key)!
-    return current.count()
+    const key = name as string;
+    if (!this.#events.has(key)) return 0;
+    const current = this.#events.get(key)!;
+    return current.count();
   }
   /** Closes this event */
   public dispose() {
     for (const [key, event] of this.#events) {
-      this.#events.delete(key)
-      event.dispose()
+      this.#events.delete(key);
+      event.dispose();
     }
   }
 }

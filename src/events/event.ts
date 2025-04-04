@@ -26,40 +26,40 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import type { EventHandler } from './handler.mts'
-import { EventListener } from './listener.mts'
+import type { EventHandler } from './handler.ts';
+import { EventListener } from './listener.ts';
 
 export class Event<T = any> {
-  readonly #subscriptions: Set<readonly [boolean, EventHandler<T>]>
+  readonly #subscriptions: Set<readonly [boolean, EventHandler<T>]>;
   constructor() {
-    this.#subscriptions = new Set<readonly [boolean, EventHandler<T>]>()
+    this.#subscriptions = new Set<readonly [boolean, EventHandler<T>]>();
   }
   /** Subscribes to events */
   public on(handler: EventHandler<T>): EventListener {
-    const subscription = [false, handler] as const
-    this.#subscriptions.add(subscription)
-    return new EventListener(() => this.#subscriptions.delete(subscription))
+    const subscription = [false, handler] as const;
+    this.#subscriptions.add(subscription);
+    return new EventListener(() => this.#subscriptions.delete(subscription));
   }
   /** Subscribes once to an event */
   public once(handler: EventHandler<T>): EventListener {
-    const subscription = [true, handler] as const
-    this.#subscriptions.add(subscription)
-    return new EventListener(() => this.#subscriptions.delete(subscription))
+    const subscription = [true, handler] as const;
+    this.#subscriptions.add(subscription);
+    return new EventListener(() => this.#subscriptions.delete(subscription));
   }
   /** Sends a value to subscribers */
   public send(value: T): any {
     for (const subscriber of this.#subscriptions) {
-      const [once, handler] = subscriber
-      if (once) this.#subscriptions.delete(subscriber)
-      handler(value)
+      const [once, handler] = subscriber;
+      if (once) this.#subscriptions.delete(subscriber);
+      handler(value);
     }
   }
   /** Returns the subscriber count for this event */
   public count(): number {
-    return this.#subscriptions.size
+    return this.#subscriptions.size;
   }
   /** Disposes of this event */
   public dispose() {
-    this.#subscriptions.clear()
+    this.#subscriptions.clear();
   }
 }

@@ -30,52 +30,52 @@ THE SOFTWARE.
 /// <reference lib="dom" />
 /// <reference lib="webworker" />
 
-import * as Protocol from '../protocol/index.mts'
-import { addClient, findClient } from './client.mts'
+import * as Protocol from '../protocol/index.ts';
+import { addClient, findClient } from './client.ts';
 
 // ------------------------------------------------------------------
 // Start
 // ------------------------------------------------------------------
 function onStart(callback: (self: ServiceWorkerGlobalScope) => unknown) {
-  callback(globalThis.self as never)
+  callback(globalThis.self as never);
 }
 onStart((self) => {
-  self.addEventListener('install', (event) => onInstall(self, event))
-  self.addEventListener('activate', (event) => onActivate(self, event))
-  self.addEventListener('message', (event) => onMessage(event))
-  self.addEventListener('fetch', (event) => onFetch(event))
-})
+  self.addEventListener('install', (event) => onInstall(self, event));
+  self.addEventListener('activate', (event) => onActivate(self, event));
+  self.addEventListener('message', (event) => onMessage(event));
+  self.addEventListener('fetch', (event) => onFetch(event));
+});
 // ------------------------------------------------------------------
 // Install
 // ------------------------------------------------------------------
 function onInstall(self: ServiceWorkerGlobalScope, event: ExtendableEvent) {
-  event.waitUntil(self.skipWaiting())
+  event.waitUntil(self.skipWaiting());
 }
 // ------------------------------------------------------------------
 // Activate
 // ------------------------------------------------------------------
 function onActivate(self: ServiceWorkerGlobalScope, event: ExtendableEvent) {
-  event.waitUntil(self.clients.claim())
+  event.waitUntil(self.clients.claim());
 }
 // ------------------------------------------------------------------
 // Message
 // ------------------------------------------------------------------
 // prettier-ignore
 function onMessage(event: ExtendableMessageEvent) {
-  const windowClient = event.source as WindowClient
-  const port = event.data.port as MessagePort
-  port.start()
+  const windowClient = event.source as WindowClient;
+  const port = event.data.port as MessagePort;
+  port.start();
   port.addEventListener('message', (event) => {
-    Protocol.assertRegisterRequest(event.data)
-    port.postMessage({ type: 'RegisterResponse', clientId: windowClient.id })
-    addClient(windowClient, port, event.data.path)
-  }, { once: true })
+    Protocol.assertRegisterRequest(event.data);
+    port.postMessage({ type: 'RegisterResponse', clientId: windowClient.id });
+    addClient(windowClient, port, event.data.path);
+  }, { once: true });
 }
 
 // ------------------------------------------------------------------
 // Fetch
 // ------------------------------------------------------------------
 async function onFetch(event: FetchEvent) {
-  const client = findClient(event.clientId, new URL(event.request.url))
-  event.respondWith(client.fetch(event.request))
+  const client = findClient(event.clientId, new URL(event.request.url));
+  event.respondWith(client.fetch(event.request));
 }

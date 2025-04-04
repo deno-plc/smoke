@@ -26,33 +26,33 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { FrameReader } from './reader.mts'
-import { FrameWriter } from './writer.mts'
-import type { Read } from '../read.mts'
-import type { Write } from '../write.mts'
+import { FrameReader } from './reader.ts';
+import { FrameWriter } from './writer.ts';
+import type { Read } from '../read.ts';
+import type { Write } from '../write.ts';
 
 export class FrameDuplex implements Read<Uint8Array>, Write<Uint8Array> {
-  readonly #reader: FrameReader
-  readonly #writer: FrameWriter
+  readonly #reader: FrameReader;
+  readonly #writer: FrameWriter;
   constructor(duplex: Read<Uint8Array> & Write<Uint8Array>) {
-    this.#reader = new FrameReader(duplex)
-    this.#writer = new FrameWriter(duplex)
+    this.#reader = new FrameReader(duplex);
+    this.#writer = new FrameWriter(duplex);
   }
   public async *[Symbol.asyncIterator](): AsyncIterableIterator<Uint8Array> {
     while (true) {
-      const next = await this.read()
-      if (next === null) return
-      yield next
+      const next = await this.read();
+      if (next === null) return;
+      yield next;
     }
   }
   public async read(): Promise<Uint8Array | null> {
-    return await this.#reader.read()
+    return await this.#reader.read();
   }
   public async write(value: Uint8Array): Promise<void> {
-    return await this.#writer.write(value)
+    return await this.#writer.write(value);
   }
   public async close() {
-    await this.#writer.close()
-    await this.#reader.close()
+    await this.#writer.close();
+    await this.#reader.close();
   }
 }

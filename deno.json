@@ -2,7 +2,7 @@
   "name": "@deno-plc/smoke",
   "version": "0.8.9",
   "exports": {
-    ".": "./src/index.mts"
+    ".": "./src/index.ts"
   },
   "compilerOptions": {
     "strict": true

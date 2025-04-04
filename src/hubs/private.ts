@@ -26,43 +26,43 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Events from '../events/index.mts'
-import * as Crypto from '../crypto/index.mts'
-import type { Hub, HubMessage, HubMessageCallback } from './hub.mts'
+import * as Events from '../events/index.ts';
+import * as Crypto from '../crypto/index.ts';
+import type { Hub, HubMessage, HubMessageCallback } from './hub.ts';
 
 /** A virtualized Hub connection that operates in Process or Page */
 export class Private implements Hub {
-  readonly #sendChannel: globalThis.BroadcastChannel
-  readonly #receiveChannel: globalThis.BroadcastChannel
-  readonly #events: Events.Events
-  readonly #config: RTCConfiguration
-  readonly #address: string
+  readonly #sendChannel: globalThis.BroadcastChannel;
+  readonly #receiveChannel: globalThis.BroadcastChannel;
+  readonly #events: Events.Events;
+  readonly #config: RTCConfiguration;
+  readonly #address: string;
   constructor() {
-    this.#sendChannel = new globalThis.BroadcastChannel('default-network-interface') as never
-    this.#receiveChannel = new globalThis.BroadcastChannel('default-network-interface') as never
-    this.#receiveChannel.addEventListener('message', (event) => this.#onMessage(event))
-    this.#events = new Events.Events()
-    this.#config = { iceServers: [] }
-    this.#address = Crypto.randomUUID()
+    this.#sendChannel = new globalThis.BroadcastChannel('default-network-interface') as never;
+    this.#receiveChannel = new globalThis.BroadcastChannel('default-network-interface') as never;
+    this.#receiveChannel.addEventListener('message', (event) => this.#onMessage(event));
+    this.#events = new Events.Events();
+    this.#config = { iceServers: [] };
+    this.#address = Crypto.randomUUID();
   }
   public async configuration(): Promise<RTCConfiguration> {
-    return this.#config
+    return this.#config;
   }
   public async address(): Promise<string> {
-    return this.#address
+    return this.#address;
   }
-  public send(message: { to: string; data: unknown }): void {
-    this.#sendChannel.postMessage(JSON.stringify({ from: this.#address, ...message }))
+  public send(message: { to: string; data: unknown; }): void {
+    this.#sendChannel.postMessage(JSON.stringify({ from: this.#address, ...message }));
   }
   public receive(handler: HubMessageCallback): void {
-    this.#events.on('message', handler)
+    this.#events.on('message', handler);
   }
   public dispose() {
-    this.#events.dispose()
+    this.#events.dispose();
   }
   #onMessage(event: MessageEvent<string>) {
-    const message: HubMessage = JSON.parse(event.data)
-    if (message.to !== this.#address) return
-    this.#events.send('message', message)
+    const message: HubMessage = JSON.parse(event.data);
+    if (message.to !== this.#address) return;
+    this.#events.send('message', message);
   }
 }

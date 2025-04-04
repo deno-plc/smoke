@@ -26,39 +26,39 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { Deferred } from './deferred.mts'
-import { Lock } from './lock.mts'
+import { Deferred } from './deferred.ts';
+import { Lock } from './lock.ts';
 
 export interface SemaphoreOptions {
-  concurrency: number
+  concurrency: number;
 }
 export class Semaphore {
-  #queue: Array<Deferred<Lock>>
-  #concurrency: number
-  #running: number
+  #queue: Array<Deferred<Lock>>;
+  #concurrency: number;
+  #running: number;
   constructor(options: SemaphoreOptions) {
-    this.#concurrency = options.concurrency
-    this.#running = 0
-    this.#queue = []
+    this.#concurrency = options.concurrency;
+    this.#running = 0;
+    this.#queue = [];
   }
   /** Acquires semaphore lock */
   public async lock(): Promise<Lock> {
-    const deferred = new Deferred<Lock>()
-    this.#queue.push(deferred)
-    this.#dispatch()
-    return deferred.promise()
+    const deferred = new Deferred<Lock>();
+    this.#queue.push(deferred);
+    this.#dispatch();
+    return deferred.promise();
   }
   #condition() {
-    return this.#running < this.#concurrency && this.#queue.length > 0
+    return this.#running < this.#concurrency && this.#queue.length > 0;
   }
   #dispatch() {
-    if (!this.#condition()) return
-    this.#running += 1
-    const next = this.#queue.shift()!
+    if (!this.#condition()) return;
+    this.#running += 1;
+    const next = this.#queue.shift()!;
     const lock = new Lock(() => {
-      this.#running -= 1
-      this.#dispatch()
-    })
-    next.resolve(lock)
+      this.#running -= 1;
+      this.#dispatch();
+    });
+    next.resolve(lock);
   }
 }

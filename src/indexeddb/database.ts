@@ -26,35 +26,35 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { ObjectStore } from './object-store.mts'
-import { Transaction } from './transaction.mts'
+import { ObjectStore } from './object-store.ts';
+import { Transaction } from './transaction.ts';
 
 export class Database {
-  constructor(private readonly database: IDBDatabase) {}
+  constructor(private readonly database: IDBDatabase) { }
   /** Creates a new object store with the given name and options and returns a new IDBObjectStore. Throws a "InvalidStateError" DOMException if not called within an upgrade transaction. */
   public createObjectStore<T>(name: string, options?: IDBObjectStoreParameters | undefined): ObjectStore<T> {
-    return new ObjectStore(this.database.createObjectStore(name, options))
+    return new ObjectStore(this.database.createObjectStore(name, options));
   }
   /** Deletes the object store with the given name. Throws a "InvalidStateError" DOMException if not called within an upgrade transaction. */
   public deleteObjectStore(name: string) {
-    return this.database.deleteObjectStore(name)
+    return this.database.deleteObjectStore(name);
   }
   /** Closes the connection once all running transactions have finished. */
   public close() {
-    return this.database.close()
+    return this.database.close();
   }
   public get name() {
-    return this.database.name
+    return this.database.name;
   }
   public get objectStoreNames() {
-    return this.database.objectStoreNames
+    return this.database.objectStoreNames;
   }
   /** Returns the version of the database. */
   public get version() {
-    return this.database.version
+    return this.database.version;
   }
   /** Returns a new transaction with the given mode ("readonly" or "readwrite") and scope which can be a single object store name or an array of names. */
   public transaction<Names extends string[]>(storeNames: [...Names], mode?: IDBTransactionMode | undefined) {
-    return new Transaction<Names>(this.database.transaction(storeNames, mode))
+    return new Transaction<Names>(this.database.transaction(storeNames, mode));
   }
 }

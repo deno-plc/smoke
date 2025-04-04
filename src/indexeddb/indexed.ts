@@ -26,9 +26,9 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { Cursor, CursorWithValue } from './cursor.mts'
-import { ObjectStore } from './object-store.mts'
-import { Request } from './request.mts'
+import { Cursor, CursorWithValue } from './cursor.ts';
+import { ObjectStore } from './object-store.ts';
+import { Request } from './request.ts';
 
 /**
  * IDBIndex interface of the IndexedDB API provides asynchronous access to an index in a database.
@@ -36,48 +36,48 @@ import { Request } from './request.mts'
  * referenced object store. You use this interface to retrieve data.
  */
 export class Index<T> {
-  constructor(private readonly index: IDBIndex) {}
+  constructor(private readonly index: IDBIndex) { }
   /** Retrieves the number of records matching the given key or key range in query. If successful, request's result will be the count. */
   public async count(query?: IDBValidKey | IDBKeyRange | undefined) {
-    return await Request(this.index.count(query))
+    return await Request(this.index.count(query));
   }
   /** Retrieves the value of the first record matching the given key or key range in query. If successful, request's result will be the value, or undefined if there was no matching record. */
   public async get(query: IDBValidKey | IDBKeyRange): Promise<T | undefined> {
-    return await Request(this.index.get(query))
+    return await Request(this.index.get(query));
   }
   /** Retrieves the values of the records matching the given key or key range in query (up to count if given). If successful, request's result will be an Array of the values. */
   public async getAll(query?: IDBValidKey | IDBKeyRange | null | undefined, count?: number | undefined): Promise<T[]> {
-    return await Request(this.index.getAll(query, count))
+    return await Request(this.index.getAll(query, count));
   }
   /** Retrieves the keys of records matching the given key or key range in query (up to count if given). If successful, request's result will be an Array of the keys. */
   public async getAllKeys(query?: IDBValidKey | IDBKeyRange | null | undefined, count?: number | undefined) {
-    return await Request(this.index.getAllKeys(query, count))
+    return await Request(this.index.getAllKeys(query, count));
   }
   /** Retrieves the key of the first record matching the given key or key range in query. If successful, request's result will be the key, or undefined if there was no matching record. */
   public async getKey(query: IDBValidKey | IDBKeyRange) {
-    return await Request(this.index.getKey(query))
+    return await Request(this.index.getKey(query));
   }
   public get keyPath() {
-    return this.index.keyPath
+    return this.index.keyPath;
   }
   public get multiEntry() {
-    return this.index.multiEntry
+    return this.index.multiEntry;
   }
   public get name() {
-    return this.index.name
+    return this.index.name;
   }
   public get objectStore() {
-    return new ObjectStore(this.index.objectStore)
+    return new ObjectStore(this.index.objectStore);
   }
   /** Opens a cursor over the records matching query, ordered by direction. If query is null, all records in store are matched. If successful, request's result will be an IDBCursorWithValue pointing at the first matching record, or null if there were no matching records. */
   public openCursor(query?: IDBValidKey | IDBKeyRange | null | undefined, direction?: IDBCursorDirection | undefined) {
-    return new CursorWithValue<T>(this.index.openCursor(query, direction))
+    return new CursorWithValue<T>(this.index.openCursor(query, direction));
   }
   /** Opens a cursor with key only flag set over the records matching query, ordered by direction. If query is null, all records in store are matched. If successful, request's result will be an IDBCursor pointing at the first matching record, or null if there were no matching records. */
   public openKeyCursor(query?: IDBValidKey | IDBKeyRange | null | undefined, direction?: IDBCursorDirection | undefined) {
-    return new Cursor<T>(this.index.openKeyCursor(query, direction))
+    return new Cursor<T>(this.index.openKeyCursor(query, direction));
   }
   public get unique() {
-    return this.index.unique
+    return this.index.unique;
   }
 }

@@ -26,54 +26,54 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Guard from '../guard/index.mts'
+import * as Guard from '../guard/index.ts';
 
 // --------------------------------------------------------------------------
 // Equality
 // --------------------------------------------------------------------------
 function EqualsTypedArray(left: Guard.TypedArrayType, right: unknown): any {
-  if (!Guard.isTypedArray(right) || left.length !== right.length || Object.getPrototypeOf(left).constructor.name !== Object.getPrototypeOf(right).constructor.name) return false
-  return left.every((value, index) => Equal(value, right[index]))
+  if (!Guard.isTypedArray(right) || left.length !== right.length || Object.getPrototypeOf(left).constructor.name !== Object.getPrototypeOf(right).constructor.name) return false;
+  return left.every((value, index) => Equal(value, right[index]));
 }
 function EqualsDate(left: Date, right: unknown): any {
-  return Guard.isDate(right) && left.getTime() === right.getTime()
+  return Guard.isDate(right) && left.getTime() === right.getTime();
 }
 function EqualsMap(left: Map<unknown, unknown>, right: unknown) {
-  if (!Guard.isMap(right) || left.size !== right.size) return false
+  if (!Guard.isMap(right) || left.size !== right.size) return false;
   for (const [key, value] of left) {
-    if (!Equal(value, right.get(key))) return false
+    if (!Equal(value, right.get(key))) return false;
   }
-  return true
+  return true;
 }
 function EqualsSet(left: Set<unknown>, right: unknown) {
-  if (!Guard.isSet(right) || left.size !== right.size) return false
+  if (!Guard.isSet(right) || left.size !== right.size) return false;
   for (const leftValue of left) {
-    let found = false
+    let found = false;
     for (const rightValue of right) {
       if (Equal(leftValue, rightValue)) {
-        found = true
-        break
+        found = true;
+        break;
       }
     }
     if (!found) {
-      return false
+      return false;
     }
   }
-  return true
+  return true;
 }
 function EqualsArray(left: Guard.ArrayType, right: unknown): any {
-  if (!Guard.isArray(right) || left.length !== right.length) return false
-  return left.every((value, index) => Equal(value, right[index]))
+  if (!Guard.isArray(right) || left.length !== right.length) return false;
+  return left.every((value, index) => Equal(value, right[index]));
 }
 function EqualsObject(left: Guard.ObjectType, right: unknown): boolean {
-  if (!Guard.isStandardObject(right) || Guard.isInstanceObject(right)) return false
-  const leftKeys = [...Object.keys(left), ...Object.getOwnPropertySymbols(left)]
-  const rightKeys = [...Object.keys(right), ...Object.getOwnPropertySymbols(right)]
-  if (leftKeys.length !== rightKeys.length) return false
-  return leftKeys.every((key) => Equal(left[key], right[key]))
+  if (!Guard.isStandardObject(right) || Guard.isInstanceObject(right)) return false;
+  const leftKeys = [...Object.keys(left), ...Object.getOwnPropertySymbols(left)];
+  const rightKeys = [...Object.keys(right), ...Object.getOwnPropertySymbols(right)];
+  if (leftKeys.length !== rightKeys.length) return false;
+  return leftKeys.every((key) => Equal(left[key], right[key]));
 }
 function EqualsValueType(left: Guard.ValueType, right: unknown): any {
-  return left === right
+  return left === right;
 }
 // --------------------------------------------------------------------------
 // Equal
@@ -83,12 +83,12 @@ export function Equal<T>(left: T, right: unknown): right is T {
   // prettier-ignore
   return (
     Guard.isTypedArray(left) ? EqualsTypedArray(left, right) :
-    Guard.isDate(left) ? EqualsDate(left, right) :
-    Guard.isMap(left) ? EqualsMap(left, right) :
-    Guard.isSet(left) ? EqualsSet(left, right) :
-    Guard.isArray(left) ? EqualsArray(left, right) :
-    Guard.isStandardObject(left) ? EqualsObject(left, right) :
-    Guard.isValueType(left) ? EqualsValueType(left, right) :
-    false
-  )
+      Guard.isDate(left) ? EqualsDate(left, right) :
+        Guard.isMap(left) ? EqualsMap(left, right) :
+          Guard.isSet(left) ? EqualsSet(left, right) :
+            Guard.isArray(left) ? EqualsArray(left, right) :
+              Guard.isStandardObject(left) ? EqualsObject(left, right) :
+                Guard.isValueType(left) ? EqualsValueType(left, right) :
+                  false
+  );
 }

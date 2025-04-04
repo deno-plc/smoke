@@ -26,103 +26,103 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Async from '../async/index.mts'
-import * as Protocol from './protocol.mts'
-import * as Buffer from '../buffer/index.mts'
-import type * as Dispose from '../dispose/index.mts'
-import type * as WebRtc from '../webrtc/index.mts'
-import type * as Net from '../net/index.mts'
-import * as Stream from '../stream/index.mts'
-import { MediaReceiver } from './receiver.mts'
+import * as Async from '../async/index.ts';
+import * as Protocol from './protocol.ts';
+import * as Buffer from '../buffer/index.ts';
+import type * as Dispose from '../dispose/index.ts';
+import type * as WebRtc from '../webrtc/index.ts';
+import type * as Net from '../net/index.ts';
+import * as Stream from '../stream/index.ts';
+import { MediaReceiver } from './receiver.ts';
 
-export type MediaListenerAcceptCallback = (receiver: MediaReceiver) => any
+export type MediaListenerAcceptCallback = (receiver: MediaReceiver) => any;
 
 export interface MediaListenerOptions {
-  port: number
+  port: number;
 }
 export class MediaListener implements Dispose.Dispose {
-  readonly #netListener: Net.NetListener
-  readonly #trackListener: WebRtc.WebRtcTrackListener
-  readonly #awaiters: Map<string, Async.Deferred<RTCRtpReceiver>>
-  readonly #accept: MediaListenerAcceptCallback
+  readonly #netListener: Net.NetListener;
+  readonly #trackListener: WebRtc.WebRtcTrackListener;
+  readonly #awaiters: Map<string, Async.Deferred<RTCRtpReceiver>>;
+  readonly #accept: MediaListenerAcceptCallback;
 
   constructor(options: MediaListenerOptions, webrtc: WebRtc.WebRtcModule, net: Net.NetModule, accept: MediaListenerAcceptCallback) {
-    this.#awaiters = new Map<string, Async.Deferred<RTCRtpReceiver>>()
-    this.#netListener = net.listen({ port: options.port }, (socket) => this.#onSocket(socket))
-    this.#trackListener = webrtc.listenTrack((peer, event) => this.#onTrack(peer, event))
-    this.#accept = accept
+    this.#awaiters = new Map<string, Async.Deferred<RTCRtpReceiver>>();
+    this.#netListener = net.listen({ port: options.port }, (socket) => this.#onSocket(socket));
+    this.#trackListener = webrtc.listenTrack((peer, event) => this.#onTrack(peer, event));
+    this.#accept = accept;
   }
   [Symbol.dispose]() {
-    this.dispose()
+    this.dispose();
   }
   public dispose() {
-    this.#awaiters.clear()
-    this.#netListener.dispose()
-    this.#trackListener.dispose()
+    this.#awaiters.clear();
+    this.#netListener.dispose();
+    this.#trackListener.dispose();
   }
   // ----------------------------------------------------------------
   // Track: Out of Band
   // ----------------------------------------------------------------
   #onTrack(peer: WebRtc.WebRtcPeer, event: RTCTrackEvent) {
-    const awaiter = this.#getAwaiter(event.track.id)
-    awaiter.resolve(event.receiver)
+    const awaiter = this.#getAwaiter(event.track.id);
+    awaiter.resolve(event.receiver);
   }
   #getAwaiter(trackId: string): Async.Deferred<RTCRtpReceiver> {
-    if (this.#awaiters.has(trackId)) return this.#awaiters.get(trackId)!
-    const awaiter = new Async.Deferred<RTCRtpReceiver>()
-    this.#awaiters.set(trackId, awaiter)
-    return awaiter
+    if (this.#awaiters.has(trackId)) return this.#awaiters.get(trackId)!;
+    const awaiter = new Async.Deferred<RTCRtpReceiver>();
+    this.#awaiters.set(trackId, awaiter);
+    return awaiter;
   }
   // ----------------------------------------------------------------
   // Protocol: Receiver
   // ----------------------------------------------------------------
   async #readMessage(stream: Stream.FrameDuplex): Promise<Protocol.Message | null> {
     try {
-      const buffer = await stream.read()
-      if (buffer === null) return null
-      return JSON.parse(Buffer.decode(buffer))
+      const buffer = await stream.read();
+      if (buffer === null) return null;
+      return JSON.parse(Buffer.decode(buffer));
     } catch {
-      return null
+      return null;
     }
   }
   async #readInit(stream: Stream.FrameDuplex): Promise<Protocol.Init | null> {
-    const message = await this.#readMessage(stream)
-    return Protocol.checkInit(message) ? message : null
+    const message = await this.#readMessage(stream);
+    return Protocol.checkInit(message) ? message : null;
   }
   async #readTrack(stream: Stream.FrameDuplex): Promise<Protocol.Track | null> {
-    const message = await this.#readMessage(stream)
-    return Protocol.checkTrack(message) ? message : null
+    const message = await this.#readMessage(stream);
+    return Protocol.checkTrack(message) ? message : null;
   }
   async #readDone(stream: Stream.FrameDuplex): Promise<Protocol.Done | null> {
-    const message = await this.#readMessage(stream)
-    return Protocol.checkDone(message) ? message : null
+    const message = await this.#readMessage(stream);
+    return Protocol.checkDone(message) ? message : null;
   }
   // ----------------------------------------------------------------
   // Socket
   // ----------------------------------------------------------------
   async #onSocket(socket: Net.NetSocket) {
-    const stream = new Stream.FrameDuplex(socket)
+    const stream = new Stream.FrameDuplex(socket);
     // wait for protocol init
-    const init = await this.#readInit(stream)
-    if (init === null) return
+    const init = await this.#readInit(stream);
+    if (init === null) return;
     // wait for tracks
-    const receivers: RTCRtpReceiver[] = []
+    const receivers: RTCRtpReceiver[] = [];
     for (let i = 0; i < init.trackCount; i++) {
-      const track = await this.#readTrack(stream)
-      if (track === null) return
-      const awaiter = this.#getAwaiter(track.trackId)
-      receivers.push(await awaiter.promise())
-      this.#awaiters.delete(track.trackId)
+      const track = await this.#readTrack(stream);
+      if (track === null) return;
+      const awaiter = this.#getAwaiter(track.trackId);
+      receivers.push(await awaiter.promise());
+      this.#awaiters.delete(track.trackId);
     }
     // wait for done
-    const done = await this.#readDone(stream)
-    if (done === undefined) return
+    const done = await this.#readDone(stream);
+    if (done === undefined) return;
     // transfer frame stream to receiver
     this.#accept(
       new MediaReceiver(stream, receivers, {
         local: socket.local,
         remote: socket.remote,
       }),
-    )
+    );
   }
 }

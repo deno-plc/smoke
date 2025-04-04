@@ -26,60 +26,60 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import type * as Dispose from './dispose/index.mts'
-import * as WebRtc from './webrtc/index.mts'
-import * as Http from './http/index.mts'
-import * as Hubs from './hubs/index.mts'
-import * as Media from './media/index.mts'
-import * as Net from './net/index.mts'
+import type * as Dispose from './dispose/index.ts';
+import * as WebRtc from './webrtc/index.ts';
+import * as Http from './http/index.ts';
+import * as Hubs from './hubs/index.ts';
+import * as Media from './media/index.ts';
+import * as Net from './net/index.ts';
 
 export interface NetworkOptions {
-  hub?: Hubs.Hub
+  hub?: Hubs.Hub;
 }
 /** Network Context */
 export class Network implements Dispose.Dispose {
-  readonly #hub: Hubs.Hub
-  readonly #webrtc: WebRtc.WebRtcModule
-  readonly #net: Net.NetModule
-  readonly #http: Http.HttpModule
-  readonly #media: Media.MediaModule
+  readonly #hub: Hubs.Hub;
+  readonly #webrtc: WebRtc.WebRtcModule;
+  readonly #net: Net.NetModule;
+  readonly #http: Http.HttpModule;
+  readonly #media: Media.MediaModule;
   constructor(options: NetworkOptions = {}) {
-    this.#hub = options.hub ?? new Hubs.Private()
-    this.#webrtc = new WebRtc.WebRtcModule(this.#hub)
-    this.#net = new Net.NetModule(this.#webrtc)
-    this.#http = new Http.HttpModule(this.#net)
-    this.#media = new Media.MediaModule(this.#net, this.#webrtc)
+    this.#hub = options.hub ?? new Hubs.Private();
+    this.#webrtc = new WebRtc.WebRtcModule(this.#hub);
+    this.#net = new Net.NetModule(this.#webrtc);
+    this.#http = new Http.HttpModule(this.#net);
+    this.#media = new Media.MediaModule(this.#net, this.#webrtc);
   }
   // ----------------------------------------------------------------
   // Dispose
   // ----------------------------------------------------------------
   public [Symbol.dispose]() {
-    this.dispose()
+    this.dispose();
   }
   public dispose() {
-    this.#hub.dispose()
+    this.#hub.dispose();
   }
   // ----------------------------------------------------------------
   // Modules
   // ----------------------------------------------------------------
   /** Hub interface */
   public get Hub() {
-    return this.#hub
+    return this.#hub;
   }
   /** WebRtc Context */
   public get WebRtc() {
-    return this.#webrtc
+    return this.#webrtc;
   }
   /** Net Context */
   public get Net() {
-    return this.#net
+    return this.#net;
   }
   /** Http Context */
   public get Http() {
-    return this.#http
+    return this.#http;
   }
   /** Media Context */
   public get Media() {
-    return this.#media
+    return this.#media;
   }
 }

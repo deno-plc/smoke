@@ -26,30 +26,30 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { NetListener, type NetListenerOptions, type NetListenerAcceptCallback } from './listener.mts'
-import { NetSocket } from './socket.mts'
-import type * as WebRtc from '../webrtc/index.mts'
+import { NetListener, type NetListenerOptions, type NetListenerAcceptCallback } from './listener.ts';
+import { NetSocket } from './socket.ts';
+import type * as WebRtc from '../webrtc/index.ts';
 
 export interface NetConnectOptions {
-  hostname?: string
-  port: number
+  hostname?: string;
+  port: number;
 }
 export class NetModule {
-  readonly #webrtc: WebRtc.WebRtcModule
+  readonly #webrtc: WebRtc.WebRtcModule;
   constructor(webrtc: WebRtc.WebRtcModule) {
-    this.#webrtc = webrtc
+    this.#webrtc = webrtc;
   }
   // ----------------------------------------------------------------
   // Module API
   // ----------------------------------------------------------------
   /** Creates a Net listener */
   public listen(options: NetListenerOptions, accept: NetListenerAcceptCallback): NetListener {
-    return new NetListener(this.#webrtc, options, accept)
+    return new NetListener(this.#webrtc, options, accept);
   }
   /** Establishes a connection to a remote Net listener */
   public async connect(options: NetConnectOptions): Promise<NetSocket> {
-    const [hostname, port] = [options.hostname ?? 'localhost', options.port]
-    const [peer, datachannel] = await this.#webrtc.connect(hostname, port, { ordered: true, maxRetransmits: 16 })
-    return new NetSocket(peer, datachannel)
+    const [hostname, port] = [options.hostname ?? 'localhost', options.port];
+    const [peer, datachannel] = await this.#webrtc.connect(hostname, port, { ordered: true, maxRetransmits: 16 });
+    return new NetSocket(peer, datachannel);
   }
 }

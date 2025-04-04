@@ -26,6 +26,6 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './audio.mts'
-export * from './pattern.mts'
-export * from './video.mts'
+export * from './audio.ts';
+export * from './pattern.ts';
+export * from './video.ts';

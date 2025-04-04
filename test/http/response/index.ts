@@ -1,3 +1,3 @@
-import './arraybuffer.mts'
-import './json.mts'
-import './text.mts'
+import './arraybuffer.ts';
+import './json.ts';
+import './text.ts';

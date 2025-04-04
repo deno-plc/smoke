@@ -26,81 +26,81 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Buffer from '../../buffer/index.mts'
-import type * as Stream from '../../stream/index.mts'
-import * as Events from '../../events/index.mts'
-import * as Protocol from './protocol.mts'
+import * as Buffer from '../../buffer/index.ts';
+import type * as Stream from '../../stream/index.ts';
+import * as Events from '../../events/index.ts';
+import * as Protocol from './protocol.ts';
 
 export class HttpServerWebSocket {
-  readonly #stream: Stream.FrameDuplex
-  readonly #events: Events.Events
+  readonly #stream: Stream.FrameDuplex;
+  readonly #events: Events.Events;
   constructor(stream: Stream.FrameDuplex) {
-    this.#stream = stream
-    this.#events = new Events.Events()
-    this.#readInternal().catch((error) => console.error(error))
+    this.#stream = stream;
+    this.#events = new Events.Events();
+    this.#readInternal().catch((error) => console.error(error));
   }
   // ----------------------------------------------------------------
   // Events
   // ----------------------------------------------------------------
-  public on(event: 'message', handler: Events.EventHandler<MessageEvent>): Events.EventListener
-  public on(event: 'ping', handler: Events.EventHandler<MessageEvent>): Events.EventListener
-  public on(event: 'pong', handler: Events.EventHandler<MessageEvent>): Events.EventListener
-  public on(event: 'error', handler: Events.EventHandler<Event>): Events.EventListener
-  public on(event: 'close', handler: Events.EventHandler<CloseEvent>): Events.EventListener
+  public on(event: 'message', handler: Events.EventHandler<MessageEvent>): Events.EventListener;
+  public on(event: 'ping', handler: Events.EventHandler<MessageEvent>): Events.EventListener;
+  public on(event: 'pong', handler: Events.EventHandler<MessageEvent>): Events.EventListener;
+  public on(event: 'error', handler: Events.EventHandler<Event>): Events.EventListener;
+  public on(event: 'close', handler: Events.EventHandler<CloseEvent>): Events.EventListener;
   public on(event: string, handler: Events.EventHandler<any>): Events.EventListener {
-    return this.#events.on(event, handler)
+    return this.#events.on(event, handler);
   }
   // ----------------------------------------------------------------
   // Properties
   // ----------------------------------------------------------------
   public get binaryType(): BinaryType {
-    return 'arraybuffer'
+    return 'arraybuffer';
   }
   // ----------------------------------------------------------------
   // Methods
   // ----------------------------------------------------------------
   public send(value: string | ArrayBufferLike | ArrayBufferView): void {
-    this.#stream.write(Protocol.encodeMessage(value))
+    this.#stream.write(Protocol.encodeMessage(value));
   }
   public ping(value: string = ''): void {
-    this.#stream.write(Protocol.encodePing(value))
+    this.#stream.write(Protocol.encodePing(value));
   }
   public pong(value: string = ''): void {
-    this.#stream.write(Protocol.encodePong(value))
+    this.#stream.write(Protocol.encodePong(value));
   }
   public close(code?: number): void {
-    this.#stream.close()
+    this.#stream.close();
   }
   // ----------------------------------------------------------------
   // ReadInternal
   // ----------------------------------------------------------------
   async #readInternal() {
     for await (const message of this.#stream) {
-      this.#dispatchProtocolMessage(message)
+      this.#dispatchProtocolMessage(message);
     }
-    this.#events.send('close', void 0)
+    this.#events.send('close', void 0);
   }
   // ----------------------------------------------------------------
   // DispatchProtocolMessage
   // ----------------------------------------------------------------
   #dispatchProtocolMessage(message: Uint8Array) {
-    const [type, data] = Protocol.decodeAny(message)
+    const [type, data] = Protocol.decodeAny(message);
     switch (type) {
       case Protocol.MessageType.MessageText: {
-        const event = new MessageEvent('message', { data: Buffer.decode(new Uint8Array(data)) })
-        return this.#events.send('message', event)
+        const event = new MessageEvent('message', { data: Buffer.decode(new Uint8Array(data)) });
+        return this.#events.send('message', event);
       }
       case Protocol.MessageType.MessageData: {
-        const event = new MessageEvent('message', { data })
-        return this.#events.send('message', event)
+        const event = new MessageEvent('message', { data });
+        return this.#events.send('message', event);
       }
       case Protocol.MessageType.Ping: {
-        const event = new MessageEvent('ping', { data })
-        return this.#events.send('ping', event)
+        const event = new MessageEvent('ping', { data });
+        return this.#events.send('ping', event);
       }
       case Protocol.MessageType.Pong: {
-        const event = new MessageEvent('pong', { data })
-        return this.#events.send('pong', event)
+        const event = new MessageEvent('pong', { data });
+        return this.#events.send('pong', event);
       }
     }
   }

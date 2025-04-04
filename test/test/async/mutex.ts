@@ -26,33 +26,33 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { Deferred } from './deferred.mts'
-import { Lock } from './lock.mts'
+import { Deferred } from './deferred.ts';
+import { Lock } from './lock.ts';
 
 export class Mutex {
-  #queue: Array<Deferred<Lock>>
-  #running: boolean
+  #queue: Array<Deferred<Lock>>;
+  #running: boolean;
   constructor() {
-    this.#running = false
-    this.#queue = []
+    this.#running = false;
+    this.#queue = [];
   }
   public async lock(): Promise<Lock> {
-    const deferred = new Deferred<Lock>()
-    this.#queue.push(deferred)
-    this.#dispatch()
-    return deferred.promise()
+    const deferred = new Deferred<Lock>();
+    this.#queue.push(deferred);
+    this.#dispatch();
+    return deferred.promise();
   }
   #condition() {
-    return this.#running === false && this.#queue.length > 0
+    return this.#running === false && this.#queue.length > 0;
   }
   #dispatch() {
-    if (!this.#condition()) return
-    this.#running = true
-    const next = this.#queue.shift()!
+    if (!this.#condition()) return;
+    this.#running = true;
+    const next = this.#queue.shift()!;
     const lock = new Lock(() => {
-      this.#running = false
-      this.#dispatch()
-    })
-    next.resolve(lock)
+      this.#running = false;
+      this.#dispatch();
+    });
+    next.resolve(lock);
   }
 }

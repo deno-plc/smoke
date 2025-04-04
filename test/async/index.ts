@@ -1,6 +1,6 @@
-import './barrier.mts'
-import './debounce.mts'
-import './delay.mts'
-import './mutex.mts'
-import './semaphore.mts'
-import './timeout.mts'
+import './barrier.ts';
+import './debounce.ts';
+import './delay.ts';
+import './mutex.ts';
+import './semaphore.ts';
+import './timeout.ts';

@@ -26,27 +26,27 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import type * as Dispose from '../../dispose/index.mts'
-import type { WebRtcPeer } from '../webrtc.mts'
+import type * as Dispose from '../../dispose/index.ts';
+import type { WebRtcPeer } from '../webrtc.ts';
 
-export type WebRtcDataChannelListenerAcceptCallback = (peer: WebRtcPeer, datachannel: RTCDataChannel) => void
-export type WebRtcDataChannelListenerDisposeCallback = () => void
+export type WebRtcDataChannelListenerAcceptCallback = (peer: WebRtcPeer, datachannel: RTCDataChannel) => void;
+export type WebRtcDataChannelListenerDisposeCallback = () => void;
 
 export class WebRtcDataChannelListener implements Dispose.Dispose {
-  readonly #accept: WebRtcDataChannelListenerAcceptCallback
-  readonly #dispose: WebRtcDataChannelListenerDisposeCallback
+  readonly #accept: WebRtcDataChannelListenerAcceptCallback;
+  readonly #dispose: WebRtcDataChannelListenerDisposeCallback;
   constructor(onAccept: WebRtcDataChannelListenerAcceptCallback, onDispose: WebRtcDataChannelListenerDisposeCallback) {
-    this.#accept = onAccept
-    this.#dispose = onDispose
+    this.#accept = onAccept;
+    this.#dispose = onDispose;
   }
   public accept(peer: WebRtcPeer, datachannel: RTCDataChannel) {
-    this.#accept(peer, datachannel)
+    this.#accept(peer, datachannel);
   }
   [Symbol.dispose]() {
-    this.dispose()
+    this.dispose();
   }
   /** Disposes of this Listener */
   public dispose() {
-    this.#dispose()
+    this.#dispose();
   }
 }

@@ -26,56 +26,56 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import type { Options } from './options.mts'
+import type { Options } from './options.ts';
 
 export class ItContext {
-  readonly #name: string
-  readonly #callback: Function
-  #elapsed: number
-  #completed: boolean
-  #error: Error | null
+  readonly #name: string;
+  readonly #callback: Function;
+  #elapsed: number;
+  #completed: boolean;
+  #error: Error | null;
   constructor(name: string, callback: Function) {
-    this.#name = name
-    this.#error = null
-    this.#elapsed = 0
-    this.#completed = false
-    this.#callback = callback
+    this.#name = name;
+    this.#error = null;
+    this.#elapsed = 0;
+    this.#completed = false;
+    this.#callback = callback;
   }
   // ----------------------------------------------------------------
   // Properties
   // ----------------------------------------------------------------
   public get name(): string {
-    return this.#name
+    return this.#name;
   }
   public get elapsed(): number {
-    return this.#elapsed
+    return this.#elapsed;
   }
   public get completed(): boolean {
-    return this.#completed
+    return this.#completed;
   }
   public get passed(): boolean {
-    return this.completed && this.#error === null
+    return this.completed && this.#error === null;
   }
   public get failed(): boolean {
-    return this.completed && this.#error !== null
+    return this.completed && this.#error !== null;
   }
   public get error(): Error | null {
-    return this.#error
+    return this.#error;
   }
   // ----------------------------------------------------------------
   // Methods
   // ----------------------------------------------------------------
   public async run(options: Options) {
-    const start = performance.now()
-    options.reporter.onUnitBegin(this)
+    const start = performance.now();
+    options.reporter.onUnitBegin(this);
     try {
-      await this.#callback()
+      await this.#callback();
     } catch (error) {
-      this.#error = error instanceof Error ? error : new Error('Unknown error')
+      this.#error = error instanceof Error ? error : new Error('Unknown error');
     } finally {
-      this.#elapsed = performance.now() - start
-      this.#completed = true
+      this.#elapsed = performance.now() - start;
+      this.#completed = true;
     }
-    options.reporter.onUnitEnd(this)
+    options.reporter.onUnitEnd(this);
   }
 }

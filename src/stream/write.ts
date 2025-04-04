@@ -26,16 +26,16 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import type { Close, CloseSync } from './close.mts'
+import type { Close, CloseSync } from './close.ts';
 
 /** Represents a resource that can write asynchronously */
 export interface Write<T = unknown> extends Close {
-  write(value: T): Promise<void>
-  close(): Promise<void>
+  write(value: T): Promise<void>;
+  close(): Promise<void>;
 }
 
 /** Represents a resource that can write synchronously */
 export interface WriteSync<T = unknown> extends CloseSync {
-  write(value: T): void
-  close(): void
+  write(value: T): void;
+  close(): void;
 }

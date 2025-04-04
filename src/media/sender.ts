@@ -26,136 +26,136 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Async from '../async/index.mts'
-import * as Events from '../events/index.mts'
-import * as Buffer from '../buffer/index.mts'
-import type * as WebRtc from '../webrtc/index.mts'
-import type * as Net from '../net/index.mts'
-import type * as Stream from '../stream/index.mts'
-import type * as Protocol from './protocol.mts'
+import * as Async from '../async/index.ts';
+import * as Events from '../events/index.ts';
+import * as Buffer from '../buffer/index.ts';
+import type * as WebRtc from '../webrtc/index.ts';
+import type * as Net from '../net/index.ts';
+import type * as Stream from '../stream/index.ts';
+import type * as Protocol from './protocol.ts';
 export interface MediaSenderOptions {
-  local: Net.Address
-  remote: Net.Address
+  local: Net.Address;
+  remote: Net.Address;
 }
 export class MediaSender {
-  readonly #barrier: Async.Barrier
-  readonly #events: Events.Events
-  readonly #webrtc: WebRtc.WebRtcModule
-  readonly #stream: Stream.FrameDuplex
-  readonly #local: Net.Address
-  readonly #remote: Net.Address
-  readonly #mediastream: MediaStream
-  readonly #senders: RTCRtpSender[]
-  #closed: boolean
+  readonly #barrier: Async.Barrier;
+  readonly #events: Events.Events;
+  readonly #webrtc: WebRtc.WebRtcModule;
+  readonly #stream: Stream.FrameDuplex;
+  readonly #local: Net.Address;
+  readonly #remote: Net.Address;
+  readonly #mediastream: MediaStream;
+  readonly #senders: RTCRtpSender[];
+  #closed: boolean;
   constructor(webrtc: WebRtc.WebRtcModule, stream: Stream.FrameDuplex, mediastream: MediaStream, options: MediaSenderOptions) {
-    this.#barrier = new Async.Barrier({ paused: true })
-    this.#events = new Events.Events()
-    this.#stream = stream
-    this.#local = options.local
-    this.#remote = options.remote
-    this.#webrtc = webrtc
-    this.#mediastream = mediastream
-    this.#senders = []
-    this.#closed = false
-    this.#sendTracks().then(() => this.#readInternal())
+    this.#barrier = new Async.Barrier({ paused: true });
+    this.#events = new Events.Events();
+    this.#stream = stream;
+    this.#local = options.local;
+    this.#remote = options.remote;
+    this.#webrtc = webrtc;
+    this.#mediastream = mediastream;
+    this.#senders = [];
+    this.#closed = false;
+    this.#sendTracks().then(() => this.#readInternal());
   }
   // ----------------------------------------------------------------
   // Properties
   // ----------------------------------------------------------------
   /** Gets the local peer address */
   public get local(): Net.Address {
-    return this.#local
+    return this.#local;
   }
   /** Gets the remote peer address */
   public get remote(): Net.Address {
-    return this.#remote
+    return this.#remote;
   }
   /** Gets this senders MediaStream */
   public get mediastream(): MediaStream {
-    return this.#mediastream
+    return this.#mediastream;
   }
   // ----------------------------------------------------------------
   // Events
   // ----------------------------------------------------------------
   /** Subscribes to message events */
-  public on(event: 'message', handler: Events.EventHandler<MessageEvent>): Events.EventListener
+  public on(event: 'message', handler: Events.EventHandler<MessageEvent>): Events.EventListener;
   /** Subscribes to close events */
-  public on(event: 'close', handler: Events.EventHandler<null>): Events.EventListener
+  public on(event: 'close', handler: Events.EventHandler<null>): Events.EventListener;
   /** Subscribes to events */
   public on(event: string, handler: Events.EventHandler): Events.EventListener {
-    return this.#events.on(event, handler)
+    return this.#events.on(event, handler);
   }
   // ----------------------------------------------------------------
   // Methods
   // ----------------------------------------------------------------
   public async send(value: unknown): Promise<void> {
-    await this.#barrier.wait()
-    this.#assertNotClosed()
-    const data = this.#encodeAsUint8Array(value)
-    await this.#stream.write(data)
+    await this.#barrier.wait();
+    this.#assertNotClosed();
+    const data = this.#encodeAsUint8Array(value);
+    await this.#stream.write(data);
   }
   public close(): void {
     for (const sender of this.#senders) {
-      this.#webrtc.removeTrack(this.#remote.hostname, sender)
+      this.#webrtc.removeTrack(this.#remote.hostname, sender);
     }
-    this.#stream.close()
+    this.#stream.close();
   }
   // ----------------------------------------------------------------
   // Encoding
   // ----------------------------------------------------------------
   #encodeAsUint8Array(value: unknown): Uint8Array {
-    const data = JSON.stringify(value)
-    return Buffer.encode(data)
+    const data = JSON.stringify(value);
+    return Buffer.encode(data);
   }
   #decodeAsMessageEvent(buffer: Uint8Array): MessageEvent | null {
     try {
-      const data = JSON.parse(Buffer.decode(buffer))
-      return new MessageEvent('message', { data })
+      const data = JSON.parse(Buffer.decode(buffer));
+      return new MessageEvent('message', { data });
     } catch {
-      return null
+      return null;
     }
   }
   // ----------------------------------------------------------------
   // Asserts
   // ----------------------------------------------------------------
   #assertNotClosed() {
-    if (this.#closed) throw Error('Sender transport is closed')
+    if (this.#closed) throw Error('Sender transport is closed');
   }
   // ----------------------------------------------------------------
   // Internal
   // ----------------------------------------------------------------
   async #readInternal() {
     for await (const buffer of this.#stream) {
-      const event = this.#decodeAsMessageEvent(buffer)
-      this.#events.send('message', event)
+      const event = this.#decodeAsMessageEvent(buffer);
+      this.#events.send('message', event);
     }
-    this.#closed = true
-    this.#events.send('close', null)
+    this.#closed = true;
+    this.#events.send('close', null);
   }
   // ----------------------------------------------------------------
   // Protocol: Sender
   // ----------------------------------------------------------------
   async #sendInit(trackCount: number) {
-    const message: Protocol.Init = { type: 'Init', trackCount }
-    await this.#stream.write(Buffer.encode(JSON.stringify(message)))
+    const message: Protocol.Init = { type: 'Init', trackCount };
+    await this.#stream.write(Buffer.encode(JSON.stringify(message)));
   }
   async #sendTrack(track: MediaStreamTrack) {
-    const message: Protocol.Track = { type: 'Track', trackId: track.id }
-    await this.#stream.write(Buffer.encode(JSON.stringify(message)))
-    const [_, sender] = await this.#webrtc.addTrack(this.#remote.hostname, track)
-    this.#senders.push(sender)
+    const message: Protocol.Track = { type: 'Track', trackId: track.id };
+    await this.#stream.write(Buffer.encode(JSON.stringify(message)));
+    const [_, sender] = await this.#webrtc.addTrack(this.#remote.hostname, track);
+    this.#senders.push(sender);
   }
   async #sendDone() {
-    const message: Protocol.Done = { type: 'Done' }
-    await this.#stream.write(Buffer.encode(JSON.stringify(message)))
+    const message: Protocol.Done = { type: 'Done' };
+    await this.#stream.write(Buffer.encode(JSON.stringify(message)));
   }
   async #sendTracks() {
-    const tracks = this.#mediastream.getTracks()
-    await this.#sendInit(tracks.length)
+    const tracks = this.#mediastream.getTracks();
+    await this.#sendInit(tracks.length);
     for (const track of tracks) {
-      await this.#sendTrack(track)
+      await this.#sendTrack(track);
     }
-    await this.#sendDone()
-    this.#barrier.resume()
+    await this.#sendDone();
+    this.#barrier.resume();
   }
 }

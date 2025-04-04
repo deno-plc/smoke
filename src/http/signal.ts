@@ -26,24 +26,24 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Buffer from '../buffer/index.mts'
+import * as Buffer from '../buffer/index.ts';
 
 /**
  * Sent from Server to Client following a requestInit. This
  * Signal indicates the Server is preparing to send a
  * Response stream.
  */
-export const RESPONSE = Buffer.encode('---RESPONSE---')
+export const RESPONSE = Buffer.encode('---RESPONSE---');
 /**
  * Sent from Server to Client following a requestInit. This
  * Signal indicates that the is Server is upgrading into
  * a WebSocket.
  */
-export const WEBSOCKET = Buffer.encode('---SOCKET---')
+export const WEBSOCKET = Buffer.encode('---SOCKET---');
 
 /**
  * Sent from Client to Server. This Signal indicates the
  * Client has completed sending it's Request Body, and
  * that the Server should expect no more data.
  */
-export const REQUEST_END = Buffer.encode('---REQUEST_END---')
+export const REQUEST_END = Buffer.encode('---REQUEST_END---');
