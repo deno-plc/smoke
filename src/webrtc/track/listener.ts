@@ -1,13 +1,19 @@
-import type * as Dispose from '../../dispose/index.ts';
-import type { WebRtcPeer } from '../webrtc.ts';
+import type * as Dispose from "../../dispose/index.ts";
+import type { WebRtcPeer } from "../webrtc.ts";
 
-export type WebRtcTrackListenerAcceptCallback = (peer: WebRtcPeer, event: RTCTrackEvent) => void;
+export type WebRtcTrackListenerAcceptCallback = (
+  peer: WebRtcPeer,
+  event: RTCTrackEvent,
+) => void;
 export type WebRtcTrackListenerDisposeCallback = () => void;
 
 export class WebRtcTrackListener implements Dispose.Dispose {
   readonly #accept: WebRtcTrackListenerAcceptCallback;
   readonly #dispose: WebRtcTrackListenerDisposeCallback;
-  constructor(onAccept: WebRtcTrackListenerAcceptCallback, onDispose: WebRtcTrackListenerDisposeCallback) {
+  constructor(
+    onAccept: WebRtcTrackListenerAcceptCallback,
+    onDispose: WebRtcTrackListenerDisposeCallback,
+  ) {
     this.#accept = onAccept;
     this.#dispose = onDispose;
   }

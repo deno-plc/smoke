@@ -26,8 +26,8 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Channel from '../../channel/index.ts';
-import * as Protocol from '../protocol/index.ts';
+import * as Channel from "../../channel/index.ts";
+import * as Protocol from "../protocol/index.ts";
 
 // ------------------------------------------------------------------
 // ProxyListener
@@ -41,13 +41,18 @@ export class ProxyListener {
   readonly #clientId: string;
   readonly #callback: ListenCallback;
   readonly #receivers: Map<number, Channel.Channel<Uint8Array>>;
-  constructor(worker: ServiceWorker, port: MessagePort, clientId: string, callback: ListenCallback) {
+  constructor(
+    worker: ServiceWorker,
+    port: MessagePort,
+    clientId: string,
+    callback: ListenCallback,
+  ) {
     this.#receivers = new Map<number, Channel.Channel<Uint8Array>>();
     this.#worker = worker;
     this.#port = port;
     this.#clientId = clientId;
     this.#callback = callback;
-    this.#port.addEventListener('message', (event) => this.#onMessage(event));
+    this.#port.addEventListener("message", (event) => this.#onMessage(event));
   }
   // ----------------------------------------------------------------
   // Properties
@@ -62,7 +67,7 @@ export class ProxyListener {
   // Body
   // ----------------------------------------------------------------
   #isHasBody(message: Protocol.RequestInit) {
-    return message.init.method !== 'GET' && message.init.method !== 'HEAD';
+    return message.init.method !== "GET" && message.init.method !== "HEAD";
   }
   // prettier-ignore
   #createReadableStreamBody(message: Protocol.RequestInit): ReadableStream {
@@ -71,10 +76,8 @@ export class ProxyListener {
     return new ReadableStream({
       pull: async (controller) => {
         const next = await receiver.next();
-        return next !== null
-          ? controller.enqueue(next)
-          : controller.close();
-      }
+        return next !== null ? controller.enqueue(next) : controller.close();
+      },
     });
   }
   #createBody(message: Protocol.RequestInit): ReadableStream | null {
@@ -87,22 +90,30 @@ export class ProxyListener {
   // ----------------------------------------------------------------
   // Send
   // ----------------------------------------------------------------
-  #send<Message extends Protocol.ResponseInit | Protocol.ResponseData | Protocol.ResponseEnd>(message: Message) {
+  #send<
+    Message extends
+      | Protocol.ResponseInit
+      | Protocol.ResponseData
+      | Protocol.ResponseEnd,
+  >(message: Message) {
     this.#port.postMessage(message);
   }
-  async #sendResponse(message: Protocol.RequestInit, response: globalThis.Response) {
+  async #sendResponse(
+    message: Protocol.RequestInit,
+    response: globalThis.Response,
+  ) {
     const { requestId } = message;
     const init = Protocol.responseInitFromResponse(response);
-    this.#send({ type: 'ResponseInit', requestId, init });
+    this.#send({ type: "ResponseInit", requestId, init });
     if (response.body) {
       const reader = response.body.getReader();
       while (true) {
         const { value: data, done } = await reader.read();
         if (done) break;
-        this.#send({ type: 'ResponseData', requestId, data });
+        this.#send({ type: "ResponseData", requestId, data });
       }
     }
-    this.#send({ type: 'ResponseEnd', requestId });
+    this.#send({ type: "ResponseEnd", requestId });
   }
   // ----------------------------------------------------------------
   // Events
@@ -110,14 +121,22 @@ export class ProxyListener {
   async #onRequestInit(message: Protocol.RequestInit) {
     const body = this.#createBody(message);
     const headers = this.#createHeaders(message);
-    const requestInit = { ...message.init, headers, body, duplex: 'half' } as globalThis.RequestInit;
+    const requestInit = {
+      ...message.init,
+      headers,
+      body,
+      duplex: "half",
+    } as globalThis.RequestInit;
     const request = new Request(message.url, requestInit);
     try {
       const response = await this.#callback(request);
       await this.#sendResponse(message, response);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Error';
-      await this.#sendResponse(message, new Response(errorMessage, { status: 500 }));
+      const errorMessage = error instanceof Error ? error.message : "Error";
+      await this.#sendResponse(
+        message,
+        new Response(errorMessage, { status: 500 }),
+      );
     }
   }
   async #onRequestData(message: Protocol.RequestData) {
@@ -140,7 +159,7 @@ export class ProxyListener {
       case Protocol.isRequestEnd(event.data):
         return this.#onRequestEnd(event.data);
       default:
-        this.#throw('Unknown message');
+        this.#throw("Unknown message");
     }
   }
   #throw(message: string): never {

@@ -27,7 +27,7 @@ THE SOFTWARE.
 ---------------------------------------------------------------------------*/
 
 export interface Failed {
-  context: string
-  unit: string
-  error: Error
+  context: string;
+  unit: string;
+  error: Error;
 }

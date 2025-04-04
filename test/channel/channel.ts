@@ -1,19 +1,19 @@
-import { Channel } from '@sinclair/smoke';
-import { Test, Assert } from '../test/index.ts';
+import { Channel } from "@sinclair/smoke";
+import { Assert, Test } from "../test/index.ts";
 
-Test.describe('Channel:Channel', () => {
-  Test.it('Should send value and end', () => {
+Test.describe("Channel:Channel", () => {
+  Test.it("Should send value and end", () => {
     const channel = new Channel.Channel();
     channel.send(0);
     channel.end();
   });
-  Test.it('Should send value, error and end without throw', () => {
+  Test.it("Should send value, error and end without throw", () => {
     const channel = new Channel.Channel();
     channel.send(0);
-    channel.error(new Error('error'));
+    channel.error(new Error("error"));
     channel.end();
   });
-  Test.it('Should receive next value then end', async () => {
+  Test.it("Should receive next value then end", async () => {
     const channel = new Channel.Channel();
     channel.send(0);
     channel.end();
@@ -23,7 +23,7 @@ Test.describe('Channel:Channel', () => {
     Assert.isEqual(value, 0);
     Assert.isEqual(eof, null);
   });
-  Test.it('Should receive next values then end', async () => {
+  Test.it("Should receive next values then end", async () => {
     const channel = new Channel.Channel();
     channel.send(0);
     channel.send(1);
@@ -42,7 +42,7 @@ Test.describe('Channel:Channel', () => {
     Assert.isEqual(value3, 3);
     Assert.isEqual(eof, null);
   });
-  Test.it('Should throw on receive if send error', async () => {
+  Test.it("Should throw on receive if send error", async () => {
     const channel = new Channel.Channel();
     channel.send(0);
     channel.send(1);
@@ -55,7 +55,7 @@ Test.describe('Channel:Channel', () => {
     Assert.isEqual(value1, 1);
     Assert.isInstanceOf(value2, Error);
   });
-  Test.it('Should end on receiver immediately following an error', async () => {
+  Test.it("Should end on receiver immediately following an error", async () => {
     const channel = new Channel.Channel();
     channel.send(0);
     channel.send(1);
@@ -70,22 +70,25 @@ Test.describe('Channel:Channel', () => {
     Assert.isInstanceOf(value2, Error);
     Assert.isEqual(eof, null);
   });
-  Test.it('Should receive eof for all subsequent reads on an ended channel', async () => {
-    const channel = new Channel.Channel();
-    channel.send(0);
-    channel.send(1);
-    channel.end();
+  Test.it(
+    "Should receive eof for all subsequent reads on an ended channel",
+    async () => {
+      const channel = new Channel.Channel();
+      channel.send(0);
+      channel.send(1);
+      channel.end();
 
-    const value0 = await channel.next();
-    const value1 = await channel.next();
-    const eof0 = await channel.next();
-    const eof1 = await channel.next();
-    Assert.isEqual(value0, 0);
-    Assert.isEqual(value1, 1);
-    Assert.isEqual(eof0, null);
-    Assert.isEqual(eof1, null);
-  });
-  Test.it('Should report accurate buffered count on send', async () => {
+      const value0 = await channel.next();
+      const value1 = await channel.next();
+      const eof0 = await channel.next();
+      const eof1 = await channel.next();
+      Assert.isEqual(value0, 0);
+      Assert.isEqual(value1, 1);
+      Assert.isEqual(eof0, null);
+      Assert.isEqual(eof1, null);
+    },
+  );
+  Test.it("Should report accurate buffered count on send", async () => {
     const channel = new Channel.Channel();
     channel.send(0);
     channel.send(1);
@@ -93,11 +96,11 @@ Test.describe('Channel:Channel', () => {
     channel.end();
     Assert.isEqual(channel.buffered, 4);
   });
-  Test.it('Should report accurate buffered count on error', async () => {
+  Test.it("Should report accurate buffered count on error", async () => {
     const channel = new Channel.Channel();
     channel.send(0);
     channel.send(1);
-    channel.error(new Error('error'));
+    channel.error(new Error("error"));
     Assert.isEqual(channel.buffered, 4);
   });
 });

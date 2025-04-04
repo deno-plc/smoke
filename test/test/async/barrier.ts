@@ -27,33 +27,35 @@ THE SOFTWARE.
 ---------------------------------------------------------------------------*/
 
 export interface BarrierOptions {
-  paused: boolean
+  paused: boolean;
 }
 
 export class Barrier {
-  readonly #resolvers: Array<() => void> = []
-  #paused: boolean = true
+  readonly #resolvers: Array<() => void> = [];
+  #paused: boolean = true;
   /** Creates a new barrier in the given state. The default is paused: true */
   constructor(options: BarrierOptions) {
-    this.#paused = options.paused
+    this.#paused = options.paused;
   }
   /** Pauses this barrier causing operations to wait. */
   public pause(): void {
-    this.#paused = true
+    this.#paused = true;
   }
   /** Resumes this barrier causing all operations to run. */
   public resume(): void {
-    this.#paused = false
-    this.#dispatch()
+    this.#paused = false;
+    this.#dispatch();
   }
   /** Waits until this barrier enters a resumed state. */
   public wait(): Promise<void> {
-    return this.#paused ? new Promise((resolve) => this.#resolvers.push(resolve)) : Promise.resolve(void 0)
+    return this.#paused
+      ? new Promise((resolve) => this.#resolvers.push(resolve))
+      : Promise.resolve(void 0);
   }
   async #dispatch(): Promise<void> {
     while (!this.#paused && this.#resolvers.length > 0) {
-      const resolve = this.#resolvers.shift()!
-      resolve()
+      const resolve = this.#resolvers.shift()!;
+      resolve();
     }
   }
 }

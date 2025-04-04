@@ -26,14 +26,14 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Async from '../async/index.ts';
-import * as Protocol from './protocol.ts';
-import * as Buffer from '../buffer/index.ts';
-import type * as Dispose from '../dispose/index.ts';
-import type * as WebRtc from '../webrtc/index.ts';
-import type * as Net from '../net/index.ts';
-import * as Stream from '../stream/index.ts';
-import { MediaReceiver } from './receiver.ts';
+import * as Async from "../async/index.ts";
+import * as Protocol from "./protocol.ts";
+import * as Buffer from "../buffer/index.ts";
+import type * as Dispose from "../dispose/index.ts";
+import type * as WebRtc from "../webrtc/index.ts";
+import type * as Net from "../net/index.ts";
+import * as Stream from "../stream/index.ts";
+import { MediaReceiver } from "./receiver.ts";
 
 export type MediaListenerAcceptCallback = (receiver: MediaReceiver) => any;
 
@@ -46,10 +46,20 @@ export class MediaListener implements Dispose.Dispose {
   readonly #awaiters: Map<string, Async.Deferred<RTCRtpReceiver>>;
   readonly #accept: MediaListenerAcceptCallback;
 
-  constructor(options: MediaListenerOptions, webrtc: WebRtc.WebRtcModule, net: Net.NetModule, accept: MediaListenerAcceptCallback) {
+  constructor(
+    options: MediaListenerOptions,
+    webrtc: WebRtc.WebRtcModule,
+    net: Net.NetModule,
+    accept: MediaListenerAcceptCallback,
+  ) {
     this.#awaiters = new Map<string, Async.Deferred<RTCRtpReceiver>>();
-    this.#netListener = net.listen({ port: options.port }, (socket) => this.#onSocket(socket));
-    this.#trackListener = webrtc.listenTrack((peer, event) => this.#onTrack(peer, event));
+    this.#netListener = net.listen(
+      { port: options.port },
+      (socket) => this.#onSocket(socket),
+    );
+    this.#trackListener = webrtc.listenTrack((peer, event) =>
+      this.#onTrack(peer, event)
+    );
     this.#accept = accept;
   }
   [Symbol.dispose]() {
@@ -76,7 +86,9 @@ export class MediaListener implements Dispose.Dispose {
   // ----------------------------------------------------------------
   // Protocol: Receiver
   // ----------------------------------------------------------------
-  async #readMessage(stream: Stream.FrameDuplex): Promise<Protocol.Message | null> {
+  async #readMessage(
+    stream: Stream.FrameDuplex,
+  ): Promise<Protocol.Message | null> {
     try {
       const buffer = await stream.read();
       if (buffer === null) return null;

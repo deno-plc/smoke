@@ -26,8 +26,8 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { Deferred } from './deferred.ts';
-import { Lock } from './lock.ts';
+import { Deferred } from "./deferred.ts";
+import { Lock } from "./lock.ts";
 
 export interface SemaphoreOptions {
   concurrency: number;

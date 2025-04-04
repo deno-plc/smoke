@@ -26,10 +26,10 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { FrameReader } from './reader.ts';
-import { FrameWriter } from './writer.ts';
-import type { Read } from '../read.ts';
-import type { Write } from '../write.ts';
+import { FrameReader } from "./reader.ts";
+import { FrameWriter } from "./writer.ts";
+import type { Read } from "../read.ts";
+import type { Write } from "../write.ts";
 
 export class FrameDuplex implements Read<Uint8Array>, Write<Uint8Array> {
   readonly #reader: FrameReader;

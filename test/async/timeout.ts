@@ -1,19 +1,22 @@
-import { Async } from '@sinclair/smoke';
-import { Test, Assert } from '../test/index.ts';
+import { Async } from "@sinclair/smoke";
+import { Assert, Test } from "../test/index.ts";
 
-Test.describe('Async:timeout', () => {
-  Test.it('Should timeout after 10 milliseconds', async () => {
+Test.describe("Async:timeout", () => {
+  Test.it("Should timeout after 10 milliseconds", async () => {
     await Assert.shouldThrowAsync(async () => {
       await Async.timeout(Async.delay(20), { timeout: 10 });
     });
   });
-  Test.it('Should timeout after 10 milliseconds and yield error', async () => {
-    class SpecializedError extends Error { }
+  Test.it("Should timeout after 10 milliseconds and yield error", async () => {
+    class SpecializedError extends Error {}
     await Assert.shouldThrowAsync(async () => {
-      await Async.timeout(Async.delay(20), { timeout: 10, error: new SpecializedError() });
+      await Async.timeout(Async.delay(20), {
+        timeout: 10,
+        error: new SpecializedError(),
+      });
     }, SpecializedError);
   });
-  Test.it('Should return a result if resolve before timeout', async () => {
+  Test.it("Should return a result if resolve before timeout", async () => {
     const R = await Async.timeout(
       (async () => {
         await Async.delay(20);

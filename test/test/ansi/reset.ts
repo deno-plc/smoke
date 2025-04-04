@@ -26,4 +26,4 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export const reset = '\x1b[0m'
+export const reset = "\x1b[0m";

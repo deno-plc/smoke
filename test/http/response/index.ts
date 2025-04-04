@@ -1,3 +1,3 @@
-import './arraybuffer.ts';
-import './json.ts';
-import './text.ts';
+import "./arraybuffer.ts";
+import "./json.ts";
+import "./text.ts";

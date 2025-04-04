@@ -26,15 +26,16 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import type * as WebRtc from '../webrtc/index.ts';
-import * as Buffer from '../buffer/index.ts';
-import * as Channel from '../channel/index.ts';
-import * as Async from '../async/index.ts';
-import type * as Stream from '../stream/index.ts';
-import type { Address } from './address.ts';
+import type * as WebRtc from "../webrtc/index.ts";
+import * as Buffer from "../buffer/index.ts";
+import * as Channel from "../channel/index.ts";
+import * as Async from "../async/index.ts";
+import type * as Stream from "../stream/index.ts";
+import type { Address } from "./address.ts";
 
 // prettier-ignore
-export class NetSocket implements Stream.Read<Uint8Array>, Stream.Write<Uint8Array> {
+export class NetSocket
+  implements Stream.Read<Uint8Array>, Stream.Write<Uint8Array> {
   readonly #peer: WebRtc.WebRtcPeer;
   readonly #datachannel: RTCDataChannel;
   readonly #readchannel: Channel.Channel<Uint8Array>;
@@ -45,10 +46,19 @@ export class NetSocket implements Stream.Read<Uint8Array>, Stream.Write<Uint8Arr
     this.#mutex = new Async.Mutex();
     this.#readchannel = new Channel.Channel<Uint8Array>();
     this.#datachannel = datachannel;
-    this.#datachannel.binaryType = 'arraybuffer';
-    this.#datachannel.addEventListener('message', (event) => this.#onMessage(event));
-    this.#datachannel.addEventListener('close', (event) => this.#onClose(event));
-    this.#datachannel.addEventListener('error', (event) => this.#onError(event));
+    this.#datachannel.binaryType = "arraybuffer";
+    this.#datachannel.addEventListener(
+      "message",
+      (event) => this.#onMessage(event),
+    );
+    this.#datachannel.addEventListener(
+      "close",
+      (event) => this.#onClose(event),
+    );
+    this.#datachannel.addEventListener(
+      "error",
+      (event) => this.#onError(event),
+    );
     this.#closed = false;
   }
   // ----------------------------------------------------------------
@@ -58,7 +68,10 @@ export class NetSocket implements Stream.Read<Uint8Array>, Stream.Write<Uint8Arr
     return { hostname: this.#resolveAddress(this.#peer.localAddress), port: 0 };
   }
   public get remote(): Address {
-    return { hostname: this.#resolveAddress(this.#peer.remoteAddress), port: 0 };
+    return {
+      hostname: this.#resolveAddress(this.#peer.remoteAddress),
+      port: 0,
+    };
   }
   // ----------------------------------------------------------------
   // Stream.Read<Uint8Array>
@@ -89,7 +102,9 @@ export class NetSocket implements Stream.Read<Uint8Array>, Stream.Write<Uint8Arr
     this.#readchannel.error(event as any);
   }
   #onMessage(event: MessageEvent) {
-    if (event.data instanceof ArrayBuffer) this.#peer.bytesReceived += event.data.byteLength;
+    if (event.data instanceof ArrayBuffer) {
+      this.#peer.bytesReceived += event.data.byteLength;
+    }
     this.#readchannel.send(new Uint8Array(event.data));
   }
   #onClose(event: Event) {
@@ -101,14 +116,18 @@ export class NetSocket implements Stream.Read<Uint8Array>, Stream.Write<Uint8Arr
   // ----------------------------------------------------------------
   #connectionBufferedAmount() {
     let size = 0;
-    for (const datachannel of this.#peer.datachannels) size += datachannel.bufferedAmount;
+    for (const datachannel of this.#peer.datachannels) {
+      size += datachannel.bufferedAmount;
+    }
     return size;
   }
   #maximumBufferedAmount() {
     return 65535; // estimated 64k
   }
   #sendMessageSize() {
-    const channelCount = this.#peer.datachannels.size === 0 ? 1 : this.#peer.datachannels.size;
+    const channelCount = this.#peer.datachannels.size === 0
+      ? 1
+      : this.#peer.datachannels.size;
     return Math.floor(32768 / channelCount);
   }
   #isUnderMinimumThreshold() {
@@ -118,13 +137,13 @@ export class NetSocket implements Stream.Read<Uint8Array>, Stream.Write<Uint8Arr
     return available > this.#sendMessageSize();
   }
   #isDataChannelOpen() {
-    return this.#datachannel.readyState === 'open';
+    return this.#datachannel.readyState === "open";
   }
   async #waitForMinimumWriteThreshold() {
     return new Promise<void>((resolve, reject) => {
       const interval = setInterval(() => {
         if (!this.#isDataChannelOpen()) {
-          return reject(new Error('Socket closed unexpectedly'));
+          return reject(new Error("Socket closed unexpectedly"));
         }
         if (this.#isUnderMinimumThreshold()) {
           clearInterval(interval);
@@ -173,6 +192,8 @@ export class NetSocket implements Stream.Read<Uint8Array>, Stream.Write<Uint8Arr
   // ResolveAddress
   // ----------------------------------------------------------------
   #resolveAddress(address: string) {
-    return ['loopback:0', 'loopback:1'].includes(address) ? 'localhost' : address;
+    return ["loopback:0", "loopback:1"].includes(address)
+      ? "localhost"
+      : address;
   }
 }

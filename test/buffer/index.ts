@@ -1,1 +1,1 @@
-import './buffer.ts';
+import "./buffer.ts";

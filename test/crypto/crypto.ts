@@ -1,8 +1,8 @@
-import { Crypto } from '@sinclair/smoke';
-import { Test, Assert } from '../test/index.ts';
-Test.describe('Crypto', () => {
-  Test.it('Should generate randomUUID', () => {
+import { Crypto } from "@sinclair/smoke";
+import { Assert, Test } from "../test/index.ts";
+Test.describe("Crypto", () => {
+  Test.it("Should generate randomUUID", () => {
     const uuid = Crypto.randomUUID();
-    Assert.isTypeOf(uuid, 'string');
+    Assert.isTypeOf(uuid, "string");
   });
 });

@@ -26,7 +26,7 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './address.ts';
-export * from './listener.ts';
-export * from './socket.ts';
-export * from './net.ts';
+export * from "./address.ts";
+export * from "./listener.ts";
+export * from "./socket.ts";
+export * from "./net.ts";

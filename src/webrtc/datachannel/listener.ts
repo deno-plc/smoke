@@ -26,16 +26,22 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import type * as Dispose from '../../dispose/index.ts';
-import type { WebRtcPeer } from '../webrtc.ts';
+import type * as Dispose from "../../dispose/index.ts";
+import type { WebRtcPeer } from "../webrtc.ts";
 
-export type WebRtcDataChannelListenerAcceptCallback = (peer: WebRtcPeer, datachannel: RTCDataChannel) => void;
+export type WebRtcDataChannelListenerAcceptCallback = (
+  peer: WebRtcPeer,
+  datachannel: RTCDataChannel,
+) => void;
 export type WebRtcDataChannelListenerDisposeCallback = () => void;
 
 export class WebRtcDataChannelListener implements Dispose.Dispose {
   readonly #accept: WebRtcDataChannelListenerAcceptCallback;
   readonly #dispose: WebRtcDataChannelListenerDisposeCallback;
-  constructor(onAccept: WebRtcDataChannelListenerAcceptCallback, onDispose: WebRtcDataChannelListenerDisposeCallback) {
+  constructor(
+    onAccept: WebRtcDataChannelListenerAcceptCallback,
+    onDispose: WebRtcDataChannelListenerDisposeCallback,
+  ) {
     this.#accept = onAccept;
     this.#dispose = onDispose;
   }

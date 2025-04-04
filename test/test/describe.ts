@@ -26,9 +26,9 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import type { Options } from './options.ts';
-import type { Failed } from './failed.ts';
-import type { ItContext } from './it.ts';
+import type { Options } from "./options.ts";
+import type { Failed } from "./failed.ts";
+import type { ItContext } from "./it.ts";
 
 export class DescribeContext {
   readonly #name: string;
@@ -61,13 +61,25 @@ export class DescribeContext {
     return this.#elasped;
   }
   public get failCount(): number {
-    const count1 = this.#contexts.reduce((acc, context) => acc + context.failCount, 0);
-    const count2 = this.#units.reduce((acc, unit) => (unit.completed && unit.failed ? acc + 1 : acc), 0);
+    const count1 = this.#contexts.reduce(
+      (acc, context) => acc + context.failCount,
+      0,
+    );
+    const count2 = this.#units.reduce(
+      (acc, unit) => (unit.completed && unit.failed ? acc + 1 : acc),
+      0,
+    );
     return count1 + count2;
   }
   public get passCount(): number {
-    const count1 = this.#contexts.reduce((acc, context) => acc + context.passCount, 0);
-    const count2 = this.#units.reduce((acc, unit) => (unit.completed && unit.passed ? acc + 1 : acc), 0);
+    const count1 = this.#contexts.reduce(
+      (acc, context) => acc + context.passCount,
+      0,
+    );
+    const count2 = this.#units.reduce(
+      (acc, unit) => (unit.completed && unit.passed ? acc + 1 : acc),
+      0,
+    );
     return count1 + count2;
   }
   public *failures(): IterableIterator<Failed> {
@@ -152,8 +164,11 @@ export class DescribeContext {
   // Filter
   // ----------------------------------------------------------------
   #shouldExcludeWithFilter(options: Options) {
-    const [name, filter] = [this.#name.toLowerCase(), options.filter.toLowerCase()];
-    return name === 'root' || name.includes(filter) ? false : true;
+    const [name, filter] = [
+      this.#name.toLowerCase(),
+      options.filter.toLowerCase(),
+    ];
+    return name === "root" || name.includes(filter) ? false : true;
   }
   // ----------------------------------------------------------------
   // Filter

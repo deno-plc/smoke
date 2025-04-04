@@ -27,16 +27,16 @@ THE SOFTWARE.
 ---------------------------------------------------------------------------*/
 
 export class Reader {
-  readonly #buffer: Uint8Array
-  #index: number
+  readonly #buffer: Uint8Array;
+  #index: number;
   constructor(buffer: Uint8Array) {
-    this.#buffer = buffer
-    this.#index = 0
+    this.#buffer = buffer;
+    this.#index = 0;
   }
   /** Reads the given length of bytes from the buffer or returns null if EOF  */
   public read(length: number): Uint8Array | null {
-    const buffer = this.#buffer.subarray(this.#index, this.#index + length)
-    this.#index += length
-    return buffer.length > 0 ? buffer : null
+    const buffer = this.#buffer.subarray(this.#index, this.#index + length);
+    this.#index += length;
+    return buffer.length > 0 ? buffer : null;
   }
 }

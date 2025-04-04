@@ -26,9 +26,9 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Buffer from '../../buffer/index.ts';
-import * as Async from '../../async/index.ts';
-import type { Read } from '../read.ts';
+import * as Buffer from "../../buffer/index.ts";
+import * as Async from "../../async/index.ts";
+import type { Read } from "../read.ts";
 
 export class FrameReaderError extends Error {
   constructor(message: string) {
@@ -95,7 +95,7 @@ export class FrameReader implements Read<Uint8Array> {
       this.#ordinal = ordinal + 1;
     } else {
       await this.#read.close();
-      this.#throw('FrameReader received unexpected ordinal');
+      this.#throw("FrameReader received unexpected ordinal");
     }
   }
   async #readFrame(length: number): Promise<Uint8Array | null> {

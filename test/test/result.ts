@@ -26,7 +26,7 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import type { Failed } from './failed.ts';
+import type { Failed } from "./failed.ts";
 
 export interface Result {
   success: boolean;

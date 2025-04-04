@@ -26,9 +26,9 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import type { EventListener } from './listener.ts';
-import type { EventHandler } from './handler.ts';
-import { Event } from './event.ts';
+import type { EventListener } from "./listener.ts";
+import type { EventHandler } from "./handler.ts";
+import { Event } from "./event.ts";
 
 export class Events<T extends Record<string, any> = Record<string, any>> {
   readonly #events: Map<string, Event>;
@@ -36,14 +36,20 @@ export class Events<T extends Record<string, any> = Record<string, any>> {
     this.#events = new Map<string, Event>();
   }
   /** Subscribes to an event */
-  public on<K extends keyof T>(name: K, handler: EventHandler<T[K]>): EventListener {
+  public on<K extends keyof T>(
+    name: K,
+    handler: EventHandler<T[K]>,
+  ): EventListener {
     const key = name as string;
     if (!this.#events.has(key)) this.#events.set(key, new Event());
     const current = this.#events.get(key)!;
     return current.on(handler);
   }
   /** Subscribes once to an event */
-  public once<K extends keyof T>(name: K, handler: EventHandler<T[K]>): EventListener {
+  public once<K extends keyof T>(
+    name: K,
+    handler: EventHandler<T[K]>,
+  ): EventListener {
     const key = name as string;
     if (!this.#events.has(key)) this.#events.set(key, new Event());
     const current = this.#events.get(key)!;

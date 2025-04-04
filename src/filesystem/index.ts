@@ -26,6 +26,6 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './filesystem.ts';
-export * from './fs.ts';
-export * from './stat.ts';
+export * from "./filesystem.ts";
+export * from "./fs.ts";
+export * from "./stat.ts";

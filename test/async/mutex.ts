@@ -1,9 +1,9 @@
-import { Async } from '@sinclair/smoke';
-import { Test, Assert } from '../test/index.ts';
+import { Async } from "@sinclair/smoke";
+import { Assert, Test } from "../test/index.ts";
 
 export const range = (length: number) => Array.from({ length });
 
-Test.describe('Async:Mutex', () => {
+Test.describe("Async:Mutex", () => {
   // ----------------------------------------------------------------
   // Concurrency
   // ----------------------------------------------------------------
@@ -20,10 +20,10 @@ Test.describe('Async:Mutex', () => {
     await Promise.all(tasks);
     Assert.isEqual(result, expect);
   }
-  Test.it('It run with a concurrency of 1', async () => {
+  Test.it("It run with a concurrency of 1", async () => {
     await concurrencyTest(32);
   });
-  Test.it('It run with a concurrency of 16', async () => {
+  Test.it("It run with a concurrency of 16", async () => {
     await concurrencyTest(32);
   });
 });

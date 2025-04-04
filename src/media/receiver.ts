@@ -26,10 +26,10 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Buffer from '../buffer/index.ts';
-import * as Events from '../events/index.ts';
-import type * as Stream from '../stream/index.ts';
-import type * as Net from '../net/index.ts';
+import * as Buffer from "../buffer/index.ts";
+import * as Events from "../events/index.ts";
+import type * as Stream from "../stream/index.ts";
+import type * as Net from "../net/index.ts";
 
 export interface MediaReceiverOptions {
   local: Net.Address;
@@ -43,10 +43,16 @@ export class MediaReceiver {
   readonly #remote: Net.Address;
   #closed: boolean;
 
-  constructor(stream: Stream.FrameDuplex, receivers: RTCRtpReceiver[], options: MediaReceiverOptions) {
+  constructor(
+    stream: Stream.FrameDuplex,
+    receivers: RTCRtpReceiver[],
+    options: MediaReceiverOptions,
+  ) {
     this.#events = new Events.Events();
     this.#stream = stream;
-    this.#mediastream = new MediaStream(receivers.map((receiver) => receiver.track));
+    this.#mediastream = new MediaStream(
+      receivers.map((receiver) => receiver.track),
+    );
     this.#local = options.local;
     this.#remote = options.remote;
     this.#readInternal().catch(console.error);
@@ -71,9 +77,15 @@ export class MediaReceiver {
   // Events
   // ----------------------------------------------------------------
   /** Subscribes to message events */
-  public on(event: 'message', handler: Events.EventHandler<MessageEvent>): Events.EventListener;
+  public on(
+    event: "message",
+    handler: Events.EventHandler<MessageEvent>,
+  ): Events.EventListener;
   /** Subscribes to close events */
-  public on(event: 'close', handler: Events.EventHandler<null>): Events.EventListener;
+  public on(
+    event: "close",
+    handler: Events.EventHandler<null>,
+  ): Events.EventListener;
   /** Subscribes to events */
   public on(event: string, handler: Events.EventHandler): Events.EventListener {
     return this.#events.on(event, handler);
@@ -93,7 +105,7 @@ export class MediaReceiver {
   // Asserts
   // ----------------------------------------------------------------
   #assertNotClosed() {
-    if (this.#closed) throw Error('Receiver transport is closed');
+    if (this.#closed) throw Error("Receiver transport is closed");
   }
   // ----------------------------------------------------------------
   // Encoding
@@ -105,7 +117,7 @@ export class MediaReceiver {
   #decodeAsMessageEvent(buffer: Uint8Array): MessageEvent | null {
     try {
       const data = JSON.parse(Buffer.decode(buffer));
-      return new MessageEvent('message', { data });
+      return new MessageEvent("message", { data });
     } catch {
       return null;
     }
@@ -117,9 +129,9 @@ export class MediaReceiver {
     for await (const buffer of this.#stream) {
       const event = this.#decodeAsMessageEvent(buffer);
       if (event === null) continue;
-      this.#events.send('message', event);
+      this.#events.send("message", event);
     }
     this.#closed = true;
-    this.#events.send('close', null);
+    this.#events.send("close", null);
   }
 }

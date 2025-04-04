@@ -26,13 +26,13 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Agent from '../agent/index.ts';
-import type * as Dispose from '../dispose/index.ts';
-import * as Buffer from '../buffer/index.ts';
-import * as Stream from '../stream/index.ts';
-import type * as Net from '../net/index.ts';
-import * as Signal from './signal.ts';
-import { HttpServerWebSocket } from './index.ts';
+import * as Agent from "../agent/index.ts";
+import type * as Dispose from "../dispose/index.ts";
+import * as Buffer from "../buffer/index.ts";
+import * as Stream from "../stream/index.ts";
+import type * as Net from "../net/index.ts";
+import * as Signal from "./signal.ts";
+import { HttpServerWebSocket } from "./index.ts";
 
 export const UpgradeMap = new WeakMap<Request, Function>();
 
@@ -51,7 +51,10 @@ export interface HttpRequestInfo {
   remote: Net.Address;
 }
 export type HttpListenerUpgradeCallback = (socket: HttpServerWebSocket) => any;
-export type HttpListenerAcceptCallback = (request: Request, info: HttpRequestInfo) => Response | Promise<Response>;
+export type HttpListenerAcceptCallback = (
+  request: Request,
+  info: HttpRequestInfo,
+) => Response | Promise<Response>;
 
 // ------------------------------------------------------------------
 // HttpListener
@@ -64,8 +67,15 @@ export class HttpListener implements Dispose.Dispose {
   readonly #listener: Net.NetListener;
   readonly #accept: HttpListenerAcceptCallback;
   readonly #options: HttpListenerOptions;
-  constructor(net: Net.NetModule, options: HttpListenerOptions, accept: HttpListenerAcceptCallback) {
-    this.#listener = net.listen({ port: options.port }, (socket) => this.#onSocket(socket));
+  constructor(
+    net: Net.NetModule,
+    options: HttpListenerOptions,
+    accept: HttpListenerAcceptCallback,
+  ) {
+    this.#listener = net.listen(
+      { port: options.port },
+      (socket) => this.#onSocket(socket),
+    );
     this.#options = options;
     this.#accept = accept;
   }
@@ -84,17 +94,21 @@ export class HttpListener implements Dispose.Dispose {
   #onSocket(socket: Net.NetSocket): void {
     this.#onRequest(socket);
   }
-  async #readListenerRequestInit(stream: Stream.FrameDuplex): Promise<HttpListenerRequestInit | null> {
+  async #readListenerRequestInit(
+    stream: Stream.FrameDuplex,
+  ): Promise<HttpListenerRequestInit | null> {
     const buffer = await stream.read();
     if (buffer === null) return null;
     const decoded = Buffer.decode(buffer);
     const init = JSON.parse(decoded) as HttpListenerRequestInit;
     return (
-      typeof init.url === 'string' &&
-      typeof init.method === 'string' &&
-      typeof init.headers === 'object' &&
-      init.headers !== null
-    ) ? init : null;
+        typeof init.url === "string" &&
+        typeof init.method === "string" &&
+        typeof init.headers === "object" &&
+        init.headers !== null
+      )
+      ? init
+      : null;
   }
   async #sendResponse(response: Response, stream: Stream.FrameDuplex) {
     const headerData = JSON.stringify({
@@ -119,8 +133,11 @@ export class HttpListener implements Dispose.Dispose {
   // Body
   // ----------------------------------------------------------------
   /** (Chromium) Creates a ReadableStream from a HttpListenerRequestInit */
-  #createReadableStreamFromRequestInit(listenerRequestInit: HttpListenerRequestInit, stream: Stream.FrameDuplex) {
-    if (['HEAD', 'GET'].includes(listenerRequestInit.method)) return null;
+  #createReadableStreamFromRequestInit(
+    listenerRequestInit: HttpListenerRequestInit,
+    stream: Stream.FrameDuplex,
+  ) {
+    if (["HEAD", "GET"].includes(listenerRequestInit.method)) return null;
     return new ReadableStream({
       pull: async (controller) => {
         const next = await stream.read();
@@ -133,8 +150,11 @@ export class HttpListener implements Dispose.Dispose {
     });
   }
   /** (Firefox) Creates a Blob from a HttpListenerRequestInit */
-  async #createBlobFromRequestInit(listenerRequestInit: HttpListenerRequestInit, stream: Stream.FrameDuplex): Promise<Blob | null> {
-    if (['HEAD', 'GET'].includes(listenerRequestInit.method)) return null;
+  async #createBlobFromRequestInit(
+    listenerRequestInit: HttpListenerRequestInit,
+    stream: Stream.FrameDuplex,
+  ): Promise<Blob | null> {
+    if (["HEAD", "GET"].includes(listenerRequestInit.method)) return null;
     const buffers: Uint8Array[] = [];
     while (true) {
       const next = await stream.read();
@@ -143,8 +163,11 @@ export class HttpListener implements Dispose.Dispose {
     }
     return new Blob(buffers);
   }
-  async #createBodyFromRequestInit(listenerRequestInit: HttpListenerRequestInit, stream: Stream.FrameDuplex): Promise<ReadableStream | Blob | null> {
-    return Agent.browserType() === 'Firefox'
+  async #createBodyFromRequestInit(
+    listenerRequestInit: HttpListenerRequestInit,
+    stream: Stream.FrameDuplex,
+  ): Promise<ReadableStream | Blob | null> {
+    return Agent.browserType() === "Firefox"
       ? this.#createBlobFromRequestInit(listenerRequestInit, stream)
       : this.#createReadableStreamFromRequestInit(listenerRequestInit, stream);
   }
@@ -155,14 +178,19 @@ export class HttpListener implements Dispose.Dispose {
     const stream = new Stream.FrameDuplex(socket);
     const listenerRequestInit = await this.#readListenerRequestInit(stream);
     if (listenerRequestInit === null) return await stream.close();
-    const url = new URL(`http://${socket.local.hostname}:${socket.local.port}${listenerRequestInit.url}`);
+    const url = new URL(
+      `http://${socket.local.hostname}:${socket.local.port}${listenerRequestInit.url}`,
+    );
     const headers = new Headers(listenerRequestInit.headers);
-    const body = await this.#createBodyFromRequestInit(listenerRequestInit, stream);
+    const body = await this.#createBodyFromRequestInit(
+      listenerRequestInit,
+      stream,
+    );
     const request = new Request(url, {
       method: listenerRequestInit.method,
       headers: headers,
       body,
-      duplex: 'half',
+      duplex: "half",
     } as RequestInit);
     const info = { local: socket.local, remote: socket.remote };
     const response = await this.#accept(request, info);

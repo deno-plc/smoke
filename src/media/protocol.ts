@@ -28,43 +28,43 @@ THE SOFTWARE.
 
 /** Sent on connection to indicate the number of tracks to transmit */
 export interface Init {
-  type: 'Init'
-  trackCount: number
+  type: "Init";
+  trackCount: number;
 }
 // prettier-ignore
 export function checkInit(message: unknown): message is Init {
   return (
-    typeof message === 'object' && message !== null &&
-    'type' in message && message['type'] === 'Init' &&
-    'trackCount' in message && typeof message['trackCount'] === 'number'
-  )
+    typeof message === "object" && message !== null &&
+    "type" in message && message["type"] === "Init" &&
+    "trackCount" in message && typeof message["trackCount"] === "number"
+  );
 }
 /** Sent prior to a track being transmitted. */
 export interface Track {
-  type: 'Track'
-  trackId: string
+  type: "Track";
+  trackId: string;
 }
 // prettier-ignore
 export function checkTrack(message: unknown): message is Track {
   return (
-    typeof message === 'object' && message !== null && 
-    'type' in message && message['type'] === 'Track' &&
-    'trackId' in message && typeof message['trackId'] === 'string'
-  )
+    typeof message === "object" && message !== null &&
+    "type" in message && message["type"] === "Track" &&
+    "trackId" in message && typeof message["trackId"] === "string"
+  );
 }
 /** Sent on connection to indicate the number of tracks to transmit */
 export interface Done {
-  type: 'Done'
+  type: "Done";
 }
 // prettier-ignore
 export function checkDone(message: unknown): message is Done {
   return (
-    typeof message === 'object' && message !== null &&
-    'type' in message && message['type'] === 'Done'
-  )
+    typeof message === "object" && message !== null &&
+    "type" in message && message["type"] === "Done"
+  );
 }
-export type Message = Init | Track | Done
+export type Message = Init | Track | Done;
 
 export function checkMessage(message: unknown): message is Message {
-  return checkInit(message) || checkTrack(message) || checkDone(message)
+  return checkInit(message) || checkTrack(message) || checkDone(message);
 }

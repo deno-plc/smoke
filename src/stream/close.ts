@@ -28,9 +28,9 @@ THE SOFTWARE.
 
 /** Represents a resource that can be closed asynchronously */
 export interface Close {
-  close(): Promise<void>
+  close(): Promise<void>;
 }
 /** Represents a resource that can be closed synchronously */
 export interface CloseSync {
-  close(): void
+  close(): void;
 }

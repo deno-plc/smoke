@@ -26,22 +26,25 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import type * as Dispose from '../dispose/index.ts';
-import * as Events from '../events/index.ts';
+import type * as Dispose from "../dispose/index.ts";
+import * as Events from "../events/index.ts";
 
 export interface FileSystemCreatedEvent {
-  type: 'created';
+  type: "created";
   path: string;
 }
 export interface FileSystemDeletedEvent {
-  type: 'deleted';
+  type: "deleted";
   path: string;
 }
 export interface FileSystemUpdatedEvent {
-  type: 'updated';
+  type: "updated";
   path: string;
 }
-export type FileSystemEvent = FileSystemCreatedEvent | FileSystemDeletedEvent | FileSystemUpdatedEvent;
+export type FileSystemEvent =
+  | FileSystemCreatedEvent
+  | FileSystemDeletedEvent
+  | FileSystemUpdatedEvent;
 export class FileSystemEvents implements Dispose.Dispose {
   readonly #receiver: BroadcastChannel;
   readonly #sender: BroadcastChannel;
@@ -51,8 +54,14 @@ export class FileSystemEvents implements Dispose.Dispose {
     this.#events = new Map<string, Events.Event>();
     this.#sender = new BroadcastChannel(channel);
     this.#receiver = new BroadcastChannel(channel);
-    this.#receiver.addEventListener('messageerror', (event) => this.#onMessageError(event));
-    this.#receiver.addEventListener('message', (event) => this.#onMessage(event));
+    this.#receiver.addEventListener(
+      "messageerror",
+      (event) => this.#onMessageError(event),
+    );
+    this.#receiver.addEventListener(
+      "message",
+      (event) => this.#onMessage(event),
+    );
   }
   // ----------------------------------------------------------------
   // Dispose
@@ -72,12 +81,18 @@ export class FileSystemEvents implements Dispose.Dispose {
   public send(event: FileSystemEvent) {
     this.#sender.postMessage(event);
   }
-  public once(path: string, handler: (event: FileSystemEvent) => any): Events.EventListener {
+  public once(
+    path: string,
+    handler: (event: FileSystemEvent) => any,
+  ): Events.EventListener {
     if (!this.#events.has(path)) this.#events.set(path, new Events.Event());
     const event = this.#events.get(path)!;
     return event.on(handler);
   }
-  public on(path: string, handler: (event: FileSystemEvent) => any): Events.EventListener {
+  public on(
+    path: string,
+    handler: (event: FileSystemEvent) => any,
+  ): Events.EventListener {
     if (!this.#events.has(path)) this.#events.set(path, new Events.Event());
     const event = this.#events.get(path)!;
     return event.on(handler);

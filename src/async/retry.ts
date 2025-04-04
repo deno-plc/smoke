@@ -26,7 +26,7 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { delay as delayFunc } from './delay.ts';
+import { delay as delayFunc } from "./delay.ts";
 
 export type RetryFunction<T> = () => Promise<T> | T;
 
@@ -39,8 +39,15 @@ export interface RetryOptions {
   backoff?: number;
 }
 /** Runs the given function for the specified number of times. Returns last error if all attempts fail. */
-export async function retry<T>(options: RetryOptions, func: RetryFunction<T>): Promise<T> {
-  let [attempts, delay, backoff] = [options.attempts ?? 1, options.delay ?? 1, options.backoff ?? 1];
+export async function retry<T>(
+  options: RetryOptions,
+  func: RetryFunction<T>,
+): Promise<T> {
+  let [attempts, delay, backoff] = [
+    options.attempts ?? 1,
+    options.delay ?? 1,
+    options.backoff ?? 1,
+  ];
   let last_error: null | Error = null;
   for (let i = 0; i < attempts; i++) {
     try {

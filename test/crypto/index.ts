@@ -1,1 +1,1 @@
-import './crypto.ts';
+import "./crypto.ts";

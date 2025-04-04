@@ -1,1 +1,1 @@
-import './proxy.ts';
+import "./proxy.ts";

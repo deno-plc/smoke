@@ -1,17 +1,17 @@
-import { Channel } from '@sinclair/smoke';
-import { Test, Assert } from '../test/index.ts';
+import { Channel } from "@sinclair/smoke";
+import { Assert, Test } from "../test/index.ts";
 
-Test.describe('Channel:Select', () => {
-  Test.it('Should select on single channel', () => {
+Test.describe("Channel:Select", () => {
+  Test.it("Should select on single channel", () => {
     const channel = new Channel.Channel();
     Channel.select([channel]);
   });
-  Test.it('Should select on multiple channels', () => {
+  Test.it("Should select on multiple channels", () => {
     const channel0 = new Channel.Channel();
     const channel1 = new Channel.Channel();
     Channel.select([channel0, channel1]);
   });
-  Test.it('Should receive select from single channel', async () => {
+  Test.it("Should receive select from single channel", async () => {
     const channel = new Channel.Channel();
     const select = Channel.select([channel]);
     channel.send(0);
@@ -30,7 +30,7 @@ Test.describe('Channel:Select', () => {
     Assert.isEqual(value3, 3);
     Assert.isEqual(eof, null);
   });
-  Test.it('Should receive select from multiple channels', async () => {
+  Test.it("Should receive select from multiple channels", async () => {
     const channel0 = new Channel.Channel();
     const channel1 = new Channel.Channel();
     const channel2 = new Channel.Channel();
@@ -69,7 +69,7 @@ Test.describe('Channel:Select', () => {
     Assert.isEqual(value7, 7);
     Assert.isEqual(eof, null);
   });
-  Test.it('Should timeout if one of multiple channels never ends', async () => {
+  Test.it("Should timeout if one of multiple channels never ends", async () => {
     const channel0 = new Channel.Channel();
     const channel1 = new Channel.Channel();
     const channel2 = new Channel.Channel();
@@ -97,14 +97,16 @@ Test.describe('Channel:Select', () => {
     await select.next();
     await select.next();
     await select.next();
-    await Assert.shouldTimeout(async () => await select.next(), { timeout: 100 });
+    await Assert.shouldTimeout(async () => await select.next(), {
+      timeout: 100,
+    });
   });
-  Test.it('Should throw if single channel errors', async () => {
+  Test.it("Should throw if single channel errors", async () => {
     const channel = new Channel.Channel();
     const select = Channel.select([channel]);
     channel.send(0);
     channel.send(1);
-    channel.error(new Error('error'));
+    channel.error(new Error("error"));
     const value0 = await select.next();
     const value1 = await select.next();
     const value2 = await select.next().catch((error) => error);
@@ -112,13 +114,13 @@ Test.describe('Channel:Select', () => {
     Assert.isEqual(value1, 1);
     Assert.isInstanceOf(value2, Error);
   });
-  Test.it('Should throw if one of multiple channels errors', async () => {
+  Test.it("Should throw if one of multiple channels errors", async () => {
     const channel0 = new Channel.Channel();
     const channel1 = new Channel.Channel();
     const select = Channel.select([channel0, channel1]);
     channel0.send(0);
     channel1.send(1);
-    channel0.error(new Error('error'));
+    channel0.error(new Error("error"));
     const value0 = await select.next();
     const value1 = await select.next();
     const value2 = await select.next().catch((error) => error);

@@ -26,7 +26,7 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import type { Reporter } from './reporter.ts';
+import type { Reporter } from "./reporter.ts";
 
 export interface Options {
   reporter: Reporter;

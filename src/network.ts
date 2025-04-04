@@ -26,12 +26,12 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import type * as Dispose from './dispose/index.ts';
-import * as WebRtc from './webrtc/index.ts';
-import * as Http from './http/index.ts';
-import * as Hubs from './hubs/index.ts';
-import * as Media from './media/index.ts';
-import * as Net from './net/index.ts';
+import type * as Dispose from "./dispose/index.ts";
+import * as WebRtc from "./webrtc/index.ts";
+import * as Http from "./http/index.ts";
+import * as Hubs from "./hubs/index.ts";
+import * as Media from "./media/index.ts";
+import * as Net from "./net/index.ts";
 
 export interface NetworkOptions {
   hub?: Hubs.Hub;

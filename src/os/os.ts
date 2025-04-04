@@ -26,14 +26,17 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export type OsType = 'win32' | 'linux' | 'darwin' | 'unknown'
+export type OsType = "win32" | "linux" | "darwin" | "unknown";
 
 /** Returns the operating system type */
 export function type(): OsType {
-  const userAgent = globalThis.navigator.userAgent.toLowerCase()
+  const userAgent = globalThis.navigator.userAgent.toLowerCase();
   // prettier-ignore
-  return userAgent.includes('windows') ? 'win32' : 
-         userAgent.includes('linux') ? 'linux' : 
-         userAgent.includes('darwin') ? 'darwin' : 
-         'unknown'
+  return userAgent.includes("windows")
+    ? "win32"
+    : userAgent.includes("linux")
+    ? "linux"
+    : userAgent.includes("darwin")
+    ? "darwin"
+    : "unknown";
 }

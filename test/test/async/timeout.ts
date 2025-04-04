@@ -28,15 +28,21 @@ THE SOFTWARE.
 
 export interface TimeoutOptions {
   /** The number of milliseconds before timeout */
-  timeout: number
+  timeout: number;
   /** An optional error to throw on timeout */
-  error?: Error
+  error?: Error;
 }
 
 /** Runs the given callback and throws if timeout */
-export async function timeout<T = unknown>(promise: Promise<T>, options: TimeoutOptions) {
-  const error = options.error ?? new Error(`Promise did not resolve after ${options.timeout} milliseconds`)
-  const timeout = new Promise<T>((_, reject) => setTimeout(() => reject(error), options.timeout))
-  const result = await Promise.race([promise, timeout])
-  return result as T
+export async function timeout<T = unknown>(
+  promise: Promise<T>,
+  options: TimeoutOptions,
+) {
+  const error = options.error ??
+    new Error(`Promise did not resolve after ${options.timeout} milliseconds`);
+  const timeout = new Promise<T>((_, reject) =>
+    setTimeout(() => reject(error), options.timeout)
+  );
+  const result = await Promise.race([promise, timeout]);
+  return result as T;
 }

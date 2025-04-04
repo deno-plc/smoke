@@ -26,19 +26,21 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { Channel } from './channel.ts';
-import type { Receiver } from './receiver.ts';
+import { Channel } from "./channel.ts";
+import type { Receiver } from "./receiver.ts";
 
 // prettier-ignore
 type ReceiverUnwrap<T> = T extends Receiver<infer U> ? U : never;
 // prettier-ignore
-type ReceiverUnion<T extends Receiver[], Acc = never> =
-  T extends [infer L extends Receiver, ...infer R extends Receiver[]]
+type ReceiverUnion<T extends Receiver[], Acc = never> = T extends
+  [infer L extends Receiver, ...infer R extends Receiver[]]
   ? ReceiverUnion<R, Acc | ReceiverUnwrap<L>>
   : Acc;
 
 // Creates combined receiver channel that selects from the given receivers
-export function select<T extends Receiver[], U = ReceiverUnion<T>>(receivers: [...T]): Receiver<U> {
+export function select<T extends Receiver[], U = ReceiverUnion<T>>(
+  receivers: [...T],
+): Receiver<U> {
   async function receive(sender: Channel<any>, iterator: AsyncIterable<any>) {
     for await (const value of iterator) {
       await sender.send(value);

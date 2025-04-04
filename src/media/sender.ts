@@ -26,13 +26,13 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Async from '../async/index.ts';
-import * as Events from '../events/index.ts';
-import * as Buffer from '../buffer/index.ts';
-import type * as WebRtc from '../webrtc/index.ts';
-import type * as Net from '../net/index.ts';
-import type * as Stream from '../stream/index.ts';
-import type * as Protocol from './protocol.ts';
+import * as Async from "../async/index.ts";
+import * as Events from "../events/index.ts";
+import * as Buffer from "../buffer/index.ts";
+import type * as WebRtc from "../webrtc/index.ts";
+import type * as Net from "../net/index.ts";
+import type * as Stream from "../stream/index.ts";
+import type * as Protocol from "./protocol.ts";
 export interface MediaSenderOptions {
   local: Net.Address;
   remote: Net.Address;
@@ -47,7 +47,12 @@ export class MediaSender {
   readonly #mediastream: MediaStream;
   readonly #senders: RTCRtpSender[];
   #closed: boolean;
-  constructor(webrtc: WebRtc.WebRtcModule, stream: Stream.FrameDuplex, mediastream: MediaStream, options: MediaSenderOptions) {
+  constructor(
+    webrtc: WebRtc.WebRtcModule,
+    stream: Stream.FrameDuplex,
+    mediastream: MediaStream,
+    options: MediaSenderOptions,
+  ) {
     this.#barrier = new Async.Barrier({ paused: true });
     this.#events = new Events.Events();
     this.#stream = stream;
@@ -78,9 +83,15 @@ export class MediaSender {
   // Events
   // ----------------------------------------------------------------
   /** Subscribes to message events */
-  public on(event: 'message', handler: Events.EventHandler<MessageEvent>): Events.EventListener;
+  public on(
+    event: "message",
+    handler: Events.EventHandler<MessageEvent>,
+  ): Events.EventListener;
   /** Subscribes to close events */
-  public on(event: 'close', handler: Events.EventHandler<null>): Events.EventListener;
+  public on(
+    event: "close",
+    handler: Events.EventHandler<null>,
+  ): Events.EventListener;
   /** Subscribes to events */
   public on(event: string, handler: Events.EventHandler): Events.EventListener {
     return this.#events.on(event, handler);
@@ -110,7 +121,7 @@ export class MediaSender {
   #decodeAsMessageEvent(buffer: Uint8Array): MessageEvent | null {
     try {
       const data = JSON.parse(Buffer.decode(buffer));
-      return new MessageEvent('message', { data });
+      return new MessageEvent("message", { data });
     } catch {
       return null;
     }
@@ -119,7 +130,7 @@ export class MediaSender {
   // Asserts
   // ----------------------------------------------------------------
   #assertNotClosed() {
-    if (this.#closed) throw Error('Sender transport is closed');
+    if (this.#closed) throw Error("Sender transport is closed");
   }
   // ----------------------------------------------------------------
   // Internal
@@ -127,26 +138,29 @@ export class MediaSender {
   async #readInternal() {
     for await (const buffer of this.#stream) {
       const event = this.#decodeAsMessageEvent(buffer);
-      this.#events.send('message', event);
+      this.#events.send("message", event);
     }
     this.#closed = true;
-    this.#events.send('close', null);
+    this.#events.send("close", null);
   }
   // ----------------------------------------------------------------
   // Protocol: Sender
   // ----------------------------------------------------------------
   async #sendInit(trackCount: number) {
-    const message: Protocol.Init = { type: 'Init', trackCount };
+    const message: Protocol.Init = { type: "Init", trackCount };
     await this.#stream.write(Buffer.encode(JSON.stringify(message)));
   }
   async #sendTrack(track: MediaStreamTrack) {
-    const message: Protocol.Track = { type: 'Track', trackId: track.id };
+    const message: Protocol.Track = { type: "Track", trackId: track.id };
     await this.#stream.write(Buffer.encode(JSON.stringify(message)));
-    const [_, sender] = await this.#webrtc.addTrack(this.#remote.hostname, track);
+    const [_, sender] = await this.#webrtc.addTrack(
+      this.#remote.hostname,
+      track,
+    );
     this.#senders.push(sender);
   }
   async #sendDone() {
-    const message: Protocol.Done = { type: 'Done' };
+    const message: Protocol.Done = { type: "Done" };
     await this.#stream.write(Buffer.encode(JSON.stringify(message)));
   }
   async #sendTracks() {

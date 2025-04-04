@@ -26,7 +26,7 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Buffer from '../../buffer/index.ts';
+import * as Buffer from "../../buffer/index.ts";
 
 export enum MessageType {
   MessageText = 0,
@@ -42,14 +42,18 @@ const PONG = new Uint8Array([MessageType.Pong]);
 // ------------------------------------------------------------------
 // EncodeMessage
 // ------------------------------------------------------------------
-function encodeMessageDataType(value: string | ArrayBufferLike | ArrayBufferView): Uint8Array {
+function encodeMessageDataType(
+  value: string | ArrayBufferLike | ArrayBufferView,
+): Uint8Array {
   if (value instanceof Uint8Array) return value;
   if (value instanceof ArrayBuffer) return new Uint8Array(value);
-  if (typeof value === 'string') return Buffer.encode(value);
-  throw Error('Unable to send data type');
+  if (typeof value === "string") return Buffer.encode(value);
+  throw Error("Unable to send data type");
 }
-export function encodeMessage(value: string | ArrayBufferLike | ArrayBufferView) {
-  const type = typeof value === 'string' ? MESSAGE_TEXT : MESSAGE_DATA;
+export function encodeMessage(
+  value: string | ArrayBufferLike | ArrayBufferView,
+) {
+  const type = typeof value === "string" ? MESSAGE_TEXT : MESSAGE_DATA;
   const data = encodeMessageDataType(value);
   return Buffer.concat([type, data]);
 }
@@ -71,7 +75,7 @@ export function encodePong(value: string | ArrayBufferLike | ArrayBufferView) {
 // DecodeAny
 // ------------------------------------------------------------------
 export function decodeAny(value: Uint8Array): [MessageType, ArrayBuffer] {
-  if (value.length === 0) throw Error('Unable to encode empty buffer');
+  if (value.length === 0) throw Error("Unable to encode empty buffer");
   const [type, data] = [value[0], value.slice(1)];
   switch (type) {
     case MessageType.MessageData:
@@ -83,6 +87,6 @@ export function decodeAny(value: Uint8Array): [MessageType, ArrayBuffer] {
     case MessageType.Pong:
       return [MessageType.Pong, data.buffer];
     default:
-      throw Error('Unknown protocol type');
+      throw Error("Unknown protocol type");
   }
 }

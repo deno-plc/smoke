@@ -26,13 +26,16 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { ObjectStore } from './object-store.ts';
-import { Transaction } from './transaction.ts';
+import { ObjectStore } from "./object-store.ts";
+import { Transaction } from "./transaction.ts";
 
 export class Database {
-  constructor(private readonly database: IDBDatabase) { }
+  constructor(private readonly database: IDBDatabase) {}
   /** Creates a new object store with the given name and options and returns a new IDBObjectStore. Throws a "InvalidStateError" DOMException if not called within an upgrade transaction. */
-  public createObjectStore<T>(name: string, options?: IDBObjectStoreParameters | undefined): ObjectStore<T> {
+  public createObjectStore<T>(
+    name: string,
+    options?: IDBObjectStoreParameters | undefined,
+  ): ObjectStore<T> {
     return new ObjectStore(this.database.createObjectStore(name, options));
   }
   /** Deletes the object store with the given name. Throws a "InvalidStateError" DOMException if not called within an upgrade transaction. */
@@ -54,7 +57,10 @@ export class Database {
     return this.database.version;
   }
   /** Returns a new transaction with the given mode ("readonly" or "readwrite") and scope which can be a single object store name or an array of names. */
-  public transaction<Names extends string[]>(storeNames: [...Names], mode?: IDBTransactionMode | undefined) {
+  public transaction<Names extends string[]>(
+    storeNames: [...Names],
+    mode?: IDBTransactionMode | undefined,
+  ) {
     return new Transaction<Names>(this.database.transaction(storeNames, mode));
   }
 }

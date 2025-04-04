@@ -26,7 +26,7 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { TransformChannel } from './transform.ts';
+import { TransformChannel } from "./transform.ts";
 
 export class Channel<T = unknown> extends TransformChannel<T, T> {
   constructor() {

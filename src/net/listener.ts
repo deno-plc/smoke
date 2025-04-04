@@ -26,9 +26,9 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import type * as Dispose from '../dispose/index.ts';
-import type * as WebRtc from '../webrtc/index.ts';
-import { NetSocket } from './socket.ts';
+import type * as Dispose from "../dispose/index.ts";
+import type * as WebRtc from "../webrtc/index.ts";
+import { NetSocket } from "./socket.ts";
 
 export type NetListenerAcceptCallback = (socket: NetSocket) => any;
 
@@ -38,8 +38,15 @@ export interface NetListenerOptions {
 export class NetListener implements Dispose.Dispose {
   readonly #listener: WebRtc.WebRtcDataChannelListener;
   readonly #accept: NetListenerAcceptCallback;
-  constructor(webrtc: WebRtc.WebRtcModule, options: NetListenerOptions, accept: NetListenerAcceptCallback) {
-    this.#listener = webrtc.listen({ port: options.port }, (peer, datachannel) => this.#onDataChannel(peer, datachannel));
+  constructor(
+    webrtc: WebRtc.WebRtcModule,
+    options: NetListenerOptions,
+    accept: NetListenerAcceptCallback,
+  ) {
+    this.#listener = webrtc.listen(
+      { port: options.port },
+      (peer, datachannel) => this.#onDataChannel(peer, datachannel),
+    );
     this.#accept = accept;
   }
   // -----------------------------------------------------------------

@@ -26,6 +26,6 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './media.ts';
-export * from './receiver.ts';
-export * from './sender.ts';
+export * from "./media.ts";
+export * from "./receiver.ts";
+export * from "./sender.ts";

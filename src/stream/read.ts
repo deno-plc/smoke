@@ -26,7 +26,7 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import type { Close, CloseSync } from './close.ts';
+import type { Close, CloseSync } from "./close.ts";
 
 /** Represents a resource that can be read asynchronously */
 export interface Read<T = unknown> extends Close {

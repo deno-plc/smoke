@@ -26,13 +26,17 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Guard from '../guard/index.ts';
+import * as Guard from "../guard/index.ts";
 
 // --------------------------------------------------------------------------
 // Equality
 // --------------------------------------------------------------------------
 function EqualsTypedArray(left: Guard.TypedArrayType, right: unknown): any {
-  if (!Guard.isTypedArray(right) || left.length !== right.length || Object.getPrototypeOf(left).constructor.name !== Object.getPrototypeOf(right).constructor.name) return false;
+  if (
+    !Guard.isTypedArray(right) || left.length !== right.length ||
+    Object.getPrototypeOf(left).constructor.name !==
+      Object.getPrototypeOf(right).constructor.name
+  ) return false;
   return left.every((value, index) => Equal(value, right[index]));
 }
 function EqualsDate(left: Date, right: unknown): any {
@@ -66,9 +70,17 @@ function EqualsArray(left: Guard.ArrayType, right: unknown): any {
   return left.every((value, index) => Equal(value, right[index]));
 }
 function EqualsObject(left: Guard.ObjectType, right: unknown): boolean {
-  if (!Guard.isStandardObject(right) || Guard.isInstanceObject(right)) return false;
-  const leftKeys = [...Object.keys(left), ...Object.getOwnPropertySymbols(left)];
-  const rightKeys = [...Object.keys(right), ...Object.getOwnPropertySymbols(right)];
+  if (!Guard.isStandardObject(right) || Guard.isInstanceObject(right)) {
+    return false;
+  }
+  const leftKeys = [
+    ...Object.keys(left),
+    ...Object.getOwnPropertySymbols(left),
+  ];
+  const rightKeys = [
+    ...Object.keys(right),
+    ...Object.getOwnPropertySymbols(right),
+  ];
   if (leftKeys.length !== rightKeys.length) return false;
   return leftKeys.every((key) => Equal(left[key], right[key]));
 }
@@ -82,13 +94,20 @@ function EqualsValueType(left: Guard.ValueType, right: unknown): any {
 export function Equal<T>(left: T, right: unknown): right is T {
   // prettier-ignore
   return (
-    Guard.isTypedArray(left) ? EqualsTypedArray(left, right) :
-      Guard.isDate(left) ? EqualsDate(left, right) :
-        Guard.isMap(left) ? EqualsMap(left, right) :
-          Guard.isSet(left) ? EqualsSet(left, right) :
-            Guard.isArray(left) ? EqualsArray(left, right) :
-              Guard.isStandardObject(left) ? EqualsObject(left, right) :
-                Guard.isValueType(left) ? EqualsValueType(left, right) :
-                  false
+    Guard.isTypedArray(left)
+      ? EqualsTypedArray(left, right)
+      : Guard.isDate(left)
+      ? EqualsDate(left, right)
+      : Guard.isMap(left)
+      ? EqualsMap(left, right)
+      : Guard.isSet(left)
+      ? EqualsSet(left, right)
+      : Guard.isArray(left)
+      ? EqualsArray(left, right)
+      : Guard.isStandardObject(left)
+      ? EqualsObject(left, right)
+      : Guard.isValueType(left)
+      ? EqualsValueType(left, right)
+      : false
   );
 }

@@ -26,14 +26,14 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Async from './async/index.ts';
-import { DescribeContext } from './describe.ts';
-import type { Options } from './options.ts';
-import { DocumentReporter } from './reporter.ts';
-import type { Result } from './result.ts';
-import { ItContext } from './it.ts';
+import * as Async from "./async/index.ts";
+import { DescribeContext } from "./describe.ts";
+import type { Options } from "./options.ts";
+import { DocumentReporter } from "./reporter.ts";
+import type { Result } from "./result.ts";
+import { ItContext } from "./it.ts";
 
-let current = new DescribeContext('root');
+let current = new DescribeContext("root");
 
 export function describe(name: string, callback: Function) {
   let prev = current;
@@ -63,7 +63,7 @@ export function after(callback: Function) {
 }
 function resolveOptions<T extends Partial<Options>>(options: T): Options {
   return {
-    filter: options.filter ?? '',
+    filter: options.filter ?? "",
     reporter: options.reporter ?? new DocumentReporter(),
   };
 }

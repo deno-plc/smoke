@@ -26,4 +26,4 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export type EventHandler<T = any> = (value: T) => any
+export type EventHandler<T = any> = (value: T) => any;

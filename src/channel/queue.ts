@@ -26,7 +26,7 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { Deferred } from '../async/deferred.ts';
+import { Deferred } from "../async/deferred.ts";
 
 /** Asynchronous queue that supports asynchronous awaiting values */
 export class Queue<T> {

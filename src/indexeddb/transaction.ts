@@ -26,11 +26,13 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { Deferred } from '../async/deferred.ts';
-import { Database } from './database.ts';
-import { ObjectStore } from './object-store.ts';
+import { Deferred } from "../async/deferred.ts";
+import { Database } from "./database.ts";
+import { ObjectStore } from "./object-store.ts";
 
-export type StoreName<Names extends readonly string[]> = Names extends string ? Names : { [K in keyof Names]: Names[K] }[number];
+export type StoreName<Names extends readonly string[]> = Names extends string
+  ? Names
+  : { [K in keyof Names]: Names[K] }[number];
 
 export class Transaction<Names extends readonly string[]> {
   private readonly _aborted: Deferred<void>;
@@ -40,9 +42,15 @@ export class Transaction<Names extends readonly string[]> {
     this._aborted = new Deferred<void>();
     this._completed = new Deferred<void>();
     this._errored = new Deferred<void>();
-    this.transaction.addEventListener('abort', () => this._aborted.resolve());
-    this.transaction.addEventListener('complete', () => this._completed.resolve());
-    this.transaction.addEventListener('error', (event) => this._errored.reject(event));
+    this.transaction.addEventListener("abort", () => this._aborted.resolve());
+    this.transaction.addEventListener(
+      "complete",
+      () => this._completed.resolve(),
+    );
+    this.transaction.addEventListener(
+      "error",
+      (event) => this._errored.reject(event),
+    );
   }
   public get aborted() {
     return this._aborted.promise();

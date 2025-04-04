@@ -26,38 +26,38 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Guard from './guard/index.ts';
+import * as Guard from "./guard/index.ts";
 
 export namespace ValueFormatter {
   function formatTypedArray(value: Guard.TypedArrayType): string {
     return Guard.isInt8Array(value)
       ? `Int8Array { length: ${value.length} }`
       : Guard.isUint8Array(value)
-        ? `Uint8Array { length: ${value.length} }`
-        : Guard.isUint8ClampedArray(value)
-          ? `Uint8ClampedArray { length: ${value.length} }`
-          : Guard.isInt16Array(value)
-            ? `Int16Array { length: ${value.length} }`
-            : Guard.isUint16Array(value)
-              ? `Uint16Array { length: ${value.length} }`
-              : Guard.isInt32Array(value)
-                ? `Int32Array { length: ${value.length} }`
-                : Guard.isUint32Array(value)
-                  ? `Uint32Array { length: ${value.length} }`
-                  : Guard.isFloat32Array(value)
-                    ? `Float32Array { length: ${value.length} }`
-                    : Guard.isFloat64Array(value)
-                      ? `Float64Array { length: ${value.length} }`
-                      : Guard.isBigInt64Array(value)
-                        ? `BigInt64Array { length: ${value.length} }`
-                        : Guard.isBigUint64Array(value)
-                          ? `BigUint64Array { length: ${value.length} }`
-                          : (() => {
-                            throw new Error('Unknown typed array');
-                          })();
+      ? `Uint8Array { length: ${value.length} }`
+      : Guard.isUint8ClampedArray(value)
+      ? `Uint8ClampedArray { length: ${value.length} }`
+      : Guard.isInt16Array(value)
+      ? `Int16Array { length: ${value.length} }`
+      : Guard.isUint16Array(value)
+      ? `Uint16Array { length: ${value.length} }`
+      : Guard.isInt32Array(value)
+      ? `Int32Array { length: ${value.length} }`
+      : Guard.isUint32Array(value)
+      ? `Uint32Array { length: ${value.length} }`
+      : Guard.isFloat32Array(value)
+      ? `Float32Array { length: ${value.length} }`
+      : Guard.isFloat64Array(value)
+      ? `Float64Array { length: ${value.length} }`
+      : Guard.isBigInt64Array(value)
+      ? `BigInt64Array { length: ${value.length} }`
+      : Guard.isBigUint64Array(value)
+      ? `BigUint64Array { length: ${value.length} }`
+      : (() => {
+        throw new Error("Unknown typed array");
+      })();
   }
   function formatArray(value: unknown[]): string {
-    const elements: string = value.map((value) => format(value)).join(', ');
+    const elements: string = value.map((value) => format(value)).join(", ");
     return `Array { length: ${value.length} } [${elements}]`;
   }
   function formatInstanceObject(value: Guard.ObjectType) {
@@ -67,6 +67,14 @@ export namespace ValueFormatter {
     return JSON.stringify(value);
   }
   export function format(value: unknown): string {
-    return Guard.isTypedArray(value) ? formatTypedArray(value) : Guard.isArray(value) ? formatArray(value) : Guard.isInstanceObject(value) ? formatInstanceObject(value) : Guard.isStandardObject(value) ? formatObject(value) : `${value}`;
+    return Guard.isTypedArray(value)
+      ? formatTypedArray(value)
+      : Guard.isArray(value)
+      ? formatArray(value)
+      : Guard.isInstanceObject(value)
+      ? formatInstanceObject(value)
+      : Guard.isStandardObject(value)
+      ? formatObject(value)
+      : `${value}`;
   }
 }

@@ -26,8 +26,8 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './options.ts';
-export * from './result.ts';
-export * as Assert from './assert/index.ts';
-export * as Hash from './hash/index.ts';
-export * as Test from './test.ts';
+export * from "./options.ts";
+export * from "./result.ts";
+export * as Assert from "./assert/index.ts";
+export * as Hash from "./hash/index.ts";
+export * as Test from "./test.ts";

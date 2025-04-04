@@ -27,6 +27,6 @@ THE SOFTWARE.
 ---------------------------------------------------------------------------*/
 
 export interface Dispose {
-  [Symbol.dispose](): void
-  dispose(): void
+  [Symbol.dispose](): void;
+  dispose(): void;
 }

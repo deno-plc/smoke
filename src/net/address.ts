@@ -27,6 +27,6 @@ THE SOFTWARE.
 ---------------------------------------------------------------------------*/
 
 export interface Address {
-  hostname: string
-  port: number
+  hostname: string;
+  port: number;
 }

@@ -26,8 +26,8 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Protocol from '../protocol/index.ts';
-import * as Path from '../../path/index.ts';
+import * as Protocol from "../protocol/index.ts";
+import * as Path from "../../path/index.ts";
 // ------------------------------------------------------------------
 // Timeout
 // ------------------------------------------------------------------
@@ -38,20 +38,27 @@ function timeout(reject: Function, message: string) {
 // Registration
 // ------------------------------------------------------------------
 // prettier-ignore
-async function getCurrentRegistration(workerPath: string): Promise<ServiceWorkerRegistration | undefined> {
+async function getCurrentRegistration(
+  workerPath: string,
+): Promise<ServiceWorkerRegistration | undefined> {
   const registrations = await navigator.serviceWorker.getRegistrations();
   const basename = Path.basename(workerPath);
   return registrations.find((registration) => {
     return (
-      (registration.installing && registration.installing.scriptURL.includes(basename)) ||
+      (registration.installing &&
+        registration.installing.scriptURL.includes(basename)) ||
       (registration.active && registration.active.scriptURL.includes(basename))
     );
   });
 }
-async function getNewRegistration(workerPath: string): Promise<ServiceWorkerRegistration> {
-  return await navigator.serviceWorker.register(workerPath, { scope: '/' });
+async function getNewRegistration(
+  workerPath: string,
+): Promise<ServiceWorkerRegistration> {
+  return await navigator.serviceWorker.register(workerPath, { scope: "/" });
 }
-async function getRegistration(workerPath: string): Promise<ServiceWorkerRegistration> {
+async function getRegistration(
+  workerPath: string,
+): Promise<ServiceWorkerRegistration> {
   const current = await getCurrentRegistration(workerPath);
   if (current) return current;
   return await getNewRegistration(workerPath);
@@ -59,12 +66,14 @@ async function getRegistration(workerPath: string): Promise<ServiceWorkerRegistr
 // ------------------------------------------------------------------
 // ServiceWorker
 // ------------------------------------------------------------------
-async function waitForServiceWorkerActivate(serviceWorker: ServiceWorker): Promise<ServiceWorker> {
-  if (serviceWorker.state === 'activated') return serviceWorker;
+async function waitForServiceWorkerActivate(
+  serviceWorker: ServiceWorker,
+): Promise<ServiceWorker> {
+  if (serviceWorker.state === "activated") return serviceWorker;
   return new Promise((resolve, reject) => {
-    timeout(reject, 'Timeout waiting for Service Worker to activate');
-    serviceWorker.addEventListener('statechange', () => {
-      if (serviceWorker.state !== 'activated') return;
+    timeout(reject, "Timeout waiting for Service Worker to activate");
+    serviceWorker.addEventListener("statechange", () => {
+      if (serviceWorker.state !== "activated") return;
       resolve(serviceWorker);
     });
   });
@@ -72,9 +81,13 @@ async function waitForServiceWorkerActivate(serviceWorker: ServiceWorker): Promi
 /** Attaches this page to a service worker */
 async function resolveWorkerInstance(workerPath: string) {
   const registration = await getRegistration(workerPath);
-  if (registration.active) return waitForServiceWorkerActivate(registration.active);
-  if (registration.installing) return waitForServiceWorkerActivate(registration.installing);
-  throw Error('Registration has no active or installing workers');
+  if (registration.active) {
+    return waitForServiceWorkerActivate(registration.active);
+  }
+  if (registration.installing) {
+    return waitForServiceWorkerActivate(registration.installing);
+  }
+  throw Error("Registration has no active or installing workers");
 }
 // ------------------------------------------------------------------
 // NegotiatedServiceWorker
@@ -90,14 +103,20 @@ export interface ServiceWorkerResponse {
 }
 /** Attaches this page to a service worker and provisions a messaging channel */
 // prettier-ignore
-export async function resolveWorker(options: ServiceWorkerRequest): Promise<ServiceWorkerResponse> {
+export async function resolveWorker(
+  options: ServiceWorkerRequest,
+): Promise<ServiceWorkerResponse> {
   const worker = await resolveWorkerInstance(options.workerPath);
   const { port1, port2 } = new MessageChannel();
   port1.start();
   worker.postMessage({ port: port2 }, [port2]);
-  port1.postMessage({ type: 'RegisterRequest', path: options.path } as Protocol.RegisterRequest);
-  return new Promise((resolve) => port1.addEventListener('message', (event) => {
-    Protocol.assertRegisterResponse(event.data);
-    resolve({ worker, port: port1, clientId: event.data.clientId });
-  }, { once: true }));
+  port1.postMessage(
+    { type: "RegisterRequest", path: options.path } as Protocol.RegisterRequest,
+  );
+  return new Promise((resolve) =>
+    port1.addEventListener("message", (event) => {
+      Protocol.assertRegisterResponse(event.data);
+      resolve({ worker, port: port1, clientId: event.data.clientId });
+    }, { once: true })
+  );
 }

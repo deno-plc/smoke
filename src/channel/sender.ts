@@ -28,9 +28,9 @@ THE SOFTWARE.
 
 export interface Sender<T> {
   /** Sends the given value to this channel. If channel has ended no action. */
-  send(value: T): void
+  send(value: T): void;
   /** Sends the given error to this channel causing the receiver to throw on next(). If channel has ended no action. */
-  error(error: Error): void
+  error(error: Error): void;
   /** Ends this channel. */
-  end(): void
+  end(): void;
 }

@@ -26,7 +26,7 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import type { Options } from './options.ts';
+import type { Options } from "./options.ts";
 
 export class ItContext {
   readonly #name: string;
@@ -71,7 +71,7 @@ export class ItContext {
     try {
       await this.#callback();
     } catch (error) {
-      this.#error = error instanceof Error ? error : new Error('Unknown error');
+      this.#error = error instanceof Error ? error : new Error("Unknown error");
     } finally {
       this.#elapsed = performance.now() - start;
       this.#completed = true;

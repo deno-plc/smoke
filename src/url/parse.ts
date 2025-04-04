@@ -28,98 +28,98 @@ THE SOFTWARE.
 
 export interface UrlObject {
   /** The auth (e.g rest://[auth]@domain.com) */
-  auth: string | null
+  auth: string | null;
   /** The hash (e.g rest://domain.com[#123] */
-  hash: string | null
+  hash: string | null;
   /** The hostname exclusive of the port. */
-  host: string | null
+  host: string | null;
   /** The hostname inclusive of the port. */
-  hostname: string | null
+  hostname: string | null;
   /** The full URL given to the parse function. */
-  href: string | null
+  href: string | null;
   /** The full path (e.g rest://domain.com/[path?a=10#foo]) */
-  path: string | null
+  path: string | null;
   /** The path component of the URL (e.g rest://domain.com[/path]?a=10#foo) */
-  pathname: string | null
+  pathname: string | null;
   /** The port. */
-  port: string | null
+  port: string | null;
   /** The protocol */
-  protocol: string | null
+  protocol: string | null;
   /** The query excluding the ? */
-  query: string | null
+  query: string | null;
   /** The query including the ? */
-  search: string | null
+  search: string | null;
 }
 /** Parses the `protocol` from this `href`. Throws if error. */
 function parseProtocol(href: string): [string | null, string] {
   for (let i = 0; i < href.length; i++) {
-    if (href.charAt(i) === ':') {
-      const next0 = href.charAt(i + 1)
-      const next1 = href.charAt(i + 2)
-      if (next0 === '/' && next1 === '/') {
-        return [href.slice(0, i + 1), href.slice(i + 3)]
+    if (href.charAt(i) === ":") {
+      const next0 = href.charAt(i + 1);
+      const next1 = href.charAt(i + 2);
+      if (next0 === "/" && next1 === "/") {
+        return [href.slice(0, i + 1), href.slice(i + 3)];
       }
     }
   }
-  return [null, href]
+  return [null, href];
 }
 /** Parses the `auth` from `protocol` remainder. Returns `null` on not found. */
 function parseAuth(s: string): [string | null, string] {
   for (let i = 0; i < s.length; i++) {
-    if (s.charAt(i) === '/') {
-      return [null, s]
+    if (s.charAt(i) === "/") {
+      return [null, s];
     }
-    if (s.charAt(i) === '@') {
-      return [s.slice(0, i), s.slice(i + 1)]
+    if (s.charAt(i) === "@") {
+      return [s.slice(0, i), s.slice(i + 1)];
     }
   }
-  return [null, s]
+  return [null, s];
 }
 /** Parses the `hostname`. Terminates at `/` | `?` | `#` */
 function parseHostname(s: string): [string, string] {
   for (let i = 0; i < s.length; i++) {
-    const next = s.charAt(i)
-    if (next === '/' || next === '?' || next === '#') {
-      return [s.slice(0, i), s.slice(i)]
+    const next = s.charAt(i);
+    if (next === "/" || next === "?" || next === "#") {
+      return [s.slice(0, i), s.slice(i)];
     }
   }
-  return [s, '']
+  return [s, ""];
 }
 /** Parses the `host` form the `hostname`. */
 function parseHost(hostname: string): [string, string] {
   for (let i = 0; i < hostname.length; i++) {
-    const next = hostname.charAt(i)
-    if (next === ':') {
-      return [hostname.slice(0, i), hostname.slice(i)]
+    const next = hostname.charAt(i);
+    if (next === ":") {
+      return [hostname.slice(0, i), hostname.slice(i)];
     }
   }
-  return [hostname, '']
+  return [hostname, ""];
 }
 /** Parses the `port` form the `hostname`. Returns `null` on not found. */
 function parsePort(hostname: string): [string | null, string] {
   for (let i = 0; i < hostname.length; i++) {
-    if (hostname.charAt(i) === ':') {
-      return [hostname.slice(i + 1), '']
+    if (hostname.charAt(i) === ":") {
+      return [hostname.slice(i + 1), ""];
     }
   }
-  return [null, hostname]
+  return [null, hostname];
 }
 /** Parses the `path` component. Adds forward '/' on path if non found. */
 function parsePath(s: string): [string, string] {
   if (s.length === 0) {
-    return ['/', '']
+    return ["/", ""];
   }
-  return [s, '']
+  return [s, ""];
 }
 /** Parses the `pathname` from the `path` component.*/
 function parsePathname(path: string): [string, string] {
   for (let i = 0; i < path.length; i++) {
-    const next = path.charAt(i)
-    if (next === '?' || next === '#') {
-      return [path.slice(0, i), path.slice(i)]
+    const next = path.charAt(i);
+    if (next === "?" || next === "#") {
+      return [path.slice(0, i), path.slice(i)];
     }
   }
-  return [path, '']
+  return [path, ""];
 }
 /**
  * Parses the `hash` from the `path` component. Returns left side as
@@ -128,57 +128,81 @@ function parsePathname(path: string): [string, string] {
  */
 function parseHash(path: string): [string | null, string] {
   for (let i = 0; i < path.length; i++) {
-    const next = path.charAt(i)
-    if (next === '#') {
-      return [path.slice(i), path.slice(0, i)]
+    const next = path.charAt(i);
+    if (next === "#") {
+      return [path.slice(i), path.slice(0, i)];
     }
   }
-  return [null, path]
+  return [null, path];
 }
 /** Parses the `search` from this path. */
 function parseSearch(path: string): [string, string] {
   for (let i = 0; i < path.length; i++) {
-    const next = path.charAt(i)
-    if (next === '?') {
-      return [path.slice(i), path.slice(0, i)]
+    const next = path.charAt(i);
+    if (next === "?") {
+      return [path.slice(i), path.slice(0, i)];
     }
   }
-  return ['', path]
+  return ["", path];
 }
 /** Parses the `query` from this `search`. */
 function parseQuery(search: string): [string, string] {
   for (let i = 0; i < search.length; i++) {
-    const next = search.charAt(i)
-    if (next === '?') {
-      return [search.slice(i + 1), search.slice(0, i)]
+    const next = search.charAt(i);
+    if (next === "?") {
+      return [search.slice(i + 1), search.slice(0, i)];
     }
   }
-  return ['', search]
+  return ["", search];
 }
 /** Parses this `href` as a UrlObject. Will throw on error. */
 export function parse(href: string): UrlObject {
-  const [protocol, r0] = parseProtocol(href)
+  const [protocol, r0] = parseProtocol(href);
   if (protocol) {
-    const [auth, r1] = parseAuth(r0)
-    const [hostname, r2] = parseHostname(r1)
-    const [host, r3] = parseHost(hostname)
-    const [port, r4] = parsePort(hostname)
-    const [path, r5] = parsePath(r2)
-    const [pathname, r6] = parsePathname(path)
-    const [hash, r7] = parseHash(path)
-    const [search, r8] = parseSearch(r7) // left side of hash
-    const [query, r9] = parseQuery(search)
-    return { protocol, auth, hash, host, hostname, href, path, pathname, port, query, search }
+    const [auth, r1] = parseAuth(r0);
+    const [hostname, r2] = parseHostname(r1);
+    const [host, r3] = parseHost(hostname);
+    const [port, r4] = parsePort(hostname);
+    const [path, r5] = parsePath(r2);
+    const [pathname, r6] = parsePathname(path);
+    const [hash, r7] = parseHash(path);
+    const [search, r8] = parseSearch(r7); // left side of hash
+    const [query, r9] = parseQuery(search);
+    return {
+      protocol,
+      auth,
+      hash,
+      host,
+      hostname,
+      href,
+      path,
+      pathname,
+      port,
+      query,
+      search,
+    };
   } else {
-    const auth = null
-    const hostname = null
-    const host = null
-    const port = null
-    const [path, r5] = parsePath(r0)
-    const [pathname, r6] = parsePathname(path)
-    const [hash, r7] = parseHash(path)
-    const [search, r8] = parseSearch(r7) // left side of hash
-    const [query, r9] = parseQuery(search)
-    return { protocol, auth, hash, host, hostname, href, path, pathname, port, query, search }
+    const auth = null;
+    const hostname = null;
+    const host = null;
+    const port = null;
+    const [path, r5] = parsePath(r0);
+    const [pathname, r6] = parsePathname(path);
+    const [hash, r7] = parseHash(path);
+    const [search, r8] = parseSearch(r7); // left side of hash
+    const [query, r9] = parseQuery(search);
+    return {
+      protocol,
+      auth,
+      hash,
+      host,
+      hostname,
+      href,
+      path,
+      pathname,
+      port,
+      query,
+      search,
+    };
   }
 }

@@ -26,12 +26,16 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Stream from '../stream/index.ts';
-import type * as WebRtc from '../webrtc/index.ts';
-import type * as Net from '../net/index.ts';
-import * as Types from './types/index.ts';
-import { MediaListener, type MediaListenerOptions, type MediaListenerAcceptCallback } from './listener.ts';
-import { MediaSender } from './sender.ts';
+import * as Stream from "../stream/index.ts";
+import type * as WebRtc from "../webrtc/index.ts";
+import type * as Net from "../net/index.ts";
+import * as Types from "./types/index.ts";
+import {
+  MediaListener,
+  type MediaListenerAcceptCallback,
+  type MediaListenerOptions,
+} from "./listener.ts";
+import { MediaSender } from "./sender.ts";
 
 export interface MediaSendOptions {
   hostname?: string;
@@ -49,11 +53,15 @@ export class MediaModule {
   // Media Types
   // ----------------------------------------------------------------
   /** Creates a streamable offscreen VideoSource */
-  public async video(options: Types.VideoSourceOptions): Promise<Types.VideoSource> {
+  public async video(
+    options: Types.VideoSourceOptions,
+  ): Promise<Types.VideoSource> {
     return await Types.VideoSource.createVideoSource(options);
   }
   /** Creates a streamable offscreen AudioSource */
-  public async audio(options: Types.AudioSourceOptions): Promise<Types.AudioSource> {
+  public async audio(
+    options: Types.AudioSourceOptions,
+  ): Promise<Types.AudioSource> {
     return await Types.AudioSource.createAudioSource(options);
   }
   /** Creates a streamable test pattern */
@@ -64,12 +72,18 @@ export class MediaModule {
   // Network
   // ----------------------------------------------------------------
   /** Listens for incoming MediaStream */
-  public listen(options: MediaListenerOptions, accept: MediaListenerAcceptCallback): MediaListener {
+  public listen(
+    options: MediaListenerOptions,
+    accept: MediaListenerAcceptCallback,
+  ): MediaListener {
     return new MediaListener(options, this.#webrtc, this.#net, accept);
   }
   /** Sends a MediaStream to a remote peer */
-  public async send(options: MediaSendOptions, mediastream: MediaStream): Promise<MediaSender> {
-    const [hostname, port] = [options.hostname || 'localhost', options.port];
+  public async send(
+    options: MediaSendOptions,
+    mediastream: MediaStream,
+  ): Promise<MediaSender> {
+    const [hostname, port] = [options.hostname || "localhost", options.port];
     const socket = await this.#net.connect({ hostname, port });
     const stream = new Stream.FrameDuplex(socket);
     return new MediaSender(this.#webrtc, stream, mediastream, {

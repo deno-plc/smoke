@@ -26,5 +26,5 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './buffer.ts';
-export * from './reader.ts';
+export * from "./buffer.ts";
+export * from "./reader.ts";

@@ -27,15 +27,15 @@ THE SOFTWARE.
 ---------------------------------------------------------------------------*/
 
 export class EventListener {
-  readonly #disposeCallback: () => any
+  readonly #disposeCallback: () => any;
   constructor(disposeCallback: () => any) {
-    this.#disposeCallback = disposeCallback
+    this.#disposeCallback = disposeCallback;
   }
   [Symbol.dispose]() {
-    this.dispose()
+    this.dispose();
   }
   /** Disposes of this event listener */
   public dispose() {
-    this.#disposeCallback()
+    this.#disposeCallback();
   }
 }

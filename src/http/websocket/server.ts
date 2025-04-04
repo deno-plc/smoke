@@ -26,10 +26,10 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Buffer from '../../buffer/index.ts';
-import type * as Stream from '../../stream/index.ts';
-import * as Events from '../../events/index.ts';
-import * as Protocol from './protocol.ts';
+import * as Buffer from "../../buffer/index.ts";
+import type * as Stream from "../../stream/index.ts";
+import * as Events from "../../events/index.ts";
+import * as Protocol from "./protocol.ts";
 
 export class HttpServerWebSocket {
   readonly #stream: Stream.FrameDuplex;
@@ -42,19 +42,37 @@ export class HttpServerWebSocket {
   // ----------------------------------------------------------------
   // Events
   // ----------------------------------------------------------------
-  public on(event: 'message', handler: Events.EventHandler<MessageEvent>): Events.EventListener;
-  public on(event: 'ping', handler: Events.EventHandler<MessageEvent>): Events.EventListener;
-  public on(event: 'pong', handler: Events.EventHandler<MessageEvent>): Events.EventListener;
-  public on(event: 'error', handler: Events.EventHandler<Event>): Events.EventListener;
-  public on(event: 'close', handler: Events.EventHandler<CloseEvent>): Events.EventListener;
-  public on(event: string, handler: Events.EventHandler<any>): Events.EventListener {
+  public on(
+    event: "message",
+    handler: Events.EventHandler<MessageEvent>,
+  ): Events.EventListener;
+  public on(
+    event: "ping",
+    handler: Events.EventHandler<MessageEvent>,
+  ): Events.EventListener;
+  public on(
+    event: "pong",
+    handler: Events.EventHandler<MessageEvent>,
+  ): Events.EventListener;
+  public on(
+    event: "error",
+    handler: Events.EventHandler<Event>,
+  ): Events.EventListener;
+  public on(
+    event: "close",
+    handler: Events.EventHandler<CloseEvent>,
+  ): Events.EventListener;
+  public on(
+    event: string,
+    handler: Events.EventHandler<any>,
+  ): Events.EventListener {
     return this.#events.on(event, handler);
   }
   // ----------------------------------------------------------------
   // Properties
   // ----------------------------------------------------------------
   public get binaryType(): BinaryType {
-    return 'arraybuffer';
+    return "arraybuffer";
   }
   // ----------------------------------------------------------------
   // Methods
@@ -62,10 +80,10 @@ export class HttpServerWebSocket {
   public send(value: string | ArrayBufferLike | ArrayBufferView): void {
     this.#stream.write(Protocol.encodeMessage(value));
   }
-  public ping(value: string = ''): void {
+  public ping(value: string = ""): void {
     this.#stream.write(Protocol.encodePing(value));
   }
-  public pong(value: string = ''): void {
+  public pong(value: string = ""): void {
     this.#stream.write(Protocol.encodePong(value));
   }
   public close(code?: number): void {
@@ -78,7 +96,7 @@ export class HttpServerWebSocket {
     for await (const message of this.#stream) {
       this.#dispatchProtocolMessage(message);
     }
-    this.#events.send('close', void 0);
+    this.#events.send("close", void 0);
   }
   // ----------------------------------------------------------------
   // DispatchProtocolMessage
@@ -87,20 +105,22 @@ export class HttpServerWebSocket {
     const [type, data] = Protocol.decodeAny(message);
     switch (type) {
       case Protocol.MessageType.MessageText: {
-        const event = new MessageEvent('message', { data: Buffer.decode(new Uint8Array(data)) });
-        return this.#events.send('message', event);
+        const event = new MessageEvent("message", {
+          data: Buffer.decode(new Uint8Array(data)),
+        });
+        return this.#events.send("message", event);
       }
       case Protocol.MessageType.MessageData: {
-        const event = new MessageEvent('message', { data });
-        return this.#events.send('message', event);
+        const event = new MessageEvent("message", { data });
+        return this.#events.send("message", event);
       }
       case Protocol.MessageType.Ping: {
-        const event = new MessageEvent('ping', { data });
-        return this.#events.send('ping', event);
+        const event = new MessageEvent("ping", { data });
+        return this.#events.send("ping", event);
       }
       case Protocol.MessageType.Pong: {
-        const event = new MessageEvent('pong', { data });
-        return this.#events.send('pong', event);
+        const event = new MessageEvent("pong", { data });
+        return this.#events.send("pong", event);
       }
     }
   }

@@ -1,5 +1,5 @@
-import { Network } from '@sinclair/smoke';
-import { Test, Assert } from '../../test/index.ts';
+import { Network } from "@sinclair/smoke";
+import { Assert, Test } from "../../test/index.ts";
 
 const { Http } = new Network();
 
@@ -9,29 +9,29 @@ const { Http } = new Network();
 async function assertedFetch() {
   const endpoint = `http://localhost:5000/`;
   const result = await Http.fetch(endpoint).then((res) => res.text());
-  Assert.isEqual(result, 'hello');
+  Assert.isEqual(result, "hello");
 }
 // --------------------------------------------------------------------------
 // Test
 // --------------------------------------------------------------------------
-Test.describe('Http:Listener', () => {
-  Test.it('Should listen then close', async () => {
-    const listener = Http.listen({ port: 5000 }, () => new Response('hello'));
+Test.describe("Http:Listener", () => {
+  Test.it("Should listen then close", async () => {
+    const listener = Http.listen({ port: 5000 }, () => new Response("hello"));
     await listener.dispose();
   });
-  Test.it('Should listen then close x 16', async () => {
+  Test.it("Should listen then close x 16", async () => {
     for (let i = 0; i < 16; i++) {
-      const listener = Http.listen({ port: 5000 }, () => new Response('hello'));
+      const listener = Http.listen({ port: 5000 }, () => new Response("hello"));
       await listener.dispose();
     }
   });
-  Test.it('Should listen fetch then close', async () => {
-    const listener = Http.listen({ port: 5000 }, () => new Response('hello'));
+  Test.it("Should listen fetch then close", async () => {
+    const listener = Http.listen({ port: 5000 }, () => new Response("hello"));
     await assertedFetch();
     await listener.dispose();
   });
-  Test.it('Should listen fetch then close (sequential x 64)', async () => {
-    const listener = Http.listen({ port: 5000 }, () => new Response('hello'));
+  Test.it("Should listen fetch then close (sequential x 64)", async () => {
+    const listener = Http.listen({ port: 5000 }, () => new Response("hello"));
     for (let i = 0; i < 64; i++) await assertedFetch();
     await listener.dispose();
   });

@@ -26,14 +26,14 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import type * as Dispose from '../dispose/index.ts';
-import type * as IndexedDb from '../indexeddb/index.ts';
-import * as Buffer from '../buffer/index.ts';
-import type * as Events from '../events/index.ts';
-import * as Path from '../path/index.ts';
-import * as Util from './util.ts';
-import * as FsEvents from './events.ts';
-import type { Stat } from './stat.ts';
+import type * as Dispose from "../dispose/index.ts";
+import type * as IndexedDb from "../indexeddb/index.ts";
+import * as Buffer from "../buffer/index.ts";
+import type * as Events from "../events/index.ts";
+import * as Path from "../path/index.ts";
+import * as Util from "./util.ts";
+import * as FsEvents from "./events.ts";
+import type { Stat } from "./stat.ts";
 
 interface FolderRecord {
   parent: string;
@@ -82,22 +82,29 @@ export class FileSystem implements Dispose.Dispose {
   // Watch
   // ----------------------------------------------------------------
   /** Watches for file and directory events on the given path. */
-  public watch(path: string, handler: Events.EventHandler<FsEvents.FileSystemEvent>): Events.EventListener {
+  public watch(
+    path: string,
+    handler: Events.EventHandler<FsEvents.FileSystemEvent>,
+  ): Events.EventListener {
     return this.#events.on(path, handler);
   }
   // ----------------------------------------------------------------
   // Streams
   // ----------------------------------------------------------------
-  public readable(path: string, start?: number, end?: number): ReadableStream<Uint8Array> {
+  public readable(
+    path: string,
+    start?: number,
+    end?: number,
+  ): ReadableStream<Uint8Array> {
     Util.assertReadRange(start, end);
     let [blob, skip, take] = [new Blob([]), 0, this.#readsize];
     let [_, filePath] = this.#resolvePath(path);
     return new ReadableStream<Uint8Array>({
       start: async (controller) => {
         if (await this.#isFileExists(path)) {
-          const transaction = this.#database.transaction(['blob'], 'readonly');
-          const blobStore = await transaction.objectStore<BlobRecord>('blob');
-          const blobIndex = blobStore.index('parent');
+          const transaction = this.#database.transaction(["blob"], "readonly");
+          const blobStore = await transaction.objectStore<BlobRecord>("blob");
+          const blobIndex = blobStore.index("parent");
           const blobRecords = await blobIndex.getAll(filePath);
           blob = new Blob(blobRecords.map((record) => record.blob));
           blob = blob.slice(start, end);
@@ -123,23 +130,32 @@ export class FileSystem implements Dispose.Dispose {
     const [folderPath, filePath] = this.#resolvePath(path);
     return new WritableStream<Uint8Array>({
       start: async (controller) => {
-        const error = await this.#assertCanWriteFile(filePath).catch((error: Error) => error);
+        const error = await this.#assertCanWriteFile(filePath).catch((
+          error: Error,
+        ) => error);
         if (error !== undefined) return controller.error(error);
         await this.#deleteFileIfExists(path);
         await this.#createDependentFolderPaths(path);
 
-        const transaction = this.#database.transaction(['file'], 'readwrite');
-        const fileStore = transaction.objectStore<FileRecord>('file');
-        await fileStore.add({ parent: folderPath, path: filePath, created: Date.now() });
+        const transaction = this.#database.transaction(["file"], "readwrite");
+        const fileStore = transaction.objectStore<FileRecord>("file");
+        await fileStore.add({
+          parent: folderPath,
+          path: filePath,
+          created: Date.now(),
+        });
         transaction.commit();
       },
       write: async (value, controller) => {
-        const transaction = this.#database.transaction(['blob'], 'readwrite');
-        const blobStore = transaction.objectStore<BlobRecord>('blob');
+        const transaction = this.#database.transaction(["blob"], "readwrite");
+        const blobStore = transaction.objectStore<BlobRecord>("blob");
         try {
           blob = new Blob([blob, value]);
           while (blob.size > this.#blobsize) {
-            await blobStore.add({ parent: filePath, blob: blob.slice(0, this.#blobsize) });
+            await blobStore.add({
+              parent: filePath,
+              blob: blob.slice(0, this.#blobsize),
+            });
             blob = blob.slice(this.#blobsize);
           }
         } catch (error) {
@@ -150,8 +166,8 @@ export class FileSystem implements Dispose.Dispose {
         transaction.commit();
       },
       close: async () => {
-        const transaction = this.#database.transaction(['blob'], 'readwrite');
-        const blobStore = transaction.objectStore<BlobRecord>('blob');
+        const transaction = this.#database.transaction(["blob"], "readwrite");
+        const blobStore = transaction.objectStore<BlobRecord>("blob");
         await blobStore.add({ parent: filePath, blob });
         transaction.commit();
       },
@@ -166,9 +182,13 @@ export class FileSystem implements Dispose.Dispose {
     await this.#assertCanMakeFolder(path);
     const [folderPath, filePath] = this.#resolvePath(path);
     await this.#createDependentFolderPaths(path);
-    const transaction = this.#database.transaction(['folder'], 'readwrite');
-    const folderStore = transaction.objectStore<FolderRecord>('folder');
-    await folderStore.add({ path: filePath, parent: folderPath, created: Date.now() });
+    const transaction = this.#database.transaction(["folder"], "readwrite");
+    const folderStore = transaction.objectStore<FolderRecord>("folder");
+    await folderStore.add({
+      path: filePath,
+      parent: folderPath,
+      created: Date.now(),
+    });
     transaction.commit();
     this.#sendCreated(filePath);
   }
@@ -178,14 +198,18 @@ export class FileSystem implements Dispose.Dispose {
   /** Reads the contents of a directory */
   public async readdir(path: string): Promise<string[]> {
     const [_, filePath] = this.#resolvePath(path);
-    const transaction = this.#database.transaction(['folder', 'file'], 'readonly');
-    const folderStore = transaction.objectStore<FolderRecord>('folder');
-    const fileStore = transaction.objectStore<FileRecord>('file');
-    const folderIndex = folderStore.index('parent');
-    const fileIndex = fileStore.index('parent');
+    const transaction = this.#database.transaction(
+      ["folder", "file"],
+      "readonly",
+    );
+    const folderStore = transaction.objectStore<FolderRecord>("folder");
+    const fileStore = transaction.objectStore<FileRecord>("file");
+    const folderIndex = folderStore.index("parent");
+    const fileIndex = fileStore.index("parent");
     const folderPaths = (await folderIndex.getAllKeys(filePath)) as string[];
     const filePaths = (await fileIndex.getAllKeys(filePath)) as string[];
-    return [...folderPaths, ...filePaths].map((path) => Path.basename(path)).filter((path) => path.length > 0);
+    return [...folderPaths, ...filePaths].map((path) => Path.basename(path))
+      .filter((path) => path.length > 0);
   }
   // ----------------------------------------------------------------
   // Exists
@@ -193,9 +217,12 @@ export class FileSystem implements Dispose.Dispose {
   /** Returns true if the given path exists */
   public async exists(path: string) {
     const [_, filePath] = this.#resolvePath(path);
-    const transaction = this.#database.transaction(['folder', 'file'], 'readonly');
-    const folderStore = transaction.objectStore<FolderRecord>('folder');
-    const fileStore = transaction.objectStore<FileRecord>('file');
+    const transaction = this.#database.transaction(
+      ["folder", "file"],
+      "readonly",
+    );
+    const folderStore = transaction.objectStore<FolderRecord>("folder");
+    const fileStore = transaction.objectStore<FileRecord>("file");
     const folderKeys = await folderStore.getAllKeys(filePath);
     const fileKeys = await fileStore.getAllKeys(filePath);
     return fileKeys.length + folderKeys.length > 0;
@@ -206,22 +233,30 @@ export class FileSystem implements Dispose.Dispose {
   /** Returns a file system Stat object for the given path. */
   public async stat(path: string): Promise<Stat> {
     const [_, filePath] = this.#resolvePath(path);
-    const transaction = this.#database.transaction(['folder', 'file', 'blob'], 'readonly');
+    const transaction = this.#database.transaction(
+      ["folder", "file", "blob"],
+      "readonly",
+    );
     // folder
-    const folderStore = transaction.objectStore<FolderRecord>('folder');
+    const folderStore = transaction.objectStore<FolderRecord>("folder");
     const folderRecord = await folderStore.get(filePath);
     if (folderRecord !== undefined) {
-      return { type: 'directory', path: filePath };
+      return { type: "directory", path: filePath };
     }
     // file
-    const fileStore = transaction.objectStore<FileRecord>('file');
-    const blobStore = transaction.objectStore<BlobRecord>('blob');
-    const blobIndex = blobStore.index('parent');
+    const fileStore = transaction.objectStore<FileRecord>("file");
+    const blobStore = transaction.objectStore<BlobRecord>("blob");
+    const blobIndex = blobStore.index("parent");
     const fileRecord = await fileStore.get(filePath);
     if (fileRecord !== undefined) {
       const blobRecords = await blobIndex.getAll(filePath);
       const size = blobRecords.reduce((acc, c) => acc + c.blob.size, 0);
-      return { type: 'file', path: filePath, created: fileRecord.created, size };
+      return {
+        type: "file",
+        path: filePath,
+        created: fileRecord.created,
+        size,
+      };
     }
     throw Error(`No such path '${filePath}'`);
   }
@@ -231,12 +266,15 @@ export class FileSystem implements Dispose.Dispose {
   /** Deletes a file or directory at the given path */
   public async delete(path: string): Promise<void> {
     const [_, filePath] = this.#resolvePath(path);
-    this.#assertNotRoot('delete', filePath);
-    const transaction = this.#database.transaction(['folder', 'file', 'blob'], 'readwrite');
-    const folderStore = transaction.objectStore<FolderRecord>('folder');
-    const fileStore = transaction.objectStore<FileRecord>('file');
-    const blobStore = transaction.objectStore<BlobRecord>('blob');
-    const blobIndex = blobStore.index('parent');
+    this.#assertNotRoot("delete", filePath);
+    const transaction = this.#database.transaction(
+      ["folder", "file", "blob"],
+      "readwrite",
+    );
+    const folderStore = transaction.objectStore<FolderRecord>("folder");
+    const fileStore = transaction.objectStore<FileRecord>("file");
+    const blobStore = transaction.objectStore<BlobRecord>("blob");
+    const blobIndex = blobStore.index("parent");
     // delete files. ensure blob records are deleted before file records
     const fileKeys = (await fileStore.getAllKeys()) as string[];
     for (const fileKey of fileKeys) {
@@ -252,7 +290,9 @@ export class FileSystem implements Dispose.Dispose {
     // delete folders use reverse order
     const folderKeys = (await folderStore.getAllKeys()).reverse() as string[];
     for (const folderKey of folderKeys) {
-      if (!(folderKey === filePath || folderKey.startsWith(`${filePath}/`))) continue;
+      if (!(folderKey === filePath || folderKey.startsWith(`${filePath}/`))) {
+        continue;
+      }
       await folderStore.delete(folderKey);
       this.#sendDeleted(folderKey);
     }
@@ -262,30 +302,53 @@ export class FileSystem implements Dispose.Dispose {
   // Copy
   // ----------------------------------------------------------------
   // Creates the target copy path for directory copy
-  #directoryCopyTargetPath(sourceDirectoryPath: string, sourcePath: string, targetDirectory: string) {
+  #directoryCopyTargetPath(
+    sourceDirectoryPath: string,
+    sourcePath: string,
+    targetDirectory: string,
+  ) {
     const parentPath = Path.dirname(sourceDirectoryPath);
-    const truncatedPath = sourcePath.replace(parentPath, '');
+    const truncatedPath = sourcePath.replace(parentPath, "");
     return Path.join(targetDirectory, truncatedPath);
   }
   async #copyDirectory(sourcePath: string, targetDirectoryPath: string) {
     // ensure target directory exists
     await this.mkdir(targetDirectoryPath);
-    const transaction = this.#database.transaction(['folder', 'file', 'blob'], 'readwrite');
-    const folderStore = transaction.objectStore<FolderRecord>('folder');
-    const fileStore = transaction.objectStore<FileRecord>('file');
-    const blobStore = transaction.objectStore<BlobRecord>('blob');
-    const fileIndex = fileStore.index('parent');
-    const blobIndex = blobStore.index('parent');
+    const transaction = this.#database.transaction(
+      ["folder", "file", "blob"],
+      "readwrite",
+    );
+    const folderStore = transaction.objectStore<FolderRecord>("folder");
+    const fileStore = transaction.objectStore<FileRecord>("file");
+    const blobStore = transaction.objectStore<BlobRecord>("blob");
+    const fileIndex = fileStore.index("parent");
+    const blobIndex = blobStore.index("parent");
     // copy folder records that match the source path
     for (const folderRecord of await folderStore.getAll()) {
       if (!folderRecord.path.startsWith(sourcePath)) continue;
-      const folderPath = this.#directoryCopyTargetPath(sourcePath, folderRecord.path, targetDirectoryPath);
-      await folderStore.add({ parent: Path.dirname(folderPath), path: folderPath, created: Date.now() });
+      const folderPath = this.#directoryCopyTargetPath(
+        sourcePath,
+        folderRecord.path,
+        targetDirectoryPath,
+      );
+      await folderStore.add({
+        parent: Path.dirname(folderPath),
+        path: folderPath,
+        created: Date.now(),
+      });
       this.#sendCreated(folderPath);
       // copy file records associated with this folder
       for (const fileRecord of await fileIndex.getAll(folderRecord.path)) {
-        const filePath = this.#directoryCopyTargetPath(sourcePath, fileRecord.path, targetDirectoryPath);
-        await fileStore.add({ parent: Path.dirname(filePath), path: filePath, created: Date.now() });
+        const filePath = this.#directoryCopyTargetPath(
+          sourcePath,
+          fileRecord.path,
+          targetDirectoryPath,
+        );
+        await fileStore.add({
+          parent: Path.dirname(filePath),
+          path: filePath,
+          created: Date.now(),
+        });
         this.#sendCreated(filePath);
         // copy blob records associated with this file
         for (const blobRecord of await blobIndex.getAll(fileRecord.path)) {
@@ -298,16 +361,23 @@ export class FileSystem implements Dispose.Dispose {
   async #copyFile(sourcePath: string, targetDirectoryPath: string) {
     // create target directory path
     await this.mkdir(targetDirectoryPath);
-    const transaction = this.#database.transaction(['file', 'blob'], 'readwrite');
-    const fileStore = transaction.objectStore<FileRecord>('file');
-    const blobStore = transaction.objectStore<BlobRecord>('blob');
-    const blobIndex = blobStore.index('parent');
+    const transaction = this.#database.transaction(
+      ["file", "blob"],
+      "readwrite",
+    );
+    const fileStore = transaction.objectStore<FileRecord>("file");
+    const blobStore = transaction.objectStore<BlobRecord>("blob");
+    const blobIndex = blobStore.index("parent");
     const fileRecord = await fileStore.get(sourcePath);
     this.#assertDefined(fileRecord);
     // copy file to target directory path
     const filePath = Path.join(targetDirectoryPath, Path.basename(sourcePath));
     const parentPath = Path.dirname(filePath);
-    await fileStore.add({ parent: parentPath, path: filePath, created: Date.now() });
+    await fileStore.add({
+      parent: parentPath,
+      path: filePath,
+      created: Date.now(),
+    });
     for (const blobRecord of await blobIndex.getAll(sourcePath)) {
       await blobStore.add({ parent: filePath, blob: blobRecord.blob });
     }
@@ -318,11 +388,15 @@ export class FileSystem implements Dispose.Dispose {
   public async copy(path: string, directory: string) {
     const [_0, sourcePath] = this.#resolvePath(path);
     const [_1, targetDirectoryPath] = this.#resolvePath(directory);
-    this.#assertNotRoot('copy', sourcePath);
+    this.#assertNotRoot("copy", sourcePath);
     if (!(await this.exists(sourcePath))) return;
     const stat = await this.stat(sourcePath);
-    if (stat.type === 'directory') return await this.#copyDirectory(sourcePath, targetDirectoryPath);
-    if (stat.type === 'file') return await this.#copyFile(sourcePath, targetDirectoryPath);
+    if (stat.type === "directory") {
+      return await this.#copyDirectory(sourcePath, targetDirectoryPath);
+    }
+    if (stat.type === "file") {
+      return await this.#copyFile(sourcePath, targetDirectoryPath);
+    }
   }
   // ----------------------------------------------------------------
   // Move
@@ -338,10 +412,13 @@ export class FileSystem implements Dispose.Dispose {
   /** Returns a file as a Blob */
   public async blob(path: string): Promise<Blob> {
     const [_0, filePath] = this.#resolvePath(path);
-    const transaction = this.#database.transaction(['file', 'blob'], 'readonly');
-    const fileStore = transaction.objectStore<FileRecord>('file');
-    const blobStore = transaction.objectStore<BlobRecord>('blob');
-    const blobIndex = blobStore.index('parent');
+    const transaction = this.#database.transaction(
+      ["file", "blob"],
+      "readonly",
+    );
+    const fileStore = transaction.objectStore<FileRecord>("file");
+    const blobStore = transaction.objectStore<BlobRecord>("blob");
+    const blobIndex = blobStore.index("parent");
     const fileRecord = await fileStore.get(filePath);
     if (fileRecord === undefined) return new Blob([]);
     const blobRecords = await blobIndex.getAll(filePath);
@@ -352,17 +429,24 @@ export class FileSystem implements Dispose.Dispose {
   // Rename
   // ----------------------------------------------------------------
   async #renameFolder(sourcePath: string, targetPath: string) {
-    const transaction = this.#database.transaction(['folder', 'file', 'blob'], 'readwrite');
-    const folderStore = transaction.objectStore<FolderRecord>('folder');
-    const fileStore = transaction.objectStore<FileRecord>('file');
-    const blobStore = transaction.objectStore<BlobRecord>('blob');
-    const blobIndex = blobStore.index('parent');
+    const transaction = this.#database.transaction(
+      ["folder", "file", "blob"],
+      "readwrite",
+    );
+    const folderStore = transaction.objectStore<FolderRecord>("folder");
+    const fileStore = transaction.objectStore<FileRecord>("file");
+    const blobStore = transaction.objectStore<BlobRecord>("blob");
+    const blobIndex = blobStore.index("parent");
     // copy folders to target
     for (const folderRecord of await folderStore.getAll()) {
       if (!folderRecord.path.startsWith(sourcePath)) continue;
       const folderPath = folderRecord.path.replace(sourcePath, targetPath);
       const parentPath = Path.dirname(folderPath);
-      await folderStore.add({ parent: parentPath, path: folderPath, created: Date.now() });
+      await folderStore.add({
+        parent: parentPath,
+        path: folderPath,
+        created: Date.now(),
+      });
       this.#sendCreated(folderPath);
     }
     // copy files and blobs to target
@@ -370,7 +454,11 @@ export class FileSystem implements Dispose.Dispose {
       if (!fileRecord.path.startsWith(sourcePath)) continue;
       const filePath = fileRecord.path.replace(sourcePath, targetPath);
       const parentPath = Path.dirname(filePath);
-      await fileStore.add({ parent: parentPath, path: filePath, created: Date.now() });
+      await fileStore.add({
+        parent: parentPath,
+        path: filePath,
+        created: Date.now(),
+      });
       this.#sendCreated(filePath);
       for (const blobRecord of await blobIndex.getAll(fileRecord.path)) {
         await blobStore.add({ parent: filePath, blob: blobRecord.blob });
@@ -393,16 +481,23 @@ export class FileSystem implements Dispose.Dispose {
     transaction.commit();
   }
   async #renameFile(sourcePath: string, targetPath: string) {
-    const transaction = this.#database.transaction(['file', 'blob'], 'readwrite');
-    const fileStore = transaction.objectStore<FileRecord>('file');
-    const blobStore = transaction.objectStore<BlobRecord>('blob');
+    const transaction = this.#database.transaction(
+      ["file", "blob"],
+      "readwrite",
+    );
+    const fileStore = transaction.objectStore<FileRecord>("file");
+    const blobStore = transaction.objectStore<BlobRecord>("blob");
     // copy source file to target
     const fileRecord = await fileStore.get(sourcePath);
     this.#assertDefined(fileRecord);
-    await fileStore.add({ parent: fileRecord.parent, path: targetPath, created: Date.now() });
+    await fileStore.add({
+      parent: fileRecord.parent,
+      path: targetPath,
+      created: Date.now(),
+    });
     this.#sendCreated(targetPath);
     // copy source blob to target
-    const blobIndex = blobStore.index('parent');
+    const blobIndex = blobStore.index("parent");
     for (const blobRecord of await blobIndex.getAll(sourcePath)) {
       await blobStore.add({ parent: targetPath, blob: blobRecord.blob });
     }
@@ -418,12 +513,16 @@ export class FileSystem implements Dispose.Dispose {
   public async rename(path: string, newname: string) {
     const [_, sourcePath] = this.#resolvePath(path);
     const targetPath = Path.join(Path.dirname(sourcePath), newname);
-    this.#assertNotRoot('rename', sourcePath);
+    this.#assertNotRoot("rename", sourcePath);
     await this.#assertPathExists(sourcePath);
     await this.#assertPathDoesNotExist(targetPath);
     const stat = await this.stat(sourcePath);
-    if (stat.type === 'directory') return await this.#renameFolder(sourcePath, targetPath);
-    if (stat.type === 'file') return await this.#renameFile(sourcePath, targetPath);
+    if (stat.type === "directory") {
+      return await this.#renameFolder(sourcePath, targetPath);
+    }
+    if (stat.type === "file") {
+      return await this.#renameFile(sourcePath, targetPath);
+    }
   }
   // ----------------------------------------------------------------
   // Read
@@ -433,7 +532,11 @@ export class FileSystem implements Dispose.Dispose {
     return Buffer.decode(await this.read(path));
   }
   /** Reads a file or empty Uint8Array if not exists. */
-  public async read(path: string, start?: number, end?: number): Promise<Uint8Array> {
+  public async read(
+    path: string,
+    start?: number,
+    end?: number,
+  ): Promise<Uint8Array> {
     const buffers: Uint8Array[] = [];
     const reader = this.readable(path, start, end).getReader();
     while (true) {
@@ -464,29 +567,32 @@ export class FileSystem implements Dispose.Dispose {
   // Internal
   // ----------------------------------------------------------------
   #resolvePath(path: string): [folderPath: string, filePath: string] {
-    const resolvedPath = Util.resolvePath('/', path);
+    const resolvedPath = Util.resolvePath("/", path);
     return [Path.dirname(resolvedPath), resolvedPath];
   }
   async #isFolderExists(path: string) {
     const [_, filePath] = this.#resolvePath(path);
-    const transaction = this.#database.transaction(['folder'], 'readonly');
-    const folderStore = transaction.objectStore<FolderRecord>('folder');
+    const transaction = this.#database.transaction(["folder"], "readonly");
+    const folderStore = transaction.objectStore<FolderRecord>("folder");
     const folderKeys = await folderStore.getAllKeys(filePath);
     return folderKeys.length === 1;
   }
   async #isFileExists(path: string) {
     const [_, filePath] = this.#resolvePath(path);
-    const transaction = this.#database.transaction(['file'], 'readonly');
-    const fileStore = transaction.objectStore<FileRecord>('file');
+    const transaction = this.#database.transaction(["file"], "readonly");
+    const fileStore = transaction.objectStore<FileRecord>("file");
     const fileKeys = await fileStore.getAllKeys(filePath);
     return fileKeys.length === 1;
   }
   async #deleteFileIfExists(path: string) {
     const [_, filePath] = this.#resolvePath(path);
-    const transaction = this.#database.transaction(['file', 'blob'], 'readwrite');
-    const fileStore = transaction.objectStore<FileRecord>('file');
-    const blobStore = transaction.objectStore<BlobRecord>('blob');
-    const blobIndex = blobStore.index('parent');
+    const transaction = this.#database.transaction(
+      ["file", "blob"],
+      "readwrite",
+    );
+    const fileStore = transaction.objectStore<FileRecord>("file");
+    const blobStore = transaction.objectStore<BlobRecord>("blob");
+    const blobIndex = blobStore.index("parent");
     const fileRecord = await fileStore.get(filePath);
     if (fileRecord === undefined) return transaction.abort();
     for (const blobKey of await blobIndex.getAllKeys(filePath)) {
@@ -497,9 +603,9 @@ export class FileSystem implements Dispose.Dispose {
     this.#sendDeleted(path);
   }
   #resolveDependentFolderPaths(path: string): string[] {
-    path = path.startsWith('/') ? path : `/${path}`;
+    path = path.startsWith("/") ? path : `/${path}`;
     const paths: string[] = [];
-    while (path !== '/') {
+    while (path !== "/") {
       path = Path.dirname(path);
       paths.unshift(path);
     }
@@ -510,12 +616,16 @@ export class FileSystem implements Dispose.Dispose {
     for (const folderPath of folderPaths) {
       await this.#assertCanMakeFolder(folderPath);
     }
-    const transaction = this.#database.transaction(['folder'], 'readwrite');
-    const folderStore = transaction.objectStore<FolderRecord>('folder');
+    const transaction = this.#database.transaction(["folder"], "readwrite");
+    const folderStore = transaction.objectStore<FolderRecord>("folder");
     for (const folderPath of folderPaths) {
       const existing = await folderStore.get(folderPath);
       if (existing) continue;
-      await folderStore.add({ parent: Path.dirname(folderPath), path: folderPath, created: Date.now() });
+      await folderStore.add({
+        parent: Path.dirname(folderPath),
+        path: folderPath,
+        created: Date.now(),
+      });
       this.#sendCreated(folderPath);
     }
     transaction.commit();
@@ -524,36 +634,42 @@ export class FileSystem implements Dispose.Dispose {
   // Events
   // ----------------------------------------------------------------
   #sendCreated(path: string) {
-    this.#events.send({ type: 'created', path });
+    this.#events.send({ type: "created", path });
   }
   #sendUpdated(path: string) {
-    this.#events.send({ type: 'updated', path });
+    this.#events.send({ type: "updated", path });
   }
   #sendDeleted(path: string) {
-    this.#events.send({ type: 'deleted', path });
+    this.#events.send({ type: "deleted", path });
   }
   // ----------------------------------------------------------------
   // Assert
   // ----------------------------------------------------------------
   #assertDefined<T>(value: T): asserts value is NonNullable<T> {
-    if (value === undefined) this.#throw('Value undefined');
+    if (value === undefined) this.#throw("Value undefined");
   }
   #assertNotRoot(operation: string, path: string) {
-    if (path === '/') this.#throw(`Cannot perform ${operation} operation on root`);
+    if (path === "/") {
+      this.#throw(`Cannot perform ${operation} operation on root`);
+    }
   }
   async #assertCanMakeFolder(path: string): Promise<void> {
     const exists = await this.exists(path);
     if (!exists) return;
     const stat = await this.stat(path);
-    if (stat.type === 'directory') return;
-    this.#throw(`Cannot make directory '${path}' because a file exists at this location`);
+    if (stat.type === "directory") return;
+    this.#throw(
+      `Cannot make directory '${path}' because a file exists at this location`,
+    );
   }
   async #assertCanWriteFile(path: string): Promise<void> {
     const exists = await this.exists(path);
     if (!exists) return;
     const stat = await this.stat(path);
-    if (stat.type === 'file') return;
-    this.#throw(`Cannot write file '${path}' because a directory exists at this location`);
+    if (stat.type === "file") return;
+    this.#throw(
+      `Cannot write file '${path}' because a directory exists at this location`,
+    );
   }
   async #assertPathExists(path: string) {
     const exists = await this.exists(path);

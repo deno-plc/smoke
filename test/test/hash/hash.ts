@@ -1,4 +1,4 @@
-import * as Guard from '../guard/index.ts';
+import * as Guard from "../guard/index.ts";
 
 // ------------------------------------------------------------------
 // Errors
@@ -27,8 +27,8 @@ enum ByteMarker {
 // ------------------------------------------------------------------
 // State
 // ------------------------------------------------------------------
-let Accumulator = BigInt('14695981039346656037');
-const [Prime, Size] = [BigInt('1099511628211'), BigInt('2') ** BigInt('64')];
+let Accumulator = BigInt("14695981039346656037");
+const [Prime, Size] = [BigInt("1099511628211"), BigInt("2") ** BigInt("64")];
 const Bytes = Array.from({ length: 256 }).map((_, i) => BigInt(i));
 const F64 = new Float64Array(1);
 const F64In = new DataView(F64.buffer);
@@ -37,7 +37,9 @@ const F64Out = new Uint8Array(F64.buffer);
 // NumberToBytes
 // ------------------------------------------------------------------
 function* NumberToBytes(value: number): IterableIterator<number> {
-  const byteCount = value === 0 ? 1 : Math.ceil(Math.floor(Math.log2(value) + 1) / 8);
+  const byteCount = value === 0
+    ? 1
+    : Math.ceil(Math.floor(Math.log2(value) + 1) / 8);
   for (let i = 0; i < byteCount; i++) {
     yield (value >> (8 * (byteCount - 1 - i))) & 0xff;
   }
@@ -127,7 +129,7 @@ function FNV1A64(byte: number) {
 // ------------------------------------------------------------------
 /** Creates a FNV1A-64 non cryptographic hash of the given value */
 export function Hash(value: unknown) {
-  Accumulator = BigInt('14695981039346656037');
+  Accumulator = BigInt("14695981039346656037");
   Visit(value);
   return Accumulator;
 }

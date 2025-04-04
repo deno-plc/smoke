@@ -26,12 +26,12 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './barrier.ts';
-export * from './debounce.ts';
-export * from './deferred.ts';
-export * from './delay.ts';
-export * from './lock.ts';
-export * from './mutex.ts';
-export * from './semaphore.ts';
-export * from './timeout.ts';
-export * from './retry.ts';
+export * from "./barrier.ts";
+export * from "./debounce.ts";
+export * from "./deferred.ts";
+export * from "./delay.ts";
+export * from "./lock.ts";
+export * from "./mutex.ts";
+export * from "./semaphore.ts";
+export * from "./timeout.ts";
+export * from "./retry.ts";

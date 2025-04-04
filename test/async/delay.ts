@@ -1,8 +1,8 @@
-import { Async } from '@sinclair/smoke';
-import { Test, Assert } from '../test/index.ts';
+import { Async } from "@sinclair/smoke";
+import { Assert, Test } from "../test/index.ts";
 
-Test.describe('Async:delay', () => {
-  Test.it('Should delay', async () => {
+Test.describe("Async:delay", () => {
+  Test.it("Should delay", async () => {
     const start = Date.now();
     await Async.delay(10);
     const delta = Date.now() - start;

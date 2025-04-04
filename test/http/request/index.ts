@@ -1,3 +1,3 @@
-import './info.ts';
-import './properties.ts';
-import './readable.ts';
+import "./info.ts";
+import "./properties.ts";
+import "./readable.ts";

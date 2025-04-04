@@ -26,29 +26,38 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import type { HttpListenerRequestInit, HttpListenerResponseInit } from './listener.ts';
+import type {
+  HttpListenerRequestInit,
+  HttpListenerResponseInit,
+} from "./listener.ts";
 
-import * as Async from '../async/index.ts';
-import * as Buffer from '../buffer/index.ts';
-import * as Stream from '../stream/index.ts';
-import type * as Net from '../net/index.ts';
-import * as Url from '../url/index.ts';
-import * as Signal from './signal.ts';
+import * as Async from "../async/index.ts";
+import * as Buffer from "../buffer/index.ts";
+import * as Stream from "../stream/index.ts";
+import type * as Net from "../net/index.ts";
+import * as Url from "../url/index.ts";
+import * as Signal from "./signal.ts";
 
 // ------------------------------------------------------------------
 // Hostname and Port
 // ------------------------------------------------------------------
-function resolveHostnameAndPort(input: string): [hostname: string, port: number] {
+function resolveHostnameAndPort(
+  input: string,
+): [hostname: string, port: number] {
   const url = Url.parse(input);
-  return [url.host ?? 'localhost', url.port === null ? 80 : parseInt(url.port)];
+  return [url.host ?? "localhost", url.port === null ? 80 : parseInt(url.port)];
 }
 // ------------------------------------------------------------------
 // SendListenerRequestInit
 // ------------------------------------------------------------------
-async function sendListenerRequestInit(duplex: Stream.FrameDuplex, urlObject: Url.UrlObject, requestInit: RequestInit) {
+async function sendListenerRequestInit(
+  duplex: Stream.FrameDuplex,
+  urlObject: Url.UrlObject,
+  requestInit: RequestInit,
+) {
   const headers = (requestInit.headers as never) ?? {};
-  const method = requestInit.method ?? 'GET';
-  const url = urlObject.path ?? '/';
+  const method = requestInit.method ?? "GET";
+  const url = urlObject.path ?? "/";
   const init: HttpListenerRequestInit = { headers, method, url };
   await duplex.write(Buffer.encode(JSON.stringify(init)));
 }
@@ -60,11 +69,17 @@ async function sendStringBody(duplex: Stream.FrameDuplex, data: string) {
   await duplex.write(buffer);
   await duplex.write(Signal.REQUEST_END);
 }
-async function sendUint8ArrayBody(duplex: Stream.FrameDuplex, data: Uint8Array) {
+async function sendUint8ArrayBody(
+  duplex: Stream.FrameDuplex,
+  data: Uint8Array,
+) {
   await duplex.write(data);
   await duplex.write(Signal.REQUEST_END);
 }
-async function sendReadableStreamBody(duplex: Stream.FrameDuplex, readable: ReadableStream<Uint8Array>) {
+async function sendReadableStreamBody(
+  duplex: Stream.FrameDuplex,
+  readable: ReadableStream<Uint8Array>,
+) {
   const reader = readable.getReader();
   while (true) {
     const next = await reader.read();
@@ -77,41 +92,60 @@ async function sendNullBody(duplex: Stream.FrameDuplex, data: null) {
   await duplex.write(Signal.REQUEST_END);
 }
 // prettier-ignore
-async function sendRequestBody(duplex: Stream.FrameDuplex, requestInit: RequestInit) {
+async function sendRequestBody(
+  duplex: Stream.FrameDuplex,
+  requestInit: RequestInit,
+) {
   const body = requestInit.body;
   if (body === undefined) return;
   switch (true) {
-    case typeof body === 'string': return await sendStringBody(duplex, body);
-    case body instanceof Uint8Array: return await sendUint8ArrayBody(duplex, body);
-    case body instanceof ReadableStream: return await sendReadableStreamBody(duplex, body);
-    case body === null: return await sendNullBody(duplex, body);
-    default: throw Error('Unknown body type');
+    case typeof body === "string":
+      return await sendStringBody(duplex, body);
+    case body instanceof Uint8Array:
+      return await sendUint8ArrayBody(duplex, body);
+    case body instanceof ReadableStream:
+      return await sendReadableStreamBody(duplex, body);
+    case body === null:
+      return await sendNullBody(duplex, body);
+    default:
+      throw Error("Unknown body type");
   }
 }
 // ------------------------------------------------------------------
 // ReadListenerResponseInit
 // ------------------------------------------------------------------
 // prettier-ignore
-async function readListenerResponseInit(duplex: Stream.FrameDuplex): Promise<HttpListenerResponseInit | null> {
+async function readListenerResponseInit(
+  duplex: Stream.FrameDuplex,
+): Promise<HttpListenerResponseInit | null> {
   const buffer = await duplex.read();
   if (buffer === null) return null;
   const init: HttpListenerResponseInit = JSON.parse(Buffer.decode(buffer));
   return (
-    'headers' in init && typeof init.headers === 'object' && init.headers !== null &&
-    'status' in init && typeof init.status === 'number' &&
-    'statusText' in init && typeof init.statusText === 'string'
-  ) ? init : null;
+      "headers" in init && typeof init.headers === "object" &&
+      init.headers !== null &&
+      "status" in init && typeof init.status === "number" &&
+      "statusText" in init && typeof init.statusText === "string"
+    )
+    ? init
+    : null;
 }
 // ------------------------------------------------------------------
 // ReadResponseSignal
 // ------------------------------------------------------------------
-async function readResponseSignal(duplex: Stream.FrameDuplex): Promise<Uint8Array | null> {
+async function readResponseSignal(
+  duplex: Stream.FrameDuplex,
+): Promise<Uint8Array | null> {
   return await duplex.read();
 }
 // ------------------------------------------------------------------
 // Fetch
 // ------------------------------------------------------------------
-export async function fetch(net: Net.NetModule, endpoint: string, requestInit: RequestInit = {}) {
+export async function fetch(
+  net: Net.NetModule,
+  endpoint: string,
+  requestInit: RequestInit = {},
+) {
   const url = Url.parse(endpoint);
   const [hostname, port] = resolveHostnameAndPort(endpoint);
   const socket = await net.connect({ hostname, port });
@@ -121,7 +155,10 @@ export async function fetch(net: Net.NetModule, endpoint: string, requestInit: R
   // send request body to server
   sendRequestBody(duplex, requestInit).catch((error) => console.error(error));
   // read server response signal
-  const signal = await Async.timeout(readResponseSignal(duplex), { timeout: 4000, error: new Error('A timeout occured reading the http response signal') });
+  const signal = await Async.timeout(readResponseSignal(duplex), {
+    timeout: 4000,
+    error: new Error("A timeout occured reading the http response signal"),
+  });
   if (signal === null) {
     await duplex.close();
     throw Error(`Connection to ${endpoint} terminated unexpectedly`);
@@ -129,13 +166,16 @@ export async function fetch(net: Net.NetModule, endpoint: string, requestInit: R
   // check server response signal
   if (!Buffer.equals(signal, Signal.RESPONSE)) {
     await duplex.close();
-    throw Error('Server is using alternate protocol');
+    throw Error("Server is using alternate protocol");
   }
   // read server response init
-  const responseInit = await Async.timeout(readListenerResponseInit(duplex), { timeout: 4000, error: new Error('A timeout occured reading http response init') });
+  const responseInit = await Async.timeout(readListenerResponseInit(duplex), {
+    timeout: 4000,
+    error: new Error("A timeout occured reading http response init"),
+  });
   if (responseInit === null) {
     await duplex.close();
-    throw Error('Unable to parse server response headers');
+    throw Error("Unable to parse server response headers");
   }
   // read server response body
   const readable = new ReadableStream({

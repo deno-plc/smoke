@@ -29,117 +29,134 @@ THE SOFTWARE.
 // ------------------------------------------------------------------
 // Guard
 // ------------------------------------------------------------------
-function isEqual<Value extends string | number | boolean>(value: unknown, equal: Value): value is Value {
-  return value === equal
+function isEqual<Value extends string | number | boolean>(
+  value: unknown,
+  equal: Value,
+): value is Value {
+  return value === equal;
 }
 function isObject(value: unknown): value is Record<PropertyKey, unknown> {
-  return typeof value === 'object' && value !== null
+  return typeof value === "object" && value !== null;
 }
 function isString(value: unknown): value is string {
-  return typeof value === 'string'
+  return typeof value === "string";
 }
 function isNumber(value: unknown): value is number {
-  return typeof value === 'number'
+  return typeof value === "number";
 }
 function isUint8Array(value: unknown): value is Uint8Array {
-  return value instanceof Uint8Array
+  return value instanceof Uint8Array;
 }
 // ------------------------------------------------------------------
 // RegisterRequest
 // ------------------------------------------------------------------
 export interface RegisterRequest {
-  type: 'RegisterRequest'
-  path: string
+  type: "RegisterRequest";
+  path: string;
 }
 export function isRegisterRequest(value: unknown): value is RegisterRequest {
-  return isObject(value) && value.type === 'RegisterRequest' && isString(value.path)
+  return isObject(value) && value.type === "RegisterRequest" &&
+    isString(value.path);
 }
-export function assertRegisterRequest(value: unknown): asserts value is RegisterRequest {
-  if (!isRegisterRequest(value)) throw new Error('Expected RegisterRequest')
+export function assertRegisterRequest(
+  value: unknown,
+): asserts value is RegisterRequest {
+  if (!isRegisterRequest(value)) throw new Error("Expected RegisterRequest");
 }
 // ------------------------------------------------------------------
 // RegisterResponse
 // ------------------------------------------------------------------
 export interface RegisterResponse {
-  type: 'RegisterResponse'
-  clientId: string
+  type: "RegisterResponse";
+  clientId: string;
 }
 export function isRegisterResponse(value: unknown): value is RegisterResponse {
-  return isObject(value) && value.type === 'RegisterResponse' && isString(value.clientId)
+  return isObject(value) && value.type === "RegisterResponse" &&
+    isString(value.clientId);
 }
-export function assertRegisterResponse(value: unknown): asserts value is RegisterResponse {
-  if (!isRegisterResponse(value)) throw new Error('Expected RegisterResponse')
+export function assertRegisterResponse(
+  value: unknown,
+): asserts value is RegisterResponse {
+  if (!isRegisterResponse(value)) throw new Error("Expected RegisterResponse");
 }
 // ------------------------------------------------------------------
 // RequestInit
 // ------------------------------------------------------------------
 export interface RequestInit {
-  type: 'RequestInit'
-  requestId: number
-  url: string
-  init: globalThis.RequestInit
+  type: "RequestInit";
+  requestId: number;
+  url: string;
+  init: globalThis.RequestInit;
 }
 export function isRequestInit(value: unknown): value is RequestInit {
-  return isObject(value) && isEqual(value.type, 'RequestInit') && isString(value.url) && isNumber(value.requestId) && isObject(value.init)
+  return isObject(value) && isEqual(value.type, "RequestInit") &&
+    isString(value.url) && isNumber(value.requestId) && isObject(value.init);
 }
 // ------------------------------------------------------------------
 // RequestBody
 // ------------------------------------------------------------------
 export interface RequestData {
-  type: 'RequestData'
-  requestId: number
-  data: Uint8Array
+  type: "RequestData";
+  requestId: number;
+  data: Uint8Array;
 }
 export function isRequestData(value: unknown): value is RequestData {
-  return isObject(value) && isEqual(value.type, 'RequestData') && isNumber(value.requestId) && isUint8Array(value.data)
+  return isObject(value) && isEqual(value.type, "RequestData") &&
+    isNumber(value.requestId) && isUint8Array(value.data);
 }
 // ------------------------------------------------------------------
 // RequestEnd
 // ------------------------------------------------------------------
 export interface RequestEnd {
-  type: 'RequestEnd'
-  requestId: number
+  type: "RequestEnd";
+  requestId: number;
 }
 export function isRequestEnd(value: unknown): value is RequestEnd {
-  return isObject(value) && isEqual(value.type, 'RequestEnd') && isNumber(value.requestId)
+  return isObject(value) && isEqual(value.type, "RequestEnd") &&
+    isNumber(value.requestId);
 }
 // ------------------------------------------------------------------
 // ResponseInit
 // ------------------------------------------------------------------
 export interface ResponseInit {
-  type: 'ResponseInit'
-  requestId: number
-  init: globalThis.ResponseInit
+  type: "ResponseInit";
+  requestId: number;
+  init: globalThis.ResponseInit;
 }
 export function isResponseInit(value: unknown): value is ResponseInit {
-  return isObject(value) && isEqual(value.type, 'ResponseInit') && isNumber(value.requestId) && isObject(value.init)
+  return isObject(value) && isEqual(value.type, "ResponseInit") &&
+    isNumber(value.requestId) && isObject(value.init);
 }
 // ------------------------------------------------------------------
 // ResponseData
 // ------------------------------------------------------------------
 export interface ResponseData {
-  type: 'ResponseData'
-  requestId: number
-  data: Uint8Array
+  type: "ResponseData";
+  requestId: number;
+  data: Uint8Array;
 }
 export function isResponseData(value: unknown): value is ResponseData {
-  return isObject(value) && isEqual(value.type, 'ResponseData') && isNumber(value.requestId) && isUint8Array(value.data)
+  return isObject(value) && isEqual(value.type, "ResponseData") &&
+    isNumber(value.requestId) && isUint8Array(value.data);
 }
 // ------------------------------------------------------------------
 // ResponseEnd
 // ------------------------------------------------------------------
 export interface ResponseEnd {
-  type: 'ResponseEnd'
-  requestId: number
+  type: "ResponseEnd";
+  requestId: number;
 }
 export function isResponseEnd(value: unknown): value is ResponseEnd {
-  return isObject(value) && isEqual(value.type, 'ResponseEnd') && isNumber(value.requestId)
+  return isObject(value) && isEqual(value.type, "ResponseEnd") &&
+    isNumber(value.requestId);
 }
 
 // -------------------------------------------------------------------
 // RequestInitFromRequest
 // -------------------------------------------------------------------
-export function requestInitFromRequest(request: Request): globalThis.RequestInit {
+export function requestInitFromRequest(
+  request: Request,
+): globalThis.RequestInit {
   return {
     cache: request.cache,
     credentials: request.credentials,
@@ -154,15 +171,17 @@ export function requestInitFromRequest(request: Request): globalThis.RequestInit
     referrerPolicy: request.referrerPolicy,
     signal: undefined,
     window: undefined,
-  }
+  };
 }
 // -------------------------------------------------------------------
 // ResponseInitFromResponse
 // -------------------------------------------------------------------
-export function responseInitFromResponse(response: Response): globalThis.ResponseInit {
+export function responseInitFromResponse(
+  response: Response,
+): globalThis.ResponseInit {
   return {
     headers: Object.fromEntries(response.headers.entries()),
     status: response.status,
     statusText: response.statusText,
-  }
+  };
 }

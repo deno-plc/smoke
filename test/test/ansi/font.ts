@@ -27,13 +27,13 @@ THE SOFTWARE.
 ---------------------------------------------------------------------------*/
 
 export namespace font {
-  export const bold = '\x1b[1m'
-  export const italic = '\x1b[3m'
-  export const underline = '\x1b[4m'
-  export const font1 = '\x1b[10m'
-  export const font2 = '\x1b[11m'
-  export const font3 = '\x1b[12m'
-  export const font4 = '\x1b[13m'
-  export const font5 = '\x1b[14m'
-  export const font6 = '\x1b[15m'
+  export const bold = "\x1b[1m";
+  export const italic = "\x1b[3m";
+  export const underline = "\x1b[4m";
+  export const font1 = "\x1b[10m";
+  export const font2 = "\x1b[11m";
+  export const font3 = "\x1b[12m";
+  export const font4 = "\x1b[13m";
+  export const font5 = "\x1b[14m";
+  export const font6 = "\x1b[15m";
 }

@@ -27,14 +27,14 @@ THE SOFTWARE.
 ---------------------------------------------------------------------------*/
 
 export interface DirectoryStat {
-  type: 'directory'
-  path: string
+  type: "directory";
+  path: string;
 }
 export interface FileStat {
-  type: 'file'
-  path: string
-  created: number
-  size: number
+  type: "file";
+  path: string;
+  created: number;
+  size: number;
 }
 
-export type Stat = DirectoryStat | FileStat
+export type Stat = DirectoryStat | FileStat;

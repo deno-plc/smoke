@@ -26,7 +26,7 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import type * as Dispose from '../../dispose/dispose.ts';
+import type * as Dispose from "../../dispose/dispose.ts";
 
 export interface PatternOptions {
   header?: string;
@@ -40,13 +40,13 @@ export class Pattern implements Dispose.Dispose {
   #footer: string;
   #time: number = 0;
   constructor(options: PatternOptions = {}) {
-    this.#canvas = document.createElement('canvas');
+    this.#canvas = document.createElement("canvas");
     this.#canvas.width = 320;
     this.#canvas.height = 200;
-    this.#context = this.#canvas.getContext('2d')!;
+    this.#context = this.#canvas.getContext("2d")!;
     this.#disposed = false;
-    this.#header = options.header || '';
-    this.#footer = options.footer || '';
+    this.#header = options.header || "";
+    this.#footer = options.footer || "";
     this.#time = 0;
     this.#draw();
   }
@@ -130,13 +130,13 @@ export class Pattern implements Dispose.Dispose {
   #drawHeader() {
     this.#context.save();
     const height = 32;
-    this.#context.fillStyle = '#000';
+    this.#context.fillStyle = "#000";
     this.#context.translate(0, 0);
     this.#context.fillRect(0, 0, this.#canvas.width, height);
     this.#context.restore();
 
     this.#context.save();
-    this.#context.strokeStyle = '#111';
+    this.#context.strokeStyle = "#111";
     this.#context.translate(0, height);
     this.#context.beginPath();
     this.#context.moveTo(0, 0);
@@ -147,13 +147,13 @@ export class Pattern implements Dispose.Dispose {
   #drawFooter() {
     this.#context.save();
     const height = 32;
-    this.#context.fillStyle = '#000';
+    this.#context.fillStyle = "#000";
     this.#context.translate(0, this.#canvas.height - height);
     this.#context.fillRect(0, 0, this.#canvas.width, height);
     this.#context.restore();
 
     this.#context.save();
-    this.#context.strokeStyle = '#111';
+    this.#context.strokeStyle = "#111";
     this.#context.translate(0, this.#canvas.height - height);
     this.#context.beginPath();
     this.#context.moveTo(0, 0);
@@ -163,8 +163,8 @@ export class Pattern implements Dispose.Dispose {
   }
   #drawLogo() {
     this.#context.save();
-    this.#context.font = '16px monospace';
-    this.#context.fillStyle = '#FFF';
+    this.#context.font = "16px monospace";
+    this.#context.fillStyle = "#FFF";
     const x = 8;
     const y = 20;
     this.#context.translate(x, y);
@@ -173,8 +173,8 @@ export class Pattern implements Dispose.Dispose {
   }
   #drawTime() {
     this.#context.save();
-    this.#context.font = '16px monospace';
-    this.#context.fillStyle = '#FFF';
+    this.#context.font = "16px monospace";
+    this.#context.fillStyle = "#FFF";
     const text = this.#timeString();
     const metrics = this.#context.measureText(text);
     const x = this.#canvas.width - (metrics.width + 8);
@@ -185,8 +185,8 @@ export class Pattern implements Dispose.Dispose {
   }
   #drawAddress() {
     this.#context.save();
-    this.#context.fillStyle = '#FFF';
-    this.#context.font = '16px monospace';
+    this.#context.fillStyle = "#FFF";
+    this.#context.font = "16px monospace";
     const x = 8;
     const y = this.#canvas.height - 10;
     this.#context.translate(x, y);
@@ -194,10 +194,10 @@ export class Pattern implements Dispose.Dispose {
     this.#context.restore();
   }
   #timeString() {
-    return new Date().toLocaleString('en-US', {
-      hour: 'numeric',
-      minute: 'numeric',
-      second: 'numeric',
+    return new Date().toLocaleString("en-US", {
+      hour: "numeric",
+      minute: "numeric",
+      second: "numeric",
       hour12: true,
     });
   }

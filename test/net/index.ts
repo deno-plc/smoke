@@ -1,1 +1,1 @@
-import './net.ts';
+import "./net.ts";

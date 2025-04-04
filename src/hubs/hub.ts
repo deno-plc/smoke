@@ -29,23 +29,23 @@ THE SOFTWARE.
 // ------------------------------------------------------------------
 // Hub
 // ------------------------------------------------------------------
-export type HubMessageCallback = (message: HubMessage<any>) => any
+export type HubMessageCallback = (message: HubMessage<any>) => any;
 
 export interface HubMessage<T = any> {
-  to: string
-  from: string
-  data: T
+  to: string;
+  from: string;
+  data: T;
 }
 /** A messaging Hub */
 export interface Hub {
   /** Gets the RTCConfiguration object for this Hub */
-  configuration(): Promise<RTCConfiguration>
+  configuration(): Promise<RTCConfiguration>;
   /** Gets the address of this Hub */
-  address(): Promise<string>
+  address(): Promise<string>;
   /** Sends a message to this Hub */
-  send(message: { to: string; data: unknown }): void
+  send(message: { to: string; data: unknown }): void;
   /** Receives messages from this Hub */
-  receive(callback: HubMessageCallback): void
+  receive(callback: HubMessageCallback): void;
   /** Disposes of this Hub */
-  dispose(): void
+  dispose(): void;
 }

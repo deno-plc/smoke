@@ -28,5 +28,5 @@ THE SOFTWARE.
 
 /** Returns a promise that resolves after the given milliseconds have elapsed. */
 export function delay(timeout: number) {
-  return new Promise<void>((resolve) => setTimeout(resolve, timeout))
+  return new Promise<void>((resolve) => setTimeout(resolve, timeout));
 }

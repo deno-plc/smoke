@@ -27,6 +27,6 @@ THE SOFTWARE.
 ---------------------------------------------------------------------------*/
 
 export namespace misc {
-  export const imageNegative = '\x1b[7m'
-  export const imagePositive = '\x1b[27m'
+  export const imageNegative = "\x1b[7m";
+  export const imagePositive = "\x1b[27m";
 }

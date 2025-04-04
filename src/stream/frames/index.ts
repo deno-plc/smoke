@@ -26,6 +26,6 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './reader.ts';
-export * from './duplex.ts';
-export * from './writer.ts';
+export * from "./reader.ts";
+export * from "./duplex.ts";
+export * from "./writer.ts";

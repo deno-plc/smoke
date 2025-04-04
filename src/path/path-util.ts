@@ -26,7 +26,7 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Os from '../os/index.ts';
+import * as Os from "../os/index.ts";
 
 export interface PathObject {
   dir?: string;
@@ -45,7 +45,7 @@ export namespace PathUtil {
   export const CHAR_BACKWARD_SLASH = 92;
   export const CHAR_COLON = 58;
   export const CHAR_QUESTION_MARK = 63;
-  export const platformIsWin32 = Os.type() === 'win32';
+  export const platformIsWin32 = Os.type() === "win32";
 
   export function isPathSeparator(code: number) {
     return code === CHAR_FORWARD_SLASH || code === CHAR_BACKWARD_SLASH;
@@ -54,11 +54,17 @@ export namespace PathUtil {
     return code === CHAR_FORWARD_SLASH;
   }
   export function isWindowsDeviceRoot(code: number) {
-    return (code >= CHAR_UPPERCASE_A && code <= CHAR_UPPERCASE_Z) || (code >= CHAR_LOWERCASE_A && code <= CHAR_LOWERCASE_Z);
+    return (code >= CHAR_UPPERCASE_A && code <= CHAR_UPPERCASE_Z) ||
+      (code >= CHAR_LOWERCASE_A && code <= CHAR_LOWERCASE_Z);
   }
   // Resolves . and .. elements in a path with directory names
-  export function normalizeString(path: string, allowAboveRoot: boolean, separator: string, isPathSeparator: (code: number) => boolean) {
-    let res = '';
+  export function normalizeString(
+    path: string,
+    allowAboveRoot: boolean,
+    separator: string,
+    isPathSeparator: (code: number) => boolean,
+  ) {
+    let res = "";
     let lastSegmentLength = 0;
     let lastSlash = -1;
     let dots = 0;
@@ -72,11 +78,15 @@ export namespace PathUtil {
         if (lastSlash === i - 1 || dots === 1) {
           // NOOP
         } else if (dots === 2) {
-          if (res.length < 2 || lastSegmentLength !== 2 || res.charCodeAt(res.length - 1) !== CHAR_DOT || res.charCodeAt(res.length - 2) !== CHAR_DOT) {
+          if (
+            res.length < 2 || lastSegmentLength !== 2 ||
+            res.charCodeAt(res.length - 1) !== CHAR_DOT ||
+            res.charCodeAt(res.length - 2) !== CHAR_DOT
+          ) {
             if (res.length > 2) {
               const lastSlashIndex = res.lastIndexOf(separator);
               if (lastSlashIndex === -1) {
-                res = '';
+                res = "";
                 lastSegmentLength = 0;
               } else {
                 res = res.slice(0, lastSlashIndex);
@@ -86,7 +96,7 @@ export namespace PathUtil {
               dots = 0;
               continue;
             } else if (res.length !== 0) {
-              res = '';
+              res = "";
               lastSegmentLength = 0;
               lastSlash = i;
               dots = 0;
@@ -94,12 +104,13 @@ export namespace PathUtil {
             }
           }
           if (allowAboveRoot) {
-            res += res.length > 0 ? `${separator}..` : '..';
+            res += res.length > 0 ? `${separator}..` : "..";
             lastSegmentLength = 2;
           }
         } else {
-          if (res.length > 0) res += `${separator}${path.slice(lastSlash + 1, i)}`;
-          else res = path.slice(lastSlash + 1, i);
+          if (res.length > 0) {
+            res += `${separator}${path.slice(lastSlash + 1, i)}`;
+          } else res = path.slice(lastSlash + 1, i);
           lastSegmentLength = i - lastSlash - 1;
         }
         lastSlash = i;
@@ -114,7 +125,8 @@ export namespace PathUtil {
   }
   export function format(sep: string, pathObject: PathObject): string {
     const dir = pathObject.dir || pathObject.root;
-    const base = pathObject.base || `${pathObject.name || ''}${pathObject.ext || ''}`;
+    const base = pathObject.base ||
+      `${pathObject.name || ""}${pathObject.ext || ""}`;
     if (!dir) {
       return base;
     }

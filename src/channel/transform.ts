@@ -26,9 +26,9 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import type { Receiver } from './receiver.ts';
-import type { Sender } from './sender.ts';
-import { Queue } from './queue.ts';
+import type { Receiver } from "./receiver.ts";
+import type { Sender } from "./sender.ts";
+import { Queue } from "./queue.ts";
 
 enum MessageType {
   Next = 0,
@@ -51,7 +51,8 @@ export type Message<T> = MessageNext<T> | MessageError | MessageEnd;
 
 export type TransformFunction<T, U> = (value: T) => U | Promise<U>;
 
-export class TransformChannel<T = unknown, U = unknown> implements Sender<T>, Receiver<U> {
+export class TransformChannel<T = unknown, U = unknown>
+  implements Sender<T>, Receiver<U> {
   readonly #transformFunction: TransformFunction<T, U>;
   readonly #queue: Queue<Message<T>>;
   #ended: boolean;

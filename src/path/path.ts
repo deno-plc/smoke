@@ -26,15 +26,15 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Util from './path-util.ts';
-import * as Cwd from './cwd.ts';
+import * as Util from "./path-util.ts";
+import * as Cwd from "./cwd.ts";
 
-export const system = 'posix';
-export const sep = '/';
-export const delimiter = ':';
+export const system = "posix";
+export const sep = "/";
+export const delimiter = ":";
 
 export function resolve(...args: string[]): string {
-  let resolvedPath = '';
+  let resolvedPath = "";
   let resolvedAbsolute = false;
   for (let i = args.length - 1; i >= -1 && !resolvedAbsolute; i--) {
     const path = i >= 0 ? args[i] : Cwd.cwd;
@@ -50,35 +50,47 @@ export function resolve(...args: string[]): string {
   // handle relative paths to be safe (might happen when Process.cwd() fails)
 
   // Normalize the path
-  resolvedPath = Util.PathUtil.normalizeString(resolvedPath, !resolvedAbsolute, '/', Util.PathUtil.isPosixPathSeparator);
+  resolvedPath = Util.PathUtil.normalizeString(
+    resolvedPath,
+    !resolvedAbsolute,
+    "/",
+    Util.PathUtil.isPosixPathSeparator,
+  );
 
   if (resolvedAbsolute) {
     return `/${resolvedPath}`;
   }
-  return resolvedPath.length > 0 ? resolvedPath : '.';
+  return resolvedPath.length > 0 ? resolvedPath : ".";
 }
 export function normalize(path: string): string {
-  if (path.length === 0) return '.';
+  if (path.length === 0) return ".";
 
   const isAbsolute = path.charCodeAt(0) === Util.PathUtil.CHAR_FORWARD_SLASH;
-  const trailingSeparator = path.charCodeAt(path.length - 1) === Util.PathUtil.CHAR_FORWARD_SLASH;
+  const trailingSeparator =
+    path.charCodeAt(path.length - 1) === Util.PathUtil.CHAR_FORWARD_SLASH;
 
   // Normalize the path
-  path = Util.PathUtil.normalizeString(path, !isAbsolute, '/', Util.PathUtil.isPosixPathSeparator);
+  path = Util.PathUtil.normalizeString(
+    path,
+    !isAbsolute,
+    "/",
+    Util.PathUtil.isPosixPathSeparator,
+  );
 
   if (path.length === 0) {
-    if (isAbsolute) return '/';
-    return trailingSeparator ? './' : '.';
+    if (isAbsolute) return "/";
+    return trailingSeparator ? "./" : ".";
   }
-  if (trailingSeparator) path += '/';
+  if (trailingSeparator) path += "/";
 
   return isAbsolute ? `/${path}` : path;
 }
 export function isAbsolute(path: string): boolean {
-  return path.length > 0 && path.charCodeAt(0) === Util.PathUtil.CHAR_FORWARD_SLASH;
+  return path.length > 0 &&
+    path.charCodeAt(0) === Util.PathUtil.CHAR_FORWARD_SLASH;
 }
 export function join(...args: string[]): string {
-  if (args.length === 0) return '.';
+  if (args.length === 0) return ".";
   let joined;
   for (let i = 0; i < args.length; ++i) {
     const arg = args[i];
@@ -87,17 +99,17 @@ export function join(...args: string[]): string {
       else joined += `/${arg}`;
     }
   }
-  if (joined === undefined) return '.';
+  if (joined === undefined) return ".";
   return normalize(joined);
 }
 export function relative(from: string, to: string): string {
-  if (from === to) return '';
+  if (from === to) return "";
 
   // Trim leading forward slashes.
   from = resolve(from);
   to = resolve(to);
 
-  if (from === to) return '';
+  if (from === to) return "";
 
   const fromStart = 1;
   const fromEnd = from.length;
@@ -139,12 +151,14 @@ export function relative(from: string, to: string): string {
     }
   }
 
-  let out = '';
+  let out = "";
   // Generate the relative path based on the path difference between `to`
   // and `from`.
   for (i = fromStart + lastCommonSep + 1; i <= fromEnd; ++i) {
-    if (i === fromEnd || from.charCodeAt(i) === Util.PathUtil.CHAR_FORWARD_SLASH) {
-      out += out.length === 0 ? '..' : '/..';
+    if (
+      i === fromEnd || from.charCodeAt(i) === Util.PathUtil.CHAR_FORWARD_SLASH
+    ) {
+      out += out.length === 0 ? ".." : "/..";
     }
   }
 
@@ -157,7 +171,7 @@ export function toNamespacedPath(path: string): string {
   return path;
 }
 export function dirname(path: string): string {
-  if (path.length === 0) return '.';
+  if (path.length === 0) return ".";
   const hasRoot = path.charCodeAt(0) === Util.PathUtil.CHAR_FORWARD_SLASH;
   let end = -1;
   let matchedSlash = true;
@@ -173,8 +187,8 @@ export function dirname(path: string): string {
     }
   }
 
-  if (end === -1) return hasRoot ? '/' : '.';
-  if (hasRoot && end === 1) return '//';
+  if (end === -1) return hasRoot ? "/" : ".";
+  if (hasRoot && end === 1) return "//";
   return path.slice(0, end);
 }
 export function basename(path: string, ext?: string) {
@@ -183,7 +197,7 @@ export function basename(path: string, ext?: string) {
   let matchedSlash = true;
 
   if (ext !== undefined && ext.length > 0 && ext.length <= path.length) {
-    if (ext === path) return '';
+    if (ext === path) return "";
     let extIdx = ext.length - 1;
     let firstNonSlashEnd = -1;
     for (let i = path.length - 1; i >= 0; --i) {
@@ -239,7 +253,7 @@ export function basename(path: string, ext?: string) {
     }
   }
 
-  if (end === -1) return '';
+  if (end === -1) return "";
   return path.slice(start, end);
 }
 export function extname(path: string): string {
@@ -286,7 +300,7 @@ export function extname(path: string): string {
     // The (right-most) trimmed path component is exactly '..'
     (preDotState === 1 && startDot === end - 1 && startDot === startPart + 1)
   ) {
-    return '';
+    return "";
   }
   return path.slice(startDot, end);
 }
@@ -294,12 +308,12 @@ export function format(pathObject: Util.PathObject): string {
   return Util.PathUtil.format(sep, pathObject);
 }
 export function parse(path: string): Util.PathObject {
-  const ret = { root: '', dir: '', base: '', ext: '', name: '' };
+  const ret = { root: "", dir: "", base: "", ext: "", name: "" };
   if (path.length === 0) return ret;
   const isAbsolute = path.charCodeAt(0) === Util.PathUtil.CHAR_FORWARD_SLASH;
   let start;
   if (isAbsolute) {
-    ret.root = '/';
+    ret.root = "/";
     start = 1;
   } else {
     start = 0;
@@ -360,6 +374,6 @@ export function parse(path: string): Util.PathObject {
     }
   }
   if (startPart > 0) ret.dir = path.slice(0, startPart - 1);
-  else if (isAbsolute) ret.dir = '/';
+  else if (isAbsolute) ret.dir = "/";
   return ret;
 }

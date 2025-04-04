@@ -26,7 +26,7 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { Equal } from './equal.ts';
+import { Equal } from "./equal.ts";
 
 // ------------------------------------------------------------------
 // Asserts
@@ -43,9 +43,16 @@ export class AssertError extends Error {
 // ------------------------------------------------------------------
 // Has
 // ------------------------------------------------------------------
-export function hasProperty<K extends PropertyKey>(value: unknown, key: K): asserts value is { [_ in keyof K]: unknown } {
-  if (typeof value === 'object' && value !== null && key in value) return;
-  throw new AssertError(`Expect value to have property '${key as string}'`, value, { [key]: undefined });
+export function hasProperty<K extends PropertyKey>(
+  value: unknown,
+  key: K,
+): asserts value is { [_ in keyof K]: unknown } {
+  if (typeof value === "object" && value !== null && key in value) return;
+  throw new AssertError(
+    `Expect value to have property '${key as string}'`,
+    value,
+    { [key]: undefined },
+  );
 }
 // ------------------------------------------------------------------
 // Guards
@@ -53,22 +60,22 @@ export function hasProperty<K extends PropertyKey>(value: unknown, key: K): asse
 /** Asserts the value is true */
 export function isTrue(value: boolean): asserts value is true {
   if (value === true) return;
-  throw new AssertError('Expect value to be true', true, value);
+  throw new AssertError("Expect value to be true", true, value);
 }
 /** Asserts the value is false */
 export function isFalse(value: boolean): asserts value is false {
   if (value === false) return;
-  throw new AssertError('Expect value to be false', false, value);
+  throw new AssertError("Expect value to be false", false, value);
 }
 /** Asserts the value is equal */
 export function isEqual(actual: unknown, expect: unknown) {
   if (Equal(actual, expect)) return;
-  throw new AssertError('Expect value to be equal', actual, expect);
+  throw new AssertError("Expect value to be equal", actual, expect);
 }
 /** Asserts the value is not equal */
 export function isNotEqual(actual: unknown, expect: unknown) {
   if (!Equal(actual, expect)) return;
-  throw new AssertError('Expect value not to be equal', actual, expect);
+  throw new AssertError("Expect value not to be equal", actual, expect);
 }
 // ------------------------------------------------------------------
 // InstanceOf
@@ -77,35 +84,44 @@ type InstanceOfInput = new (...args: any[]) => any;
 type InstanceOfOutput<T extends InstanceOfInput> = InstanceType<T>;
 
 /** Asserts the value using the instanceof operator */
-export function isInstanceOf<T extends InstanceOfInput>(value: any, constructor: T): asserts value is InstanceOfOutput<T> {
+export function isInstanceOf<T extends InstanceOfInput>(
+  value: any,
+  constructor: T,
+): asserts value is InstanceOfOutput<T> {
   if (value instanceof constructor) return;
-  throw new AssertError(`Value is not instance of ${constructor}`, value, constructor);
+  throw new AssertError(
+    `Value is not instance of ${constructor}`,
+    value,
+    constructor,
+  );
 }
 // ------------------------------------------------------------------
 // TypeOf
 // ------------------------------------------------------------------
 // prettier-ignore
 type TypeOfInput =
-  | 'number'
-  | 'string'
-  | 'boolean'
-  | 'object'
-  | 'function'
-  | 'symbol'
-  | 'bigint';
+  | "number"
+  | "string"
+  | "boolean"
+  | "object"
+  | "function"
+  | "symbol"
+  | "bigint";
 // prettier-ignore
-type TypeOfOutput<T extends TypeOfInput> =
-  T extends 'number' ? number :
-  T extends 'string' ? string :
-  T extends 'boolean' ? boolean :
-  T extends 'object' ? object :
-  T extends 'function' ? Function :
-  T extends 'symbol' ? symbol :
-  T extends 'bigint' ? bigint :
-  never;
+type TypeOfOutput<T extends TypeOfInput> = T extends "number" ? number
+  : T extends "string" ? string
+  : T extends "boolean" ? boolean
+  : T extends "object" ? object
+  : T extends "function" ? Function
+  : T extends "symbol" ? symbol
+  : T extends "bigint" ? bigint
+  : never;
 
 /** Asserts the value using the typeof operator */
-export function isTypeOf<T extends TypeOfInput>(value: any, type: T): asserts value is TypeOfOutput<T> {
+export function isTypeOf<T extends TypeOfInput>(
+  value: any,
+  type: T,
+): asserts value is TypeOfOutput<T> {
   if (typeof value === type) return;
   throw new AssertError(`Value is not typeof ${type}`, value, type);
 }
@@ -125,7 +141,10 @@ export function shouldThrow(callback: Function, expect?: ThrowExpected) {
   throw new AssertError(`Expected throw`, null, null);
 }
 /** Asserts the given callback throws asynchronously */
-export async function shouldThrowAsync(callback: Function, expect?: ThrowExpected) {
+export async function shouldThrowAsync(
+  callback: Function,
+  expect?: ThrowExpected,
+) {
   try {
     await callback();
   } catch (error) {
@@ -138,7 +157,10 @@ export async function shouldThrowAsync(callback: Function, expect?: ThrowExpecte
 // Throw
 // ------------------------------------------------------------------
 /** Asserts the given callback times out */
-export function shouldTimeout(callback: () => Promise<any>, options: { timeout: number; } = { timeout: 2000 }) {
+export function shouldTimeout(
+  callback: () => Promise<any>,
+  options: { timeout: number } = { timeout: 2000 },
+) {
   return new Promise<void>(async (resolve, reject) => {
     setTimeout(() => resolve(), options.timeout);
     await callback();

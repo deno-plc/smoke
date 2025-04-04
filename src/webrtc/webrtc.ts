@@ -26,27 +26,36 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Async from '../async/index.ts';
-import type * as Dispose from '../dispose/index.ts';
-import type * as Hubs from '../hubs/index.ts';
-import { WebRtcDataChannelListener, type WebRtcDataChannelListenerAcceptCallback } from './datachannel/index.ts';
-import { WebRtcTrackListener, type WebRtcTrackListenerAcceptCallback } from './track/index.ts';
+import * as Async from "../async/index.ts";
+import type * as Dispose from "../dispose/index.ts";
+import type * as Hubs from "../hubs/index.ts";
+import {
+  WebRtcDataChannelListener,
+  type WebRtcDataChannelListenerAcceptCallback,
+} from "./datachannel/index.ts";
+import {
+  WebRtcTrackListener,
+  type WebRtcTrackListenerAcceptCallback,
+} from "./track/index.ts";
 
 // ------------------------------------------------------------------
 // WebRtcMessage
 // ------------------------------------------------------------------
-export type WebRtcMessage = WebRtcCandidateMessage | WebRtcDescriptionMessage | WebRtcTerminateMessage;
+export type WebRtcMessage =
+  | WebRtcCandidateMessage
+  | WebRtcDescriptionMessage
+  | WebRtcTerminateMessage;
 
 export type WebRtcCandidateMessage = {
-  type: 'candidate';
+  type: "candidate";
   candidate: RTCIceCandidate | null;
 };
 export type WebRtcDescriptionMessage = {
-  type: 'description';
+  type: "description";
   description: RTCSessionDescription;
 };
 export type WebRtcTerminateMessage = {
-  type: 'terminate';
+  type: "terminate";
 };
 // ------------------------------------------------------------------
 // WebRtcPeer
@@ -109,7 +118,10 @@ export class WebRtcModule implements Dispose.Dispose {
   // ------------------------------------------------------------------
   /** Gets network statistics for each peer managed by this module */
   public stats(): WebRtcPeerStatistic[] {
-    let [statistics, index]: [WebRtcPeerStatistic[], number] = [Array.from({ length: this.#peers.size }), 0];
+    let [statistics, index]: [WebRtcPeerStatistic[], number] = [
+      Array.from({ length: this.#peers.size }),
+      0,
+    ];
     for (const peer of this.#peers.values()) {
       let bytesBuffered = 0;
       for (const channel of peer.datachannels) {
@@ -133,49 +145,87 @@ export class WebRtcModule implements Dispose.Dispose {
   // DataChannels
   // ------------------------------------------------------------------
   /** Listens for incoming data channels */
-  public listen(options: WebRtcListenOptions, callback: WebRtcDataChannelListenerAcceptCallback): WebRtcDataChannelListener {
+  public listen(
+    options: WebRtcListenOptions,
+    callback: WebRtcDataChannelListenerAcceptCallback,
+  ): WebRtcDataChannelListener {
     this.#assertPortInUse(options);
     const listener = new WebRtcDataChannelListener(
       (peer, datachannel) => callback(peer, datachannel),
-      () => this.#channelListeners.delete(options.port.toString()
-      ));
+      () => this.#channelListeners.delete(options.port.toString()),
+    );
     this.#channelListeners.set(options.port.toString(), listener);
     return listener;
   }
   /** Connects to a remote peer */
-  public async connect(remoteAddress: string, port: number, options: RTCDataChannelInit): Promise<[WebRtcPeer, RTCDataChannel]> {
-    const peer = await this.#resolvePeer(await this.#resolveAddress(remoteAddress));
-    const datachannel = peer.connection.createDataChannel(port.toString(), options);
+  public async connect(
+    remoteAddress: string,
+    port: number,
+    options: RTCDataChannelInit,
+  ): Promise<[WebRtcPeer, RTCDataChannel]> {
+    const peer = await this.#resolvePeer(
+      await this.#resolveAddress(remoteAddress),
+    );
+    const datachannel = peer.connection.createDataChannel(
+      port.toString(),
+      options,
+    );
     const awaiter = new Async.Deferred<[WebRtcPeer, RTCDataChannel]>();
-    datachannel.addEventListener('close', () => peer.datachannels.delete(datachannel));
-    datachannel.addEventListener('open', () => peer.datachannels.add(datachannel));
-    datachannel.addEventListener('open', () => awaiter.resolve([peer, datachannel]));
-    return Async.timeout(awaiter.promise(), { timeout: 4000, error: new Error(`Connection to '${remoteAddress}:${port}' timed out`) });
+    datachannel.addEventListener(
+      "close",
+      () => peer.datachannels.delete(datachannel),
+    );
+    datachannel.addEventListener(
+      "open",
+      () => peer.datachannels.add(datachannel),
+    );
+    datachannel.addEventListener(
+      "open",
+      () => awaiter.resolve([peer, datachannel]),
+    );
+    return Async.timeout(awaiter.promise(), {
+      timeout: 4000,
+      error: new Error(`Connection to '${remoteAddress}:${port}' timed out`),
+    });
   }
   /** Terminates the RTCPeerConnection associated with this remoteAddress and asks the remote peer to do the same  */
   public async terminate(remoteAddress: string) {
-    this.#hub.send({ to: remoteAddress, data: { type: 'terminate' } });
+    this.#hub.send({ to: remoteAddress, data: { type: "terminate" } });
     await this.#terminateConnection(remoteAddress);
   }
   // ------------------------------------------------------------------
   // Media
   // ------------------------------------------------------------------
   /** Sends a track to a remote peer */
-  public async addTrack(remoteAddress: string, track: MediaStreamTrack, ...streams: MediaStream[]): Promise<[WebRtcPeer, RTCRtpSender]> {
-    const peer = await this.#resolvePeer(await this.#resolveAddress(remoteAddress));
+  public async addTrack(
+    remoteAddress: string,
+    track: MediaStreamTrack,
+    ...streams: MediaStream[]
+  ): Promise<[WebRtcPeer, RTCRtpSender]> {
+    const peer = await this.#resolvePeer(
+      await this.#resolveAddress(remoteAddress),
+    );
     const sender = peer.connection.addTrack(track, ...streams);
     return [peer, sender];
   }
   /** Removes a track */
   public async removeTrack(remoteAddress: string, sender: RTCRtpSender) {
-    const peer = await this.#resolvePeer(await this.#resolveAddress(remoteAddress));
+    const peer = await this.#resolvePeer(
+      await this.#resolveAddress(remoteAddress),
+    );
     peer.connection.removeTrack(sender);
   }
   /** Listens for incoming media tracks */
-  public listenTrack(callback: WebRtcTrackListenerAcceptCallback): WebRtcTrackListener {
+  public listenTrack(
+    callback: WebRtcTrackListenerAcceptCallback,
+  ): WebRtcTrackListener {
     const listener = new WebRtcTrackListener(
-      (peer, event) => { callback(peer, event); },
-      () => { this.#trackListeners.delete(listener); }
+      (peer, event) => {
+        callback(peer, event);
+      },
+      () => {
+        this.#trackListeners.delete(listener);
+      },
     );
     this.#trackListeners.add(listener);
     return listener;
@@ -192,9 +242,13 @@ export class WebRtcModule implements Dispose.Dispose {
   // ------------------------------------------------------------------
   // SendToHub
   // ------------------------------------------------------------------
-  #sendToHub(request: { to: string; data: WebRtcMessage; }) {
-    if (['loopback:0', 'loopback:1'].includes(request.to)) {
-      this.#onHubMessage({ from: request.to === 'loopback:0' ? 'loopback:1' : 'loopback:0', to: request.to, data: request.data });
+  #sendToHub(request: { to: string; data: WebRtcMessage }) {
+    if (["loopback:0", "loopback:1"].includes(request.to)) {
+      this.#onHubMessage({
+        from: request.to === "loopback:0" ? "loopback:1" : "loopback:0",
+        to: request.to,
+        data: request.data,
+      });
     } else {
       this.#hub.send({ to: request.to, data: request.data });
     }
@@ -206,14 +260,20 @@ export class WebRtcModule implements Dispose.Dispose {
     const lock = await this.#mutex.lock();
     try {
       const peer = await this.#resolvePeer(message.from);
-      const [collision, polite] = [this.#isCollision(peer, message.data), this.#isPolite(peer.localAddress, peer.remoteAddress)];
+      const [collision, polite] = [
+        this.#isCollision(peer, message.data),
+        this.#isPolite(peer.localAddress, peer.remoteAddress),
+      ];
       peer.ignoreOffer = !polite && collision;
       if (peer.ignoreOffer) return;
       await peer.connection.setRemoteDescription(message.data.description);
-      if (message.data.description.type == 'offer') {
+      if (message.data.description.type == "offer") {
         await peer.connection.setLocalDescription();
-        const [to, description] = [peer.remoteAddress, peer.connection.localDescription!];
-        this.#sendToHub({ to, data: { type: 'description', description } });
+        const [to, description] = [
+          peer.remoteAddress,
+          peer.connection.localDescription!,
+        ];
+        this.#sendToHub({ to, data: { type: "description", description } });
       }
     } finally {
       lock.dispose();
@@ -232,9 +292,12 @@ export class WebRtcModule implements Dispose.Dispose {
   #onHubMessage(message: Hubs.HubMessage) {
     const data = message.data as WebRtcMessage;
     switch (data.type) {
-      case 'description': return this.#onHubDescription(message as never);
-      case 'candidate': return this.#onHubCandidate(message as never);
-      case 'terminate': return this.#terminateConnection(message.from);
+      case "description":
+        return this.#onHubDescription(message as never);
+      case "candidate":
+        return this.#onHubCandidate(message as never);
+      case "terminate":
+        return this.#terminateConnection(message.from);
     }
   }
   // ------------------------------------------------------------------
@@ -245,8 +308,14 @@ export class WebRtcModule implements Dispose.Dispose {
     peer.makingOffer = true;
     try {
       await peer.connection.setLocalDescription();
-      const [description, to] = [peer.connection.localDescription!, peer.remoteAddress];
-      const data: WebRtcDescriptionMessage = { type: 'description', description };
+      const [description, to] = [
+        peer.connection.localDescription!,
+        peer.remoteAddress,
+      ];
+      const data: WebRtcDescriptionMessage = {
+        type: "description",
+        description,
+      };
       this.#sendToHub({ to, data });
     } catch (error) {
       console.warn(error);
@@ -256,17 +325,23 @@ export class WebRtcModule implements Dispose.Dispose {
     }
   }
   #onPeerIceCandidate(peer: WebRtcPeer, event: RTCPeerConnectionIceEvent) {
-    this.#sendToHub({ to: peer.remoteAddress, data: { type: 'candidate', candidate: event.candidate } });
+    this.#sendToHub({
+      to: peer.remoteAddress,
+      data: { type: "candidate", candidate: event.candidate },
+    });
   }
   #onPeerConnectionStateChange(peer: WebRtcPeer, event: Event) {
-    if (peer.connection.iceConnectionState !== 'disconnected') return;
+    if (peer.connection.iceConnectionState !== "disconnected") return;
     this.#terminateConnection(peer.remoteAddress);
   }
   #onPeerDataChannel(peer: WebRtcPeer, event: RTCDataChannelEvent) {
     const [datachannel, port] = [event.channel, event.channel.label];
     if (!this.#channelListeners.has(port)) return datachannel.close();
     const listener = this.#channelListeners.get(port)!;
-    event.channel.addEventListener('close', () => peer.datachannels.delete(datachannel));
+    event.channel.addEventListener(
+      "close",
+      () => peer.datachannels.delete(datachannel),
+    );
     peer.datachannels.add(datachannel);
     listener.accept(peer, datachannel);
   }
@@ -279,7 +354,8 @@ export class WebRtcModule implements Dispose.Dispose {
   // Collision
   // ----------------------------------------------------------------
   #isCollision(peer: WebRtcPeer, data: WebRtcDescriptionMessage) {
-    return data.description.type === 'offer' && (peer.makingOffer || peer.connection.signalingState !== 'stable');
+    return data.description.type === "offer" &&
+      (peer.makingOffer || peer.connection.signalingState !== "stable");
   }
   #isPolite(addressA: string, addressB: string) {
     const sorted = [addressA, addressB].sort();
@@ -287,13 +363,22 @@ export class WebRtcModule implements Dispose.Dispose {
   }
   // ----------------------------------------------------------------
   // ResolvePeer
-  // ----------------------------------------------------------------  
+  // ----------------------------------------------------------------
   async #resolvePeer(remoteAddress: string): Promise<WebRtcPeer> {
     if (this.#peers.has(remoteAddress)) return this.#peers.get(remoteAddress)!;
     const configuration = await this.#hub.configuration();
     const localAddress = await this.#hub.address();
     const connection = new RTCPeerConnection(configuration);
-    const peer: WebRtcPeer = { connection, datachannels: new Set<RTCDataChannel>(), localAddress, remoteAddress, makingOffer: false, ignoreOffer: true, bytesSent: 0, bytesReceived: 0 };
+    const peer: WebRtcPeer = {
+      connection,
+      datachannels: new Set<RTCDataChannel>(),
+      localAddress,
+      remoteAddress,
+      makingOffer: false,
+      ignoreOffer: true,
+      bytesSent: 0,
+      bytesReceived: 0,
+    };
     this.#setupPeerEvents(peer);
     this.#peers.set(remoteAddress, peer);
     return peer;
@@ -303,7 +388,9 @@ export class WebRtcModule implements Dispose.Dispose {
   // ----------------------------------------------------------------
   async #resolveAddress(remoteAddress: string): Promise<string> {
     const localAddress = await this.#hub.address();
-    return remoteAddress === 'localhost' || remoteAddress === localAddress ? 'loopback:1' : remoteAddress;
+    return remoteAddress === "localhost" || remoteAddress === localAddress
+      ? "loopback:1"
+      : remoteAddress;
   }
   // ------------------------------------------------------------------
   // Asserts
@@ -327,7 +414,7 @@ export class WebRtcModule implements Dispose.Dispose {
     try {
       const targetAddress = await this.#resolveAddress(remoteAddress);
       if (!this.#peers.has(targetAddress)) return;
-      if (['loopback:0', 'loopback:1'].includes(targetAddress)) {
+      if (["loopback:0", "loopback:1"].includes(targetAddress)) {
         this.#resetLocalhost();
       } else {
         const peer = this.#peers.get(targetAddress)!;
@@ -343,24 +430,44 @@ export class WebRtcModule implements Dispose.Dispose {
   // Localhost
   // ----------------------------------------------------------------
   #setupLocalhost(): void {
-    if (this.#peers.has('loopback:1') || this.#peers.has('loopback:0')) {
+    if (this.#peers.has("loopback:1") || this.#peers.has("loopback:0")) {
       return;
     }
     const connection0 = new RTCPeerConnection({});
     const connection1 = new RTCPeerConnection({});
-    const peer0: WebRtcPeer = { connection: connection0, datachannels: new Set<RTCDataChannel>(), localAddress: 'loopback:0', remoteAddress: 'loopback:1', makingOffer: false, ignoreOffer: false, bytesSent: 0, bytesReceived: 0 };
-    const peer1: WebRtcPeer = { connection: connection1, datachannels: new Set<RTCDataChannel>(), localAddress: 'loopback:1', remoteAddress: 'loopback:0', makingOffer: false, ignoreOffer: false, bytesSent: 0, bytesReceived: 0 };
+    const peer0: WebRtcPeer = {
+      connection: connection0,
+      datachannels: new Set<RTCDataChannel>(),
+      localAddress: "loopback:0",
+      remoteAddress: "loopback:1",
+      makingOffer: false,
+      ignoreOffer: false,
+      bytesSent: 0,
+      bytesReceived: 0,
+    };
+    const peer1: WebRtcPeer = {
+      connection: connection1,
+      datachannels: new Set<RTCDataChannel>(),
+      localAddress: "loopback:1",
+      remoteAddress: "loopback:0",
+      makingOffer: false,
+      ignoreOffer: false,
+      bytesSent: 0,
+      bytesReceived: 0,
+    };
     this.#setupPeerEvents(peer0);
     this.#setupPeerEvents(peer1);
     this.#peers.set(peer0.remoteAddress, peer0);
     this.#peers.set(peer1.remoteAddress, peer1);
   }
   #resetLocalhost() {
-    if (!(this.#peers.has('loopback:0') && this.#peers.has('loopback:1'))) return;
-    const localhost0 = this.#peers.get('loopback:0')!;
-    const localhost1 = this.#peers.get('loopback:1')!;
-    this.#peers.delete('loopback:0');
-    this.#peers.delete('loopback:1');
+    if (!(this.#peers.has("loopback:0") && this.#peers.has("loopback:1"))) {
+      return;
+    }
+    const localhost0 = this.#peers.get("loopback:0")!;
+    const localhost1 = this.#peers.get("loopback:1")!;
+    this.#peers.delete("loopback:0");
+    this.#peers.delete("loopback:1");
     localhost1.connection.close();
     localhost0.connection.close();
     this.#setupLocalhost();
@@ -369,12 +476,33 @@ export class WebRtcModule implements Dispose.Dispose {
   // Event Registration
   // ----------------------------------------------------------------
   #setupPeerEvents(peer: WebRtcPeer) {
-    peer.connection.addEventListener('iceconnectionstatechange', (event) => this.#onPeerConnectionStateChange(peer, event));
-    peer.connection.addEventListener('icegatheringstatechange', (event) => this.#onPeerConnectionStateChange(peer, event));
-    peer.connection.addEventListener('signalingstatechange', (event) => this.#onPeerConnectionStateChange(peer, event));
-    peer.connection.addEventListener('negotiationneeded', (event) => this.#onPeerNegotiationNeeded(peer, event));
-    peer.connection.addEventListener('icecandidate', (event) => this.#onPeerIceCandidate(peer, event));
-    peer.connection.addEventListener('datachannel', (event) => this.#onPeerDataChannel(peer, event));
-    peer.connection.addEventListener('track', (event) => this.#onPeerTrack(peer, event));
+    peer.connection.addEventListener(
+      "iceconnectionstatechange",
+      (event) => this.#onPeerConnectionStateChange(peer, event),
+    );
+    peer.connection.addEventListener(
+      "icegatheringstatechange",
+      (event) => this.#onPeerConnectionStateChange(peer, event),
+    );
+    peer.connection.addEventListener(
+      "signalingstatechange",
+      (event) => this.#onPeerConnectionStateChange(peer, event),
+    );
+    peer.connection.addEventListener(
+      "negotiationneeded",
+      (event) => this.#onPeerNegotiationNeeded(peer, event),
+    );
+    peer.connection.addEventListener(
+      "icecandidate",
+      (event) => this.#onPeerIceCandidate(peer, event),
+    );
+    peer.connection.addEventListener(
+      "datachannel",
+      (event) => this.#onPeerDataChannel(peer, event),
+    );
+    peer.connection.addEventListener(
+      "track",
+      (event) => this.#onPeerTrack(peer, event),
+    );
   }
 }

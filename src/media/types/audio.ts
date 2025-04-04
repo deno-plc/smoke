@@ -26,7 +26,7 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import type * as Dispose from '../../dispose/dispose.ts';
+import type * as Dispose from "../../dispose/dispose.ts";
 
 export interface AudioSourceOptions {
   src: string;
@@ -57,28 +57,37 @@ export class AudioSource implements Dispose.Dispose {
   // Statics
   // ----------------------------------------------------------------
   private static createMediaStream(element: HTMLAudioElement): MediaStream {
-    if ('captureStream' in element && typeof element.captureStream === 'function') {
+    if (
+      "captureStream" in element && typeof element.captureStream === "function"
+    ) {
       return element.captureStream(30) as MediaStream;
     }
-    if ('mozCaptureStream' in element && typeof element.mozCaptureStream === 'function') {
+    if (
+      "mozCaptureStream" in element &&
+      typeof element.mozCaptureStream === "function"
+    ) {
       return element.mozCaptureStream(30) as MediaStream;
     }
-    throw new Error('HTMLAudioElement does not support captureStream()');
+    throw new Error("HTMLAudioElement does not support captureStream()");
   }
-  private static createAudioElement(options: AudioSourceOptions): Promise<HTMLAudioElement> {
+  private static createAudioElement(
+    options: AudioSourceOptions,
+  ): Promise<HTMLAudioElement> {
     return new Promise<HTMLVideoElement>((resolve, reject) => {
-      const element = document.createElement('video');
+      const element = document.createElement("video");
       element.src = options.src;
       element.volume = 0.0001;
       element.loop = true;
       element.controls = true;
       element.play();
-      element.addEventListener('canplay', () => resolve(element));
-      element.addEventListener('error', (error) => reject(error));
+      element.addEventListener("canplay", () => resolve(element));
+      element.addEventListener("error", (error) => reject(error));
     });
   }
   /** Creates a new VideoSource */
-  public static async createAudioSource(options: AudioSourceOptions): Promise<AudioSource> {
+  public static async createAudioSource(
+    options: AudioSourceOptions,
+  ): Promise<AudioSource> {
     const element = await AudioSource.createAudioElement(options);
     const mediastream = AudioSource.createMediaStream(element);
     return new AudioSource(element, mediastream);

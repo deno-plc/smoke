@@ -26,8 +26,8 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './color.ts';
-export * from './cursor.ts';
-export * from './font.ts';
-export * from './misc.ts';
-export * from './reset.ts';
+export * from "./color.ts";
+export * from "./cursor.ts";
+export * from "./font.ts";
+export * from "./misc.ts";
+export * from "./reset.ts";

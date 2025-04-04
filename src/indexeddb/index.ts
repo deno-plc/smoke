@@ -26,10 +26,10 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './cursor.ts';
-export * from './database.ts';
-export * from './factory.ts';
-export * from './indexed.ts';
-export * from './object-store.ts';
-export * from './request.ts';
-export * from './transaction.ts';
+export * from "./cursor.ts";
+export * from "./database.ts";
+export * from "./factory.ts";
+export * from "./indexed.ts";
+export * from "./object-store.ts";
+export * from "./request.ts";
+export * from "./transaction.ts";

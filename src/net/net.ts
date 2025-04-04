@@ -26,9 +26,13 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { NetListener, type NetListenerOptions, type NetListenerAcceptCallback } from './listener.ts';
-import { NetSocket } from './socket.ts';
-import type * as WebRtc from '../webrtc/index.ts';
+import {
+  NetListener,
+  type NetListenerAcceptCallback,
+  type NetListenerOptions,
+} from "./listener.ts";
+import { NetSocket } from "./socket.ts";
+import type * as WebRtc from "../webrtc/index.ts";
 
 export interface NetConnectOptions {
   hostname?: string;
@@ -43,13 +47,19 @@ export class NetModule {
   // Module API
   // ----------------------------------------------------------------
   /** Creates a Net listener */
-  public listen(options: NetListenerOptions, accept: NetListenerAcceptCallback): NetListener {
+  public listen(
+    options: NetListenerOptions,
+    accept: NetListenerAcceptCallback,
+  ): NetListener {
     return new NetListener(this.#webrtc, options, accept);
   }
   /** Establishes a connection to a remote Net listener */
   public async connect(options: NetConnectOptions): Promise<NetSocket> {
-    const [hostname, port] = [options.hostname ?? 'localhost', options.port];
-    const [peer, datachannel] = await this.#webrtc.connect(hostname, port, { ordered: true, maxRetransmits: 16 });
+    const [hostname, port] = [options.hostname ?? "localhost", options.port];
+    const [peer, datachannel] = await this.#webrtc.connect(hostname, port, {
+      ordered: true,
+      maxRetransmits: 16,
+    });
     return new NetSocket(peer, datachannel);
   }
 }

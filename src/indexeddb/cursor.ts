@@ -26,13 +26,13 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { Request } from './request.ts';
+import { Request } from "./request.ts";
 
 // --------------------------------------------------------------------------
 // Cursor<T>
 // --------------------------------------------------------------------------
 export class Record<T> {
-  constructor(private readonly cursor: IDBCursor) { }
+  constructor(private readonly cursor: IDBCursor) {}
   /** This records key */
   public get key(): IDBValidKey {
     return this.cursor.key;
@@ -47,7 +47,7 @@ export class Record<T> {
   }
 }
 export class Cursor<T> {
-  constructor(protected readonly request: IDBRequest<IDBCursor | null>) { }
+  constructor(protected readonly request: IDBRequest<IDBCursor | null>) {}
   public async *[Symbol.asyncIterator]() {
     while (true) {
       const next = await Request(this.request);
@@ -61,7 +61,7 @@ export class Cursor<T> {
 // CursorWithValue<T>
 // --------------------------------------------------------------------------
 export class RecordWithValue<T> {
-  constructor(private readonly cursor: IDBCursorWithValue) { }
+  constructor(private readonly cursor: IDBCursorWithValue) {}
   /** This records key */
   public get key(): IDBValidKey {
     return this.cursor.key;
@@ -80,7 +80,9 @@ export class RecordWithValue<T> {
   }
 }
 export class CursorWithValue<T> {
-  constructor(protected readonly request: IDBRequest<IDBCursorWithValue | null>) { }
+  constructor(
+    protected readonly request: IDBRequest<IDBCursorWithValue | null>,
+  ) {}
   public async *[Symbol.asyncIterator]() {
     while (true) {
       const next = await Request(this.request);

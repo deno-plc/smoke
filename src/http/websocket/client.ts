@@ -26,15 +26,15 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Buffer from '../../buffer/index.ts';
-import * as Events from '../../events/index.ts';
-import * as Stream from '../../stream/index.ts';
-import type * as Net from '../../net/index.ts';
-import * as Url from '../../url/index.ts';
-import * as Signal from '../signal.ts';
-import * as Protocol from './protocol.ts';
+import * as Buffer from "../../buffer/index.ts";
+import * as Events from "../../events/index.ts";
+import * as Stream from "../../stream/index.ts";
+import type * as Net from "../../net/index.ts";
+import * as Url from "../../url/index.ts";
+import * as Signal from "../signal.ts";
+import * as Protocol from "./protocol.ts";
 
-import type { HttpListenerRequestInit } from '../listener.ts';
+import type { HttpListenerRequestInit } from "../listener.ts";
 
 export enum HttpWebSocketState {
   CONNECTING,
@@ -58,19 +58,36 @@ export class HttpWebSocket {
   // ----------------------------------------------------------------
   // WebSocket
   // ----------------------------------------------------------------
-  public on(event: 'open', handler: Events.EventHandler<Event>): Events.EventListener;
-  public on(event: 'message', handler: Events.EventHandler<MessageEvent>): Events.EventListener;
-  public on(event: 'error', handler: Events.EventHandler<Event>): Events.EventListener;
-  public on(event: 'close', handler: Events.EventHandler<CloseEvent>): Events.EventListener;
-  public on(event: string, handler: Events.EventHandler<any>): Events.EventListener {
+  public on(
+    event: "open",
+    handler: Events.EventHandler<Event>,
+  ): Events.EventListener;
+  public on(
+    event: "message",
+    handler: Events.EventHandler<MessageEvent>,
+  ): Events.EventListener;
+  public on(
+    event: "error",
+    handler: Events.EventHandler<Event>,
+  ): Events.EventListener;
+  public on(
+    event: "close",
+    handler: Events.EventHandler<CloseEvent>,
+  ): Events.EventListener;
+  public on(
+    event: string,
+    handler: Events.EventHandler<any>,
+  ): Events.EventListener {
     return this.#events.on(event, handler);
   }
   public get binaryType(): BinaryType {
-    return 'arraybuffer';
+    return "arraybuffer";
   }
   public send(value: string | ArrayBufferLike | ArrayBufferView): void {
     if (this.#state === HttpWebSocketState.CLOSED) return;
-    if (this.#state === HttpWebSocketState.CONNECTING) throw Error('Socket is still connecting');
+    if (this.#state === HttpWebSocketState.CONNECTING) {
+      throw Error("Socket is still connecting");
+    }
     this.#stream.write(Protocol.encodeMessage(value));
   }
   public close(code?: number): void {
@@ -88,10 +105,13 @@ export class HttpWebSocket {
   // ----------------------------------------------------------------
   // SendListenerRequestInit
   // ----------------------------------------------------------------
-  async #sendListenerRequestInit(urlObject: Url.UrlObject, requestInit: RequestInit) {
+  async #sendListenerRequestInit(
+    urlObject: Url.UrlObject,
+    requestInit: RequestInit,
+  ) {
     const headers = (requestInit.headers as never) ?? {};
-    const method = requestInit.method ?? 'GET';
-    const url = urlObject.path ?? '/';
+    const method = requestInit.method ?? "GET";
+    const url = urlObject.path ?? "/";
     const init: HttpListenerRequestInit = { headers, method, url };
     await this.#stream.write(Buffer.encode(JSON.stringify(init)));
   }
@@ -102,15 +122,15 @@ export class HttpWebSocket {
     await this.#sendListenerRequestInit(Url.parse(this.#endpoint), {});
     if ((await this.#checkResponseSignal()) === false) {
       await this.#stream.close();
-      this.#events.send('error', new Error('Unexpected protocol response'));
-      this.#events.send('close', void 0);
+      this.#events.send("error", new Error("Unexpected protocol response"));
+      this.#events.send("close", void 0);
       return;
     }
     if (this.#state === HttpWebSocketState.CLOSED) {
       return;
     }
     this.#state = HttpWebSocketState.CONNECTED;
-    this.#events.send('open', void 0);
+    this.#events.send("open", void 0);
     await this.#readInternal();
   }
   // ----------------------------------------------------------------
@@ -120,7 +140,7 @@ export class HttpWebSocket {
     for await (const message of this.#stream) {
       this.#dispatchProtocolMessage(message);
     }
-    this.#events.send('close', void 0);
+    this.#events.send("close", void 0);
   }
   // ----------------------------------------------------------------
   // DispatchProtocolMessage
@@ -129,12 +149,14 @@ export class HttpWebSocket {
     const [type, data] = Protocol.decodeAny(message);
     switch (type) {
       case Protocol.MessageType.MessageText: {
-        const event = new MessageEvent('message', { data: Buffer.decode(new Uint8Array(data)) });
-        return this.#events.send('message', event);
+        const event = new MessageEvent("message", {
+          data: Buffer.decode(new Uint8Array(data)),
+        });
+        return this.#events.send("message", event);
       }
       case Protocol.MessageType.MessageData: {
-        const event = new MessageEvent('message', { data: data });
-        return this.#events.send('message', event);
+        const event = new MessageEvent("message", { data: data });
+        return this.#events.send("message", event);
       }
       case Protocol.MessageType.Ping: {
         return this.#stream.write(Protocol.encodePong(data));

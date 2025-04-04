@@ -27,15 +27,15 @@ THE SOFTWARE.
 ---------------------------------------------------------------------------*/
 
 export class Lock {
-  #resolve: Function
+  #resolve: Function;
   constructor(resolve: Function) {
-    this.#resolve = resolve
+    this.#resolve = resolve;
   }
   [Symbol.dispose]() {
-    this.dispose()
+    this.dispose();
   }
   /** Disposes of this lock */
   public dispose() {
-    this.#resolve()
+    this.#resolve();
   }
 }

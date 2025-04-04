@@ -26,9 +26,9 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Events from '../events/index.ts';
-import * as Crypto from '../crypto/index.ts';
-import type { Hub, HubMessage, HubMessageCallback } from './hub.ts';
+import * as Events from "../events/index.ts";
+import * as Crypto from "../crypto/index.ts";
+import type { Hub, HubMessage, HubMessageCallback } from "./hub.ts";
 
 /** A virtualized Hub connection that operates in Process or Page */
 export class Private implements Hub {
@@ -38,9 +38,16 @@ export class Private implements Hub {
   readonly #config: RTCConfiguration;
   readonly #address: string;
   constructor() {
-    this.#sendChannel = new globalThis.BroadcastChannel('default-network-interface') as never;
-    this.#receiveChannel = new globalThis.BroadcastChannel('default-network-interface') as never;
-    this.#receiveChannel.addEventListener('message', (event) => this.#onMessage(event));
+    this.#sendChannel = new globalThis.BroadcastChannel(
+      "default-network-interface",
+    ) as never;
+    this.#receiveChannel = new globalThis.BroadcastChannel(
+      "default-network-interface",
+    ) as never;
+    this.#receiveChannel.addEventListener(
+      "message",
+      (event) => this.#onMessage(event),
+    );
     this.#events = new Events.Events();
     this.#config = { iceServers: [] };
     this.#address = Crypto.randomUUID();
@@ -51,11 +58,13 @@ export class Private implements Hub {
   public async address(): Promise<string> {
     return this.#address;
   }
-  public send(message: { to: string; data: unknown; }): void {
-    this.#sendChannel.postMessage(JSON.stringify({ from: this.#address, ...message }));
+  public send(message: { to: string; data: unknown }): void {
+    this.#sendChannel.postMessage(
+      JSON.stringify({ from: this.#address, ...message }),
+    );
   }
   public receive(handler: HubMessageCallback): void {
-    this.#events.on('message', handler);
+    this.#events.on("message", handler);
   }
   public dispose() {
     this.#events.dispose();
@@ -63,6 +72,6 @@ export class Private implements Hub {
   #onMessage(event: MessageEvent<string>) {
     const message: HubMessage = JSON.parse(event.data);
     if (message.to !== this.#address) return;
-    this.#events.send('message', message);
+    this.#events.send("message", message);
   }
 }

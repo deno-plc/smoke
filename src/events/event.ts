@@ -26,8 +26,8 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import type { EventHandler } from './handler.ts';
-import { EventListener } from './listener.ts';
+import type { EventHandler } from "./handler.ts";
+import { EventListener } from "./listener.ts";
 
 export class Event<T = any> {
   readonly #subscriptions: Set<readonly [boolean, EventHandler<T>]>;

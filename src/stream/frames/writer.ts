@@ -26,9 +26,9 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Buffer from '../../buffer/index.ts';
-import * as Async from '../../async/index.ts';
-import type { Write } from '../write.ts';
+import * as Buffer from "../../buffer/index.ts";
+import * as Async from "../../async/index.ts";
+import type { Write } from "../write.ts";
 
 export class FrameWriter implements Write<Uint8Array> {
   readonly #write: Write<Uint8Array>;

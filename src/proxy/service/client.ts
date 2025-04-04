@@ -26,19 +26,25 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Async from '../../async/index.ts';
-import * as Channel from '../../channel/index.ts';
-import * as Protocol from '../protocol/index.ts';
+import * as Async from "../../async/index.ts";
+import * as Channel from "../../channel/index.ts";
+import * as Protocol from "../protocol/index.ts";
 
 // ------------------------------------------------------------------
 // Registry
 // ------------------------------------------------------------------
 const registered = new Set<ProxyClient>();
-export function addClient(windowClient: WindowClient, port: MessagePort, clientId: string) {
+export function addClient(
+  windowClient: WindowClient,
+  port: MessagePort,
+  clientId: string,
+) {
   registered.add(new ProxyClient(windowClient, port, clientId));
 }
 export function findClient(clientId: string, url: URL): ServiceClient {
-  for (const client of registered) if (client.shouldAccept(clientId, url)) return client;
+  for (const client of registered) {
+    if (client.shouldAccept(clientId, url)) return client;
+  }
   return new DefaultClient();
 }
 // ------------------------------------------------------------------
@@ -72,33 +78,44 @@ export class ProxyClient implements ServiceClient {
     this.#receivers = new Map<number, Channel.Channel<Uint8Array>>();
     this.#port = port;
     this.#path = path;
-    this.#port.addEventListener('message', (event) => this.#onMessage(event));
+    this.#port.addEventListener("message", (event) => this.#onMessage(event));
   }
   // ----------------------------------------------------------------
   // ShouldAccept
   // ----------------------------------------------------------------
   /** Returns true of this client should accept this request */
   public shouldAccept(clientId: string, url: URL): boolean {
-    return this.#windowClient.id === clientId && url.pathname.startsWith(this.#path);
+    return this.#windowClient.id === clientId &&
+      url.pathname.startsWith(this.#path);
   }
   // ----------------------------------------------------------------
   // Fetch
   // ----------------------------------------------------------------
-  #send<Message extends Protocol.RequestInit | Protocol.RequestData | Protocol.RequestEnd>(message: Message) {
+  #send<
+    Message extends
+      | Protocol.RequestInit
+      | Protocol.RequestData
+      | Protocol.RequestEnd,
+  >(message: Message) {
     this.#port.postMessage(message);
   }
   // prettier-ignore
   async #sendRequest(requestId: number, request: Request) {
-    this.#send({ type: 'RequestInit', requestId, url: request.url, init: Protocol.requestInitFromRequest(request) });
+    this.#send({
+      type: "RequestInit",
+      requestId,
+      url: request.url,
+      init: Protocol.requestInitFromRequest(request),
+    });
     if (request.body !== null) {
       const reader = request.body.getReader();
       while (true) {
         const { value, done } = await reader.read();
         if (done) break;
-        this.#send({ requestId, type: 'RequestData', data: value! });
+        this.#send({ requestId, type: "RequestData", data: value! });
       }
     }
-    this.#send({ requestId, type: 'RequestEnd' });
+    this.#send({ requestId, type: "RequestEnd" });
   }
   /** Performs a fetch operation on this client. */
   public async fetch(request: Request): Promise<Response> {
@@ -115,7 +132,7 @@ export class ProxyClient implements ServiceClient {
   // ----------------------------------------------------------------
   #createReadableStreamBody(message: Protocol.ResponseInit) {
     const receiver = this.#receivers.get(message.requestId)!;
-    if (receiver === undefined) this.#throw('Cannot find receiver');
+    if (receiver === undefined) this.#throw("Cannot find receiver");
     return new ReadableStream({
       pull: async (controller) => {
         const next = await receiver.next();
@@ -125,7 +142,7 @@ export class ProxyClient implements ServiceClient {
   }
   #onResponseInit(message: Protocol.ResponseInit) {
     const deferred = this.#deferred.get(message.requestId);
-    if (deferred === undefined) this.#throw('Cannot find response');
+    if (deferred === undefined) this.#throw("Cannot find response");
     this.#deferred.delete(message.requestId);
     const body = this.#createReadableStreamBody(message);
     const response = new Response(body, {
@@ -137,12 +154,12 @@ export class ProxyClient implements ServiceClient {
   }
   #onResponseData(message: Protocol.ResponseData) {
     const receiver = this.#receivers.get(message.requestId);
-    if (receiver === undefined) this.#throw('Cannot find receiver');
+    if (receiver === undefined) this.#throw("Cannot find receiver");
     receiver.send(message.data);
   }
   #onResponseEnd(message: Protocol.ResponseEnd) {
     const receiver = this.#receivers.get(message.requestId);
-    if (receiver === undefined) this.#throw('Cannot find receiver');
+    if (receiver === undefined) this.#throw("Cannot find receiver");
     this.#receivers.delete(message.requestId);
     receiver.end();
   }
@@ -155,7 +172,7 @@ export class ProxyClient implements ServiceClient {
       case Protocol.isResponseEnd(event.data):
         return this.#onResponseEnd(event.data);
       default:
-        this.#throw('Unknown message');
+        this.#throw("Unknown message");
     }
   }
   #throw(message: string): never {

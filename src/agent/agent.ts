@@ -26,20 +26,31 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export type BrowserType = 'Firefox' | 'Chromium' | 'Safari' | 'Internet Explorer' | 'Unknown'
+export type BrowserType =
+  | "Firefox"
+  | "Chromium"
+  | "Safari"
+  | "Internet Explorer"
+  | "Unknown";
 
 /** Returns the Browser Type */
 export function browserType(): BrowserType {
-  const userAgent = navigator.userAgent.toLowerCase()
-  if (userAgent.includes('firefox')) {
-    return 'Firefox'
-  } else if (userAgent.includes('edg/') || (userAgent.includes('chrome') && !userAgent.includes('chromium'))) {
-    return 'Chromium'
-  } else if (userAgent.includes('safari') && !userAgent.includes('chrome') && !userAgent.includes('chromium')) {
-    return 'Safari'
-  } else if (userAgent.includes('msie') || userAgent.includes('trident/')) {
-    return 'Internet Explorer'
+  const userAgent = navigator.userAgent.toLowerCase();
+  if (userAgent.includes("firefox")) {
+    return "Firefox";
+  } else if (
+    userAgent.includes("edg/") ||
+    (userAgent.includes("chrome") && !userAgent.includes("chromium"))
+  ) {
+    return "Chromium";
+  } else if (
+    userAgent.includes("safari") && !userAgent.includes("chrome") &&
+    !userAgent.includes("chromium")
+  ) {
+    return "Safari";
+  } else if (userAgent.includes("msie") || userAgent.includes("trident/")) {
+    return "Internet Explorer";
   } else {
-    return 'Unknown'
+    return "Unknown";
   }
 }

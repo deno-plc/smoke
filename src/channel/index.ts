@@ -26,8 +26,8 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './channel.ts';
-export * from './receiver.ts';
-export * from './select.ts';
-export * from './sender.ts';
-export * from './transform.ts';
+export * from "./channel.ts";
+export * from "./receiver.ts";
+export * from "./select.ts";
+export * from "./sender.ts";
+export * from "./transform.ts";
