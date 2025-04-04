@@ -26,12 +26,12 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './barrier.mjs'
-export * from './debounce.mjs'
-export * from './deferred.mjs'
-export * from './delay.mjs'
-export * from './lock.mjs'
-export * from './mutex.mjs'
-export * from './semaphore.mjs'
-export * from './timeout.mjs'
-export * from './retry.mjs'
+export * from './barrier.mts'
+export * from './debounce.mts'
+export * from './deferred.mts'
+export * from './delay.mts'
+export * from './lock.mts'
+export * from './mutex.mts'
+export * from './semaphore.mts'
+export * from './timeout.mts'
+export * from './retry.mts'

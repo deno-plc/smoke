@@ -26,9 +26,9 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Buffer from '../../buffer/index.mjs'
-import * as Async from '../../async/index.mjs'
-import { Read } from '../read.mjs'
+import * as Buffer from '../../buffer/index.mts'
+import * as Async from '../../async/index.mts'
+import type { Read } from '../read.mts'
 
 export class FrameReaderError extends Error {
   constructor(message: string) {

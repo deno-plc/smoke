@@ -26,8 +26,8 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Util from './path-util.mjs'
-import * as Cwd from './cwd.mjs'
+import * as Util from './path-util.mts'
+import * as Cwd from './cwd.mts'
 
 export const system = 'posix'
 export const sep = '/'

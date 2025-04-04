@@ -26,9 +26,9 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { Options } from './options.mjs'
-import { Failed } from './failed.mjs'
-import { ItContext } from './it.mjs'
+import type { Options } from './options.mts'
+import type { Failed } from './failed.mts'
+import type { ItContext } from './it.mts'
 
 export class DescribeContext {
   readonly #name: string

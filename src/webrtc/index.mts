@@ -26,6 +26,6 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './datachannel/index.mjs'
-export * from './track/index.mjs'
-export * from './webrtc.mjs'
+export * from './datachannel/index.mts'
+export * from './track/index.mts'
+export * from './webrtc.mts'

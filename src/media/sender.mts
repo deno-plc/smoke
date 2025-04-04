@@ -26,13 +26,13 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Async from '../async/index.mjs'
-import * as Events from '../events/index.mjs'
-import * as Buffer from '../buffer/index.mjs'
-import * as WebRtc from '../webrtc/index.mjs'
-import * as Net from '../net/index.mjs'
-import * as Stream from '../stream/index.mjs'
-import * as Protocol from './protocol.mjs'
+import * as Async from '../async/index.mts'
+import * as Events from '../events/index.mts'
+import * as Buffer from '../buffer/index.mts'
+import type * as WebRtc from '../webrtc/index.mts'
+import type * as Net from '../net/index.mts'
+import type * as Stream from '../stream/index.mts'
+import type * as Protocol from './protocol.mts'
 export interface MediaSenderOptions {
   local: Net.Address
   remote: Net.Address

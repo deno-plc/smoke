@@ -1,5 +1,5 @@
-import { Path, Crypto, FileSystem, Buffer } from '@sinclair/smoke'
-import { Test, Assert, Hash } from '../test/index.mjs'
+import { Path, type Crypto, FileSystem, Buffer } from '@sinclair/smoke'
+import { Test, Assert, Hash } from '../test/index.mts'
 
 Test.describe('FileSystem', () => {
   const databaseName = 'filesystem-test'

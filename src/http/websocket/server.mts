@@ -26,10 +26,10 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Buffer from '../../buffer/index.mjs'
-import * as Stream from '../../stream/index.mjs'
-import * as Events from '../../events/index.mjs'
-import * as Protocol from './protocol.mjs'
+import * as Buffer from '../../buffer/index.mts'
+import type * as Stream from '../../stream/index.mts'
+import * as Events from '../../events/index.mts'
+import * as Protocol from './protocol.mts'
 
 export class HttpServerWebSocket {
   readonly #stream: Stream.FrameDuplex

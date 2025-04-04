@@ -26,14 +26,14 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Dispose from '../dispose/index.mjs'
-import * as IndexedDb from '../indexeddb/index.mjs'
-import * as Buffer from '../buffer/index.mjs'
-import * as Events from '../events/index.mjs'
-import * as Path from '../path/index.mjs'
-import * as Util from './util.mjs'
-import * as FsEvents from './events.mjs'
-import { Stat } from './stat.mjs'
+import type * as Dispose from '../dispose/index.mts'
+import type * as IndexedDb from '../indexeddb/index.mts'
+import * as Buffer from '../buffer/index.mts'
+import type * as Events from '../events/index.mts'
+import * as Path from '../path/index.mts'
+import * as Util from './util.mts'
+import * as FsEvents from './events.mts'
+import type { Stat } from './stat.mts'
 
 interface FolderRecord {
   parent: string

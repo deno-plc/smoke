@@ -26,8 +26,8 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Dispose from '../../dispose/index.mjs'
-import { WebRtcPeer } from '../webrtc.mjs'
+import type * as Dispose from '../../dispose/index.mts'
+import type { WebRtcPeer } from '../webrtc.mts'
 
 export type WebRtcDataChannelListenerAcceptCallback = (peer: WebRtcPeer, datachannel: RTCDataChannel) => void
 export type WebRtcDataChannelListenerDisposeCallback = () => void

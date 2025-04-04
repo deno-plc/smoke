@@ -26,7 +26,7 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Dispose from '../../dispose/dispose.mjs'
+import type * as Dispose from '../../dispose/dispose.mts'
 
 export interface PatternOptions {
   header?: string

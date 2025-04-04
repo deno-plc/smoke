@@ -26,7 +26,7 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './address.mjs'
-export * from './listener.mjs'
-export * from './socket.mjs'
-export * from './net.mjs'
+export * from './address.mts'
+export * from './listener.mts'
+export * from './socket.mts'
+export * from './net.mts'

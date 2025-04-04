@@ -1,21 +1,21 @@
 // ------------------------------------------------------------------
 // Harness
 // ------------------------------------------------------------------
-import { Test } from './test/index.mjs'
+import { Test } from './test/index.mts'
 
 // ------------------------------------------------------------------
 // Modules
 // ------------------------------------------------------------------
-import './async/index.mjs'
-import './buffer/index.mjs'
-import './channel/index.mjs'
-import './crypto/index.mjs'
-import './events/index.mjs'
-import './filesystem/index.mjs'
-import './http/index.mjs'
-import './net/index.mjs'
-import './os/index.mjs'
-import './proxy/index.mjs'
+import './async/index.mts'
+import './buffer/index.mts'
+import './channel/index.mts'
+import './crypto/index.mts'
+import './events/index.mts'
+import './filesystem/index.mts'
+import './http/index.mts'
+import './net/index.mts'
+import './os/index.mts'
+import './proxy/index.mts'
 
 // ------------------------------------------------------------------
 // Drift
@@ -27,7 +27,7 @@ declare const Drift: any
 // ------------------------------------------------------------------
 function resolve_filter() {
   if ('Drift' in globalThis) return Drift.args[0]
-  const searchParams = new URLSearchParams(window.location.search)
+  const searchParams = new URLSearchParams(globalThis.location.search)
   return searchParams.get('filter') ?? ''
 }
 

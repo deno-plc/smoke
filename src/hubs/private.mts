@@ -26,9 +26,9 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Events from '../events/index.mjs'
-import * as Crypto from '../crypto/index.mjs'
-import { Hub, HubMessage, HubMessageCallback } from './hub.mjs'
+import * as Events from '../events/index.mts'
+import * as Crypto from '../crypto/index.mts'
+import type { Hub, HubMessage, HubMessageCallback } from './hub.mts'
 
 /** A virtualized Hub connection that operates in Process or Page */
 export class Private implements Hub {

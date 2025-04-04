@@ -26,6 +26,6 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './hub.mjs'
-export * from './private.mjs'
-export * from './public.mjs'
+export * from './hub.mts'
+export * from './private.mts'
+export * from './public.mts'

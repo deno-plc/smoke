@@ -1,1 +1,1 @@
-import './buffer.mjs'
+import './buffer.mts'

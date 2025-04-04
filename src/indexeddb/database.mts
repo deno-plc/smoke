@@ -26,8 +26,8 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { ObjectStore } from './object-store.mjs'
-import { Transaction } from './transaction.mjs'
+import { ObjectStore } from './object-store.mts'
+import { Transaction } from './transaction.mts'
 
 export class Database {
   constructor(private readonly database: IDBDatabase) {}

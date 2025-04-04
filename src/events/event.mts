@@ -26,8 +26,8 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { EventHandler } from './handler.mjs'
-import { EventListener } from './listener.mjs'
+import type { EventHandler } from './handler.mts'
+import { EventListener } from './listener.mts'
 
 export class Event<T = any> {
   readonly #subscriptions: Set<readonly [boolean, EventHandler<T>]>

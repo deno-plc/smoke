@@ -26,12 +26,12 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Async from './async/index.mjs'
-import { DescribeContext } from './describe.mjs'
-import { Options } from './options.mjs'
-import { DocumentReporter } from './reporter.mjs'
-import { Result } from './result.mjs'
-import { ItContext } from './it.mjs'
+import * as Async from './async/index.mts'
+import { DescribeContext } from './describe.mts'
+import type { Options } from './options.mts'
+import { DocumentReporter } from './reporter.mts'
+import type { Result } from './result.mts'
+import { ItContext } from './it.mts'
 
 let current = new DescribeContext('root')
 

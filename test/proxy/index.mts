@@ -1,1 +1,1 @@
-import './proxy.mjs'
+import './proxy.mts'

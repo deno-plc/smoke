@@ -26,7 +26,7 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import type { Reporter } from './reporter.mjs'
+import type { Reporter } from './reporter.mts'
 
 export interface Options {
   reporter: Reporter

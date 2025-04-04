@@ -1,5 +1,5 @@
 import { Async } from '@sinclair/smoke'
-import { Test, Assert } from '../test/index.mjs'
+import { Test, Assert } from '../test/index.mts'
 
 export const range = (length: number) => Array.from({ length })
 

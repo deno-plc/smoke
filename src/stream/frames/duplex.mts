@@ -26,10 +26,10 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { FrameReader } from './reader.mjs'
-import { FrameWriter } from './writer.mjs'
-import { Read } from '../read.mjs'
-import { Write } from '../write.mjs'
+import { FrameReader } from './reader.mts'
+import { FrameWriter } from './writer.mts'
+import type { Read } from '../read.mts'
+import type { Write } from '../write.mts'
 
 export class FrameDuplex implements Read<Uint8Array>, Write<Uint8Array> {
   readonly #reader: FrameReader

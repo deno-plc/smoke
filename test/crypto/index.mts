@@ -1,1 +1,1 @@
-import './crypto.mjs'
+import './crypto.mts'

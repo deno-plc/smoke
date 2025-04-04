@@ -26,7 +26,7 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { delay as delayFunc } from './delay.mjs'
+import { delay as delayFunc } from './delay.mts'
 
 export type RetryFunction<T> = () => Promise<T> | T
 

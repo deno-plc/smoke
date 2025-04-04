@@ -26,7 +26,7 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { TransformChannel } from './transform.mjs'
+import { TransformChannel } from './transform.mts'
 
 export class Channel<T = unknown> extends TransformChannel<T, T> {
   constructor() {

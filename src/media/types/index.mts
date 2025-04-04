@@ -26,6 +26,6 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './audio.mjs'
-export * from './pattern.mjs'
-export * from './video.mjs'
+export * from './audio.mts'
+export * from './pattern.mts'
+export * from './video.mts'

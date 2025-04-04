@@ -26,7 +26,7 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { Deferred } from '../async/deferred.mjs'
+import { Deferred } from '../async/deferred.mts'
 
 /** Asynchronous queue that supports asynchronous awaiting values */
 export class Queue<T> {

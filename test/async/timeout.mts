@@ -1,5 +1,5 @@
 import { Async } from '@sinclair/smoke'
-import { Test, Assert } from '../test/index.mjs'
+import { Test, Assert } from '../test/index.mts'
 
 Test.describe('Async:timeout', () => {
   Test.it('Should timeout after 10 milliseconds', async () => {

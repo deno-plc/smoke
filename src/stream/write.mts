@@ -26,7 +26,7 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { Close, CloseSync } from './close.mjs'
+import type { Close, CloseSync } from './close.mts'
 
 /** Represents a resource that can write asynchronously */
 export interface Write<T = unknown> extends Close {

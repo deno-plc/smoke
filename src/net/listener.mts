@@ -26,9 +26,9 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Dispose from '../dispose/index.mjs'
-import * as WebRtc from '../webrtc/index.mjs'
-import { NetSocket } from './socket.mjs'
+import type * as Dispose from '../dispose/index.mts'
+import type * as WebRtc from '../webrtc/index.mts'
+import { NetSocket } from './socket.mts'
 
 export type NetListenerAcceptCallback = (socket: NetSocket) => any
 

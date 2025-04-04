@@ -1,5 +1,5 @@
 import { Events } from '@sinclair/smoke'
-import { Test, Assert } from '../test/index.mjs'
+import { Test, Assert } from '../test/index.mts'
 
 Test.describe('Events:Event', () => {
   Test.it('Should subscribe and send once', () => {

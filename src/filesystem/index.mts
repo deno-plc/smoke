@@ -26,6 +26,6 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './filesystem.mjs'
-export * from './fs.mjs'
-export * from './stat.mjs'
+export * from './filesystem.mts'
+export * from './fs.mts'
+export * from './stat.mts'

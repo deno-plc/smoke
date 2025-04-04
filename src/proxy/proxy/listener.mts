@@ -26,8 +26,8 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Channel from '../../channel/index.mjs'
-import * as Protocol from '../protocol/index.mjs'
+import * as Channel from '../../channel/index.mts'
+import * as Protocol from '../protocol/index.mts'
 
 // ------------------------------------------------------------------
 // ProxyListener

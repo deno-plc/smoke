@@ -1,0 +1,13 @@
+{
+  "name": "@deno-plc/smoke",
+  "version": "0.8.9",
+  "exports": {
+    ".": "./src/index.mts"
+  },
+  "compilerOptions": {
+    "strict": true
+  },
+  "unstable": [
+    "sloppy-imports"
+  ]
+}

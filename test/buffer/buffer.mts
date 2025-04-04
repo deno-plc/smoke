@@ -1,5 +1,5 @@
 import { Buffer } from '@sinclair/smoke'
-import { Test, Assert } from '../test/index.mjs'
+import { Test, Assert } from '../test/index.mts'
 
 Test.describe('Buffer', () => {
   Test.it('Should alloc a new zero buffer', () => {

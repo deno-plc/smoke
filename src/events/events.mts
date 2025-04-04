@@ -26,9 +26,9 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { EventListener } from './listener.mjs'
-import { EventHandler } from './handler.mjs'
-import { Event } from './event.mjs'
+import type { EventListener } from './listener.mts'
+import type { EventHandler } from './handler.mts'
+import { Event } from './event.mts'
 
 export class Events<T extends Record<string, any> = Record<string, any>> {
   readonly #events: Map<string, Event>

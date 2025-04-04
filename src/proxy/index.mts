@@ -26,4 +26,4 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './proxy/index.mjs'
+export * from './proxy/index.mts'

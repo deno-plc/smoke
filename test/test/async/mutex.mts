@@ -26,8 +26,8 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { Deferred } from './deferred.mjs'
-import { Lock } from './lock.mjs'
+import { Deferred } from './deferred.mts'
+import { Lock } from './lock.mts'
 
 export class Mutex {
   #queue: Array<Deferred<Lock>>

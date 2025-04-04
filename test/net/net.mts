@@ -1,5 +1,5 @@
 import { Network, Buffer } from '@sinclair/smoke'
-import { Test, Assert } from '../test/index.mjs'
+import { Test, Assert } from '../test/index.mts'
 
 const Node = new Network()
 const { Net } = Node

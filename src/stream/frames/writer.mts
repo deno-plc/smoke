@@ -26,9 +26,9 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Buffer from '../../buffer/index.mjs'
-import * as Async from '../../async/index.mjs'
-import { Write } from '../write.mjs'
+import * as Buffer from '../../buffer/index.mts'
+import * as Async from '../../async/index.mts'
+import type { Write } from '../write.mts'
 
 export class FrameWriter implements Write<Uint8Array> {
   readonly #write: Write<Uint8Array>

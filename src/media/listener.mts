@@ -26,14 +26,14 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Async from '../async/index.mjs'
-import * as Protocol from './protocol.mjs'
-import * as Buffer from '../buffer/index.mjs'
-import * as Dispose from '../dispose/index.mjs'
-import * as WebRtc from '../webrtc/index.mjs'
-import * as Net from '../net/index.mjs'
-import * as Stream from '../stream/index.mjs'
-import { MediaReceiver } from './receiver.mjs'
+import * as Async from '../async/index.mts'
+import * as Protocol from './protocol.mts'
+import * as Buffer from '../buffer/index.mts'
+import type * as Dispose from '../dispose/index.mts'
+import type * as WebRtc from '../webrtc/index.mts'
+import type * as Net from '../net/index.mts'
+import * as Stream from '../stream/index.mts'
+import { MediaReceiver } from './receiver.mts'
 
 export type MediaListenerAcceptCallback = (receiver: MediaReceiver) => any
 

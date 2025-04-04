@@ -26,7 +26,7 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { Close, CloseSync } from './close.mjs'
+import type { Close, CloseSync } from './close.mts'
 
 /** Represents a resource that can be read asynchronously */
 export interface Read<T = unknown> extends Close {

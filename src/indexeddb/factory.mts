@@ -26,7 +26,7 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { Database } from './database.mjs'
+import { Database } from './database.mts'
 
 declare namespace window {
   export const indexedDB: any
@@ -37,7 +37,7 @@ export namespace Factory {
   /** Attempts to open a connection to the named database with the current version, or 1 if it does not already exist. If the request is successful request's result will be the connection. */
   export async function open(name: string, upgrade: UpgradeCallback, version: number = 1): Promise<Database> {
     return new Promise<Database>((resolve, reject) => {
-      const request = window.indexedDB.open(name, version)
+      const request = globalThis.indexedDB.open(name, version)
       request.addEventListener('success', () => resolve(new Database(request.result)))
       request.addEventListener('upgradeneeded', (event: any /** fix */) => upgrade(new Database(request.result)))
       request.addEventListener('blocked', (event: any /** fix */) => reject(new Error('Database blocked')))
@@ -47,7 +47,7 @@ export namespace Factory {
   /** Attempts to delete the named database. If the database already exists and there are open connections that don't close in response to a versionchange event, the request will be blocked until all they close. If the request is successful request's result will be null. */
   export async function deleteDatabase(name: string) {
     return new Promise<void>((resolve, reject) => {
-      const request = window.indexedDB.deleteDatabase(name)
+      const request = globalThis.indexedDB.deleteDatabase(name)
       request.addEventListener('success', () => resolve(void 0))
       request.addEventListener('upgradeneeded', (event: any /** fix */) => reject(new Error('Unexpected upgradedneeded on database delete')))
       request.addEventListener('blocked', (event: any /** fix */) => reject(new Error('Database blocked')))
@@ -56,9 +56,9 @@ export namespace Factory {
   }
   /** Compares two values as keys. Returns -1 if key1 precedes key2, 1 if key2 precedes key1, and 0 if the keys are equal. Throws a "DataError" DOMException if either input is not a valid key. */
   export function cmp(first: any, second: any) {
-    return window.indexedDB.cmp(first, second)
+    return globalThis.indexedDB.cmp(first, second)
   }
   export async function databases() {
-    return await window.indexedDB.databases()
+    return await globalThis.indexedDB.databases()
   }
 }

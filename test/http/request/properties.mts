@@ -1,5 +1,5 @@
 import { Network } from '@sinclair/smoke'
-import { Test, Assert } from '../../test/index.mjs'
+import { Test, Assert } from '../../test/index.mts'
 
 const { Http } = new Network()
 

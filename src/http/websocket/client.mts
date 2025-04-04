@@ -26,15 +26,15 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Buffer from '../../buffer/index.mjs'
-import * as Events from '../../events/index.mjs'
-import * as Stream from '../../stream/index.mjs'
-import * as Net from '../../net/index.mjs'
-import * as Url from '../../url/index.mjs'
-import * as Signal from '../signal.mjs'
-import * as Protocol from './protocol.mjs'
+import * as Buffer from '../../buffer/index.mts'
+import * as Events from '../../events/index.mts'
+import * as Stream from '../../stream/index.mts'
+import type * as Net from '../../net/index.mts'
+import * as Url from '../../url/index.mts'
+import * as Signal from '../signal.mts'
+import * as Protocol from './protocol.mts'
 
-import { HttpListenerRequestInit } from '../listener.mjs'
+import type { HttpListenerRequestInit } from '../listener.mts'
 
 export enum HttpWebSocketState {
   CONNECTING,

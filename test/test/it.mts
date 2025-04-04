@@ -26,7 +26,7 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { Options } from './options.mjs'
+import type { Options } from './options.mts'
 
 export class ItContext {
   readonly #name: string

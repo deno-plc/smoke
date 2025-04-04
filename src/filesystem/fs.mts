@@ -26,8 +26,8 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as IndexedDb from '../indexeddb/index.mjs'
-import { FileSystem } from './filesystem.mjs'
+import * as IndexedDb from '../indexeddb/index.mts'
+import { FileSystem } from './filesystem.mts'
 
 /** Deletes a FileSystem with the given databaseName */
 export async function remove(databaseName: string): Promise<void> {

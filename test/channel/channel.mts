@@ -1,5 +1,5 @@
 import { Channel } from '@sinclair/smoke'
-import { Test, Assert } from '../test/index.mjs'
+import { Test, Assert } from '../test/index.mts'
 
 Test.describe('Channel:Channel', () => {
   Test.it('Should send value and end', () => {

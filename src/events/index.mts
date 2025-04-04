@@ -26,7 +26,7 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './event.mjs'
-export * from './events.mjs'
-export * from './handler.mjs'
-export * from './listener.mjs'
+export * from './event.mts'
+export * from './events.mts'
+export * from './handler.mts'
+export * from './listener.mts'

@@ -26,9 +26,9 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { Cursor, CursorWithValue } from './cursor.mjs'
-import { ObjectStore } from './object-store.mjs'
-import { Request } from './request.mjs'
+import { Cursor, CursorWithValue } from './cursor.mts'
+import { ObjectStore } from './object-store.mts'
+import { Request } from './request.mts'
 
 /**
  * IDBIndex interface of the IndexedDB API provides asynchronous access to an index in a database.

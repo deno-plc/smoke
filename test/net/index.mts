@@ -1,1 +1,1 @@
-import './net.mjs'
+import './net.mts'

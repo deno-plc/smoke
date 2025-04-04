@@ -26,7 +26,7 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Buffer from '../../buffer/index.mjs'
+import * as Buffer from '../../buffer/index.mts'
 
 export enum MessageType {
   MessageText = 0,

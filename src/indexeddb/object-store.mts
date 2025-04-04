@@ -26,10 +26,10 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { Cursor, CursorWithValue } from './cursor.mjs'
-import { Transaction } from './transaction.mjs'
-import { Index } from './indexed.mjs'
-import { Request } from './request.mjs'
+import { Cursor, CursorWithValue } from './cursor.mts'
+import { Transaction } from './transaction.mts'
+import { Index } from './indexed.mts'
+import { Request } from './request.mts'
 
 export class ObjectStore<T> {
   constructor(private readonly objectStore: IDBObjectStore) {}

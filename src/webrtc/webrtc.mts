@@ -26,11 +26,11 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Async from '../async/index.mjs'
-import * as Dispose from '../dispose/index.mjs'
-import * as Hubs from '../hubs/index.mjs'
-import { WebRtcDataChannelListener, WebRtcDataChannelListenerAcceptCallback } from './datachannel/index.mjs'
-import { WebRtcTrackListener, WebRtcTrackListenerAcceptCallback } from './track/index.mjs'
+import * as Async from '../async/index.mts'
+import type * as Dispose from '../dispose/index.mts'
+import type * as Hubs from '../hubs/index.mts'
+import { WebRtcDataChannelListener, type WebRtcDataChannelListenerAcceptCallback } from './datachannel/index.mts'
+import { WebRtcTrackListener, type WebRtcTrackListenerAcceptCallback } from './track/index.mts'
 
 // ------------------------------------------------------------------
 // WebRtcMessage

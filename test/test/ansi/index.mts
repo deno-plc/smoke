@@ -26,8 +26,8 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './color.mjs'
-export * from './cursor.mjs'
-export * from './font.mjs'
-export * from './misc.mjs'
-export * from './reset.mjs'
+export * from './color.mts'
+export * from './cursor.mts'
+export * from './font.mts'
+export * from './misc.mts'
+export * from './reset.mts'

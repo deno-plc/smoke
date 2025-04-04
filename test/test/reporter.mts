@@ -26,13 +26,13 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Assert from './assert/index.mjs'
-import * as Buffer from './buffer/index.mjs'
-import * as Ansi from './ansi/index.mjs'
+import * as Assert from './assert/index.mts'
+import * as Buffer from './buffer/index.mts'
+import * as Ansi from './ansi/index.mts'
 
-import type { DescribeContext } from './describe.mjs'
-import type { ItContext } from './it.mjs'
-import { ValueFormatter } from './formatter.mjs'
+import type { DescribeContext } from './describe.mts'
+import type { ItContext } from './it.mts'
+import { ValueFormatter } from './formatter.mts'
 
 // Mapping of ANSI codes to their respective hex color values
 const ansiToHex: Record<string, string> = {

@@ -1,5 +1,5 @@
 import { Channel } from '@sinclair/smoke'
-import { Test, Assert } from '../test/index.mjs'
+import { Test, Assert } from '../test/index.mts'
 
 Test.describe('Channel:Select', () => {
   Test.it('Should select on single channel', () => {

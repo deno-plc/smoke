@@ -1,5 +1,5 @@
 import { Proxy, Buffer } from '@sinclair/smoke'
-import { Test, Assert } from '../test/index.mjs'
+import { Test, Assert } from '../test/index.mts'
 
 Test.describe('Proxy', () => {
   Test.before(async () => {

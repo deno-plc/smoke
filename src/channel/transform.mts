@@ -26,9 +26,9 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { Receiver } from './receiver.mjs'
-import { Sender } from './sender.mjs'
-import { Queue } from './queue.mjs'
+import type { Receiver } from './receiver.mts'
+import type { Sender } from './sender.mts'
+import { Queue } from './queue.mts'
 
 enum MessageType {
   Next = 0,

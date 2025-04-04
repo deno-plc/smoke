@@ -26,12 +26,12 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Stream from '../stream/index.mjs'
-import * as WebRtc from '../webrtc/index.mjs'
-import * as Net from '../net/index.mjs'
-import * as Types from './types/index.mjs'
-import { MediaListener, type MediaListenerOptions, type MediaListenerAcceptCallback } from './listener.mjs'
-import { MediaSender } from './sender.mjs'
+import * as Stream from '../stream/index.mts'
+import type * as WebRtc from '../webrtc/index.mts'
+import type * as Net from '../net/index.mts'
+import * as Types from './types/index.mts'
+import { MediaListener, type MediaListenerOptions, type MediaListenerAcceptCallback } from './listener.mts'
+import { MediaSender } from './sender.mts'
 
 export interface MediaSendOptions {
   hostname?: string

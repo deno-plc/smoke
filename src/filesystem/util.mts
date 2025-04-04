@@ -26,7 +26,7 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Path from '../path/index.mjs'
+import * as Path from '../path/index.mts'
 
 /** Resolves the file system path, ensuring consistent formatting of the path */
 export function resolvePath(directory: string, path: string) {

@@ -1,3 +1,3 @@
-import './info.mjs'
-import './properties.mjs'
-import './readable.mjs'
+import './info.mts'
+import './properties.mts'
+import './readable.mts'

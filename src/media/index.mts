@@ -26,6 +26,6 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './media.mjs'
-export * from './receiver.mjs'
-export * from './sender.mjs'
+export * from './media.mts'
+export * from './receiver.mts'
+export * from './sender.mts'

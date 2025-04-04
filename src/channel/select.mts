@@ -26,8 +26,8 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { Channel } from './channel.mjs'
-import { Receiver } from './receiver.mjs'
+import { Channel } from './channel.mts'
+import type { Receiver } from './receiver.mts'
 
 // prettier-ignore
 type ReceiverUnwrap<T> = T extends Receiver<infer U> ? U : never

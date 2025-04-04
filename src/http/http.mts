@@ -26,11 +26,11 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { HttpListener, HttpListenerOptions, HttpListenerAcceptCallback, HttpListenerUpgradeCallback, UpgradeMap } from './listener.mjs'
-import * as WebSocket from './websocket/index.mjs'
-import * as Fetch from './fetch.mjs'
-import * as Net from '../net/index.mjs'
-import * as Url from '../url/index.mjs'
+import { HttpListener, type HttpListenerOptions, type HttpListenerAcceptCallback, type HttpListenerUpgradeCallback, UpgradeMap } from './listener.mts'
+import * as WebSocket from './websocket/index.mts'
+import * as Fetch from './fetch.mts'
+import type * as Net from '../net/index.mts'
+import * as Url from '../url/index.mts'
 
 export class HttpModule {
   readonly #net: Net.NetModule

@@ -26,6 +26,6 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './reader.mjs'
-export * from './duplex.mjs'
-export * from './writer.mjs'
+export * from './reader.mts'
+export * from './duplex.mts'
+export * from './writer.mts'

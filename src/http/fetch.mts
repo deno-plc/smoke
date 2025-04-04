@@ -26,14 +26,14 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { HttpListenerRequestInit, HttpListenerResponseInit } from './listener.mjs'
+import type { HttpListenerRequestInit, HttpListenerResponseInit } from './listener.mts'
 
-import * as Async from '../async/index.mjs'
-import * as Buffer from '../buffer/index.mjs'
-import * as Stream from '../stream/index.mjs'
-import * as Net from '../net/index.mjs'
-import * as Url from '../url/index.mjs'
-import * as Signal from './signal.mjs'
+import * as Async from '../async/index.mts'
+import * as Buffer from '../buffer/index.mts'
+import * as Stream from '../stream/index.mts'
+import type * as Net from '../net/index.mts'
+import * as Url from '../url/index.mts'
+import * as Signal from './signal.mts'
 
 // ------------------------------------------------------------------
 // Hostname and Port

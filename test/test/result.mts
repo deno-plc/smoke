@@ -26,7 +26,7 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import type { Failed } from './failed.mjs'
+import type { Failed } from './failed.mts'
 
 export interface Result {
   success: boolean

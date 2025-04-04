@@ -26,12 +26,12 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as WebRtc from '../webrtc/index.mjs'
-import * as Buffer from '../buffer/index.mjs'
-import * as Channel from '../channel/index.mjs'
-import * as Async from '../async/index.mjs'
-import * as Stream from '../stream/index.mjs'
-import { Address } from './address.mjs'
+import type * as WebRtc from '../webrtc/index.mts'
+import * as Buffer from '../buffer/index.mts'
+import * as Channel from '../channel/index.mts'
+import * as Async from '../async/index.mts'
+import type * as Stream from '../stream/index.mts'
+import type { Address } from './address.mts'
 
 // prettier-ignore
 export class NetSocket implements Stream.Read<Uint8Array>, Stream.Write<Uint8Array> {

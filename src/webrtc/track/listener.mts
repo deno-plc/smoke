@@ -1,5 +1,5 @@
-import * as Dispose from '../../dispose/index.mjs'
-import { WebRtcPeer } from '../webrtc.mjs'
+import type * as Dispose from '../../dispose/index.mts'
+import type { WebRtcPeer } from '../webrtc.mts'
 
 export type WebRtcTrackListenerAcceptCallback = (peer: WebRtcPeer, event: RTCTrackEvent) => void
 export type WebRtcTrackListenerDisposeCallback = () => void

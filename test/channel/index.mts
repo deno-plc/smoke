@@ -1,2 +1,2 @@
-import './channel.mjs'
-import './select.mjs'
+import './channel.mts'
+import './select.mts'

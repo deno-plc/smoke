@@ -1,5 +1,5 @@
 import { Async } from '@sinclair/smoke'
-import { Test, Assert } from '../test/index.mjs'
+import { Test, Assert } from '../test/index.mts'
 
 Test.describe('Async:Barrier', () => {
   Test.it('It should start in a paused state', async () => {

@@ -30,8 +30,8 @@ THE SOFTWARE.
 /// <reference lib="dom" />
 /// <reference lib="webworker" />
 
-import * as Protocol from '../protocol/index.mjs'
-import { addClient, findClient } from './client.mjs'
+import * as Protocol from '../protocol/index.mts'
+import { addClient, findClient } from './client.mts'
 
 // ------------------------------------------------------------------
 // Start

@@ -26,7 +26,7 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Os from '../os/index.mjs'
+import * as Os from '../os/index.mts'
 
 export interface PathObject {
   dir?: string

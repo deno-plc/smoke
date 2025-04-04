@@ -26,8 +26,8 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Dispose from '../dispose/index.mjs'
-import * as Events from '../events/index.mjs'
+import type * as Dispose from '../dispose/index.mts'
+import * as Events from '../events/index.mts'
 
 export interface FileSystemCreatedEvent {
   type: 'created'

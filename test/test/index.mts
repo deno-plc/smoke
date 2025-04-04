@@ -26,8 +26,8 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './options.mjs'
-export * from './result.mjs'
-export * as Assert from './assert/index.mjs'
-export * as Hash from './hash/index.mjs'
-export * as Test from './test.mjs'
+export * from './options.mts'
+export * from './result.mts'
+export * as Assert from './assert/index.mts'
+export * as Hash from './hash/index.mts'
+export * as Test from './test.mts'

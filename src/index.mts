@@ -30,31 +30,31 @@ THE SOFTWARE.
 // Internal API
 // ------------------------------------------------------------------
 
-export * as Agent from './agent/index.mjs'
-export * as Async from './async/index.mjs'
-export * as Buffer from './buffer/index.mjs'
-export * as Channel from './channel/index.mjs'
-export * as Crypto from './crypto/index.mjs'
-export * as Dispose from './dispose/index.mjs'
-export * as Events from './events/index.mjs'
-export * as FileSystem from './filesystem/index.mjs'
-export * as Hubs from './hubs/index.mjs'
-export * as IndexedDb from './indexeddb/index.mjs'
-export * as Os from './os/index.mjs'
-export * as Path from './path/index.mjs'
-export * as Proxy from './proxy/index.mjs'
-export * as Stream from './stream/index.mjs'
-export * as Url from './url/index.mjs'
+export * as Agent from './agent/index.mts'
+export * as Async from './async/index.mts'
+export * as Buffer from './buffer/index.mts'
+export * as Channel from './channel/index.mts'
+export * as Crypto from './crypto/index.mts'
+export * as Dispose from './dispose/index.mts'
+export * as Events from './events/index.mts'
+export * as FileSystem from './filesystem/index.mts'
+export * as Hubs from './hubs/index.mts'
+export * as IndexedDb from './indexeddb/index.mts'
+export * as Os from './os/index.mts'
+export * as Path from './path/index.mts'
+export * as Proxy from './proxy/index.mts'
+export * as Stream from './stream/index.mts'
+export * as Url from './url/index.mts'
 
 // ------------------------------------------------------------------
 // Network Module API
 // ------------------------------------------------------------------
-export * from './http/index.mjs'
-export * from './media/index.mjs'
-export * from './net/index.mjs'
-export * from './webrtc/index.mjs'
+export * from './http/index.mts'
+export * from './media/index.mts'
+export * from './net/index.mts'
+export * from './webrtc/index.mts'
 
 // ------------------------------------------------------------------
 // Network API
 // ------------------------------------------------------------------
-export { Network } from './network.mjs'
+export { Network } from './network.mts'

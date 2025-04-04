@@ -26,13 +26,13 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Agent from '../agent/index.mjs'
-import * as Dispose from '../dispose/index.mjs'
-import * as Buffer from '../buffer/index.mjs'
-import * as Stream from '../stream/index.mjs'
-import * as Net from '../net/index.mjs'
-import * as Signal from './signal.mjs'
-import { HttpServerWebSocket } from './index.mjs'
+import * as Agent from '../agent/index.mts'
+import type * as Dispose from '../dispose/index.mts'
+import * as Buffer from '../buffer/index.mts'
+import * as Stream from '../stream/index.mts'
+import type * as Net from '../net/index.mts'
+import * as Signal from './signal.mts'
+import { HttpServerWebSocket } from './index.mts'
 
 export const UpgradeMap = new WeakMap<Request, Function>()
 

@@ -26,8 +26,8 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Async from '../async/index.mjs'
-import { Hub, HubMessageCallback } from './hub.mjs'
+import * as Async from '../async/index.mts'
+import type { Hub, HubMessageCallback } from './hub.mts'
 
 export class Public implements Hub {
   readonly #barrier: Async.Barrier

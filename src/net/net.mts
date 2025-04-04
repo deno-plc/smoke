@@ -26,9 +26,9 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { NetListener, NetListenerOptions, NetListenerAcceptCallback } from './listener.mjs'
-import { NetSocket } from './socket.mjs'
-import * as WebRtc from '../webrtc/index.mjs'
+import { NetListener, type NetListenerOptions, type NetListenerAcceptCallback } from './listener.mts'
+import { NetSocket } from './socket.mts'
+import type * as WebRtc from '../webrtc/index.mts'
 
 export interface NetConnectOptions {
   hostname?: string

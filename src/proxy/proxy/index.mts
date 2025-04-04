@@ -26,5 +26,5 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './listener.mjs'
-export * from './proxy.mjs'
+export * from './listener.mts'
+export * from './proxy.mts'

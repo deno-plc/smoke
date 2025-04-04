@@ -26,8 +26,8 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { ProxyListener, ListenCallback } from './listener.mjs'
-import * as Setup from './setup.mjs'
+import { ProxyListener, type ListenCallback } from './listener.mts'
+import * as Setup from './setup.mts'
 
 export interface ProxyListenOptions {
   /** The path this listener should intercept Http requests */

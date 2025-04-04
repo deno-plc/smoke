@@ -1,5 +1,5 @@
-import { Network, HttpRequestInfo } from '@sinclair/smoke'
-import { Test, Assert } from '../../test/index.mjs'
+import { Network, type HttpRequestInfo } from '@sinclair/smoke'
+import { Test, Assert } from '../../test/index.mts'
 
 const { Http } = new Network()
 

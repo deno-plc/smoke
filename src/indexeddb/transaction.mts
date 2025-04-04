@@ -26,9 +26,9 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { Deferred } from '../async/deferred.mjs'
-import { Database } from './database.mjs'
-import { ObjectStore } from './object-store.mjs'
+import { Deferred } from '../async/deferred.mts'
+import { Database } from './database.mts'
+import { ObjectStore } from './object-store.mts'
 
 export type StoreName<Names extends readonly string[]> = Names extends string ? Names : { [K in keyof Names]: Names[K] }[number]
 

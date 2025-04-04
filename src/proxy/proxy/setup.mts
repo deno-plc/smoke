@@ -26,8 +26,8 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Protocol from '../protocol/index.mjs'
-import * as Path from '../../path/index.mjs'
+import * as Protocol from '../protocol/index.mts'
+import * as Path from '../../path/index.mts'
 // ------------------------------------------------------------------
 // Timeout
 // ------------------------------------------------------------------

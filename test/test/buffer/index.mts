@@ -26,5 +26,5 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './buffer.mjs'
-export * from './reader.mjs'
+export * from './buffer.mts'
+export * from './reader.mts'

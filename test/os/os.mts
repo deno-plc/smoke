@@ -1,5 +1,5 @@
 import { Os } from '@sinclair/smoke'
-import { Test, Assert } from '../test/index.mjs'
+import { Test, Assert } from '../test/index.mts'
 
 Test.describe('Os:type', () => {
   Test.it('Should return operating system string', async () => {

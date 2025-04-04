@@ -26,7 +26,7 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import * as Guard from './guard/index.mjs'
+import * as Guard from './guard/index.mts'
 
 export namespace ValueFormatter {
   function formatTypedArray(value: Guard.TypedArrayType): string {
